@@ -1,0 +1,33 @@
+version: '1.0'
+services:
+  postgredb:
+    container_name: hyperdb
+    image: hyperhub/hyperdb
+    build:
+      context: .
+      args:
+        dbname: hyperdb
+        dbuser: hyperhub
+        dbpassword: password
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+    ports:
+      - 5050:80
+
+networks:
+  default:
+    name: postgre-service_default
