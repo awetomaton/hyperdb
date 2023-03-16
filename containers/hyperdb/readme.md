@@ -20,7 +20,7 @@ The build command above includes placeholder in `<>`:
 For example, one could build the database with:
 
 ```
-docker build -t hyperhub/geometrydb:latest --build-arg dbname=hyperhub --build-arg dbuser=user --build-arg dbpassword=password .
+docker build -t hyperhub/geometrydb:latest --build-arg dbname=hyperhub --build-arg dbuser=me --build-arg dbpassword=password .
 ```
 
 In this case, the database will be called `geometrydb`, the username will be `user`, and the password will be `password`.
