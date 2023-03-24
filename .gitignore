@@ -1,3 +1,4 @@
 .vscode/*
 *.pyc
 hyperdb_api/hyperdb/data/*.json
+.env

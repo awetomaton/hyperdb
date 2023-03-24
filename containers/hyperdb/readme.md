@@ -20,15 +20,15 @@ The build command above includes placeholder in `<>`:
 For example, one could build the database with:
 
 ```
-docker build -t hyperhub/geometrydb:latest --build-arg dbname=hyperhub --build-arg dbuser=me --build-arg dbpassword=password .
+docker build -t hyperhub/hyperdb:latest --build-arg dbname=hyperhub --build-arg dbuser=hyperhub --build-arg dbpassword=password .
 ```
 
-In this case, the database will be called `geometrydb`, the username will be `user`, and the password will be `password`.
+In this case, the database will be called `hyperhub`, the username will be `hyperhub`, and the password will be `password`.
 
 After building the container, users can run the container with:
 
 ```
-docker run -e POSTGRES_PASSWORD=password -p 5432:5432 -d hyperhub/geometrydb:latest
+docker run -e POSTGRES_PASSWORD=password -p 5432:5432 -d hyperhub/hyperdb:latest
 ```
 
 Note that the argument to `POSTGRES_PASSWORD` will make the password for the admin `postgres` user `password`.
