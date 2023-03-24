@@ -1,2 +1,7 @@
-pyscopg2-binary
 fastapi
+lorem
+names
+pycountry
+pydantic
+pydantic[email]
+pyscopg2-binary

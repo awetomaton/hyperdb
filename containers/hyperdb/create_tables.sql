@@ -36,6 +36,7 @@ CREATE TABLE public.country
 (
     id bigint DEFAULT nextval('country_id_seq'::regclass) not NULL,
     alpha_three_code character varying(3) COLLATE pg_catalog."default",
+    icon character varying(128) COLLATE pg_catalog."default",
     CONSTRAINT country_pkey PRIMARY KEY (id),
     CONSTRAINT country_uk UNIQUE (alpha_three_code)
 );
@@ -100,6 +101,7 @@ CREATE TABLE public.geometry
     file character varying(128) COLLATE pg_catalog."default",
     contributor_fk bigint REFERENCES contributor(id) ON DELETE CASCADE,
     system_fk bigint REFERENCES system(id) ON DELETE CASCADE,
+    classification character varying(128) COLLATE pg_catalog."default",
     CONSTRAINT geometry_pkey PRIMARY KEY (id),
     CONSTRAINT geometry_uk UNIQUE (file, system_fk)
 );
@@ -213,27 +215,6 @@ ALTER TABLE public.tool_settings OWNER to DBUSER;
 GRANT ALL ON TABLE public.tool_settings TO DBUSER;
 
 
-CREATE SEQUENCE tool_mesh_association_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER TABLE tool_mesh_association_seq OWNER TO DBUSER;
-
-
-CREATE TABLE public.tool_mesh_association
-(
-    id bigint DEFAULT nextval('tool_mesh_association_seq'::regclass) not NULL,
-    tool_fk bigint REFERENCES contributor(id) ON DELETE CASCADE,
-    mesh_fk bigint REFERENCES mesh(id) ON DELETE CASCADE,
-    CONSTRAINT tool_mesh_association_pkey PRIMARY KEY (id),
-    CONSTRAINT tool_mesh_association_uk UNIQUE (tool_fk, mesh_fk)
-);
-ALTER TABLE public.tool_mesh_association OWNER to DBUSER;
-GRANT ALL ON TABLE public.tool_mesh_association TO DBUSER;
-
-
 CREATE SEQUENCE configured_tool_seq
     START WITH 1
     INCREMENT BY 1
@@ -255,6 +236,52 @@ ALTER TABLE public.configured_tool OWNER to DBUSER;
 GRANT ALL ON TABLE public.configured_tool TO DBUSER;
 
 
+CREATE SEQUENCE tool_mesh_association_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE tool_mesh_association_seq OWNER TO DBUSER;
+
+
+CREATE TABLE public.tool_mesh_association
+(
+    id bigint DEFAULT nextval('tool_mesh_association_seq'::regclass) not NULL,
+    contributor_fk bigint REFERENCES contributor(id) ON DELETE CASCADE,
+    mesh_fk bigint REFERENCES mesh(id) ON DELETE CASCADE,
+    tool_fk bigint REFERENCES tool(id) ON DELETE CASCADE,
+    configured_tool_fk bigint REFERENCES configured_tool(id) ON DELETE CASCADE,
+    CONSTRAINT tool_mesh_association_pkey PRIMARY KEY (id),
+    CONSTRAINT tool_mesh_association_uk UNIQUE (tool_fk, mesh_fk)
+);
+ALTER TABLE public.tool_mesh_association OWNER to DBUSER;
+GRANT ALL ON TABLE public.tool_mesh_association TO DBUSER;
+
+
+CREATE SEQUENCE tool_geometry_association_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER TABLE tool_geometry_association_seq OWNER TO DBUSER;
+
+
+CREATE TABLE public.tool_geometry_association
+(
+    id bigint DEFAULT nextval('tool_geometry_association_seq'::regclass) not NULL,
+    contributor_fk bigint REFERENCES contributor(id) ON DELETE CASCADE,
+    tool_fk bigint REFERENCES tool(id) ON DELETE CASCADE,
+    configured_tool_fk bigint REFERENCES configured_tool(id) ON DELETE CASCADE,
+    geometry_fk bigint REFERENCES mesh(id) ON DELETE CASCADE,
+    CONSTRAINT tool_geometry_association_pkey PRIMARY KEY (id),
+    CONSTRAINT tool_geometry_association_uk UNIQUE (tool_fk, geometry_fk)
+);
+ALTER TABLE public.tool_geometry_association OWNER to DBUSER;
+GRANT ALL ON TABLE public.tool_geometry_association TO DBUSER;
+
+
 CREATE SEQUENCE aero_seq
     START WITH 1
     INCREMENT BY 1
@@ -264,19 +291,18 @@ CREATE SEQUENCE aero_seq
 ALTER TABLE aero_seq OWNER TO DBUSER;
 
 
-CREATE TABLE public.aero_results
+CREATE TABLE public.aero_result
 (
     id bigint DEFAULT nextval('aero_seq'::regclass) not NULL,
     mach real,
     alpha real,
-    reference_area real,
     lift_coefficient double precision,
     drag_coefficient double precision,
     configured_tool_fk bigint REFERENCES configured_tool(id) ON DELETE CASCADE,
     CONSTRAINT aero_results_pkey PRIMARY KEY (id)
 );
-ALTER TABLE public.aero_results OWNER to DBUSER;
-GRANT ALL ON TABLE public.aero_results TO DBUSER;
+ALTER TABLE public.aero_result OWNER to DBUSER;
+GRANT ALL ON TABLE public.aero_result TO DBUSER;
 
 
 CREATE SEQUENCE comment_id_seq
