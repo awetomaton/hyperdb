@@ -22,11 +22,11 @@ class CountryBase(BaseModel):
     icon: str
 
 
-class CountryCreate(SystemBase):
+class CountryCreate(CountryBase):
     pass
 
 
-class Country(SystemBase):
+class Country(CountryBase):
     id: int
 
     class Config:
@@ -38,11 +38,11 @@ class ContributorBase(BaseModel):
     email: str
 
 
-class ContributorCreate(SystemBase):
+class ContributorCreate(ContributorBase):
     pass
 
 
-class Contributor(SystemBase):
+class Contributor(ContributorBase):
     id: int
 
     class Config:
@@ -56,11 +56,11 @@ class GeometryBase(BaseModel):
     classification: str
 
 
-class GeometryCreate(SystemBase):
+class GeometryCreate(GeometryBase):
     pass
 
 
-class Geometry(SystemBase):
+class Geometry(GeometryBase):
     id: int
 
     class Config:
@@ -73,11 +73,11 @@ class MeshBase(BaseModel):
     geometry_fk: int
 
 
-class MeshCreate(SystemBase):
+class MeshCreate(MeshBase):
     pass
 
 
-class Mesh(SystemBase):
+class Mesh(MeshBase):
     id: int
 
     class Config:
@@ -89,11 +89,11 @@ class ToolBase(BaseModel):
     version: str
 
 
-class ToolCreate(SystemBase):
+class ToolCreate(ToolBase):
     pass
 
 
-class Tool(SystemBase):
+class Tool(ToolBase):
     id: int
 
     class Config:
@@ -105,11 +105,11 @@ class CBAeroSettingBase(BaseModel):
     hash: str
 
 
-class CBAeroSettingCreate(SystemBase):
+class CBAeroSettingCreate(CBAeroSettingBase):
     pass
 
 
-class CBAeroSetting(SystemBase):
+class CBAeroSetting(CBAeroSettingBase):
     id: int
 
     class Config:
@@ -121,11 +121,11 @@ class Cart3DSettingBase(BaseModel):
     hash: str
 
 
-class Cart3DSettingCreate(SystemBase):
+class Cart3DSettingCreate(Cart3DSettingBase):
     pass
 
 
-class Cart3DSetting(SystemBase):
+class Cart3DSetting(Cart3DSettingBase):
     id: int
 
     class Config:
@@ -137,11 +137,11 @@ class ToolSettingBase(BaseModel):
     cart3d_settings_fk: int
 
 
-class ToolSettingCreate(SystemBase):
+class ToolSettingCreate(ToolSettingBase):
     pass
 
 
-class ToolSetting(SystemBase):
+class ToolSetting(ToolSettingBase):
     id: int
 
     class Config:
@@ -153,11 +153,11 @@ class ConfiguredToolBase(BaseModel):
     tool_settings_fk: int
 
 
-class ConfiguredToolCreate(SystemBase):
+class ConfiguredToolCreate(ConfiguredToolBase):
     pass
 
 
-class ConfiguredTool(SystemBase):
+class ConfiguredTool(ConfiguredToolBase):
     id: int
 
     class Config:
@@ -171,11 +171,11 @@ class ToolMeshAssociationBase(BaseModel):
     configured_tool_fk: int
 
 
-class ToolMeshAssociationCreate(SystemBase):
+class ToolMeshAssociationCreate(ToolMeshAssociationBase):
     pass
 
 
-class ToolMeshAssociation(SystemBase):
+class ToolMeshAssociation(ToolMeshAssociationBase):
     id: int
 
     class Config:
@@ -189,11 +189,11 @@ class ToolGeometryAssociationBase(BaseModel):
     configured_tool_fk: int
 
 
-class ToolGeometryAssociationCreate(SystemBase):
+class ToolGeometryAssociationCreate(ToolGeometryAssociationBase):
     pass
 
 
-class ToolGeometryAssociation(SystemBase):
+class ToolGeometryAssociation(ToolGeometryAssociationBase):
     id: int
 
     class Config:
@@ -209,11 +209,11 @@ class AeroResultBase(BaseModel):
     mesh_fk: int
 
 
-class AeroResultCreate(SystemBase):
+class AeroResultCreate(AeroResultBase):
     pass
 
 
-class AeroResult(SystemBase):
+class AeroResult(AeroResultBase):
     id: int
 
     class Config:
@@ -231,11 +231,11 @@ class CommentBase(BaseModel):
     configured_tool_fk: int
 
 
-class CommentCreate(SystemBase):
+class CommentCreate(CommentBase):
     pass
 
 
-class Comment(SystemBase):
+class Comment(CommentBase):
     id: int
 
     class Config:

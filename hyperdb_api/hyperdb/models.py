@@ -1,7 +1,13 @@
+import pycountry
 from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float
 from sqlalchemy.orm import Mapped, mapped_column
-
 from hyperdb.database import Base
+
+
+class ToDictMixin(object):
+
+    def to_dict(self) -> dict:
+        return {k: v for k, v in self.__dict__.items() if k[0] != "_"}
 
 
 class System(Base):
@@ -12,12 +18,19 @@ class System(Base):
     classification = Column(String(128))
 
 
-class Country(Base):
+class Country(Base, ToDictMixin):
     __tablename__ = "countries"
+    __generated_instances = 0
 
     id: Mapped[int] = mapped_column(primary_key=True)
     alpha_three_code = Column(String(3), unique=True)
     icon = Column(String(128), unique=True)
+
+    @classmethod
+    def generate_random(cls):
+        country = list(pycountry.countries)[cls.__generated_instances % len(pycountry.countries)]
+
+        return cls(alpha_three_code=country.alpha_3)
 
 
 class CountrySystemAssociations(Base):
