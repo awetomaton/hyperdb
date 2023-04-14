@@ -117,4 +117,5 @@ Database migrations are handled via `alembic`. The database was created with `al
 `alembic/env.py` was modified. If one wishes to start with a fresh database migration, they must remove the tables in 
 the database **including** the `alembic_version` table which stores database migration metadata. They must copy the 
 content in the `env.py` file, delete the `alembic` directory, and then copy the `env.py` content back. Then the 
-developer can run `alembic init alembic` to create migrations from scratch.
+developer can run `alembic init alembic` to create migrations from scratch. Run `alembic revision --autogenerate` to 
+automatically create a migration.

@@ -10,6 +10,7 @@ from hyperdb import crud
 
 
 app = FastAPI()
+BASE_ROUTE = '/api'
 
 
 # Dependency
@@ -22,162 +23,162 @@ def get_db():
 
 
 # Based on https://fastapi.tiangolo.com/tutorial/static-files/
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount(BASE_ROUTE + "/static", StaticFiles(directory="static"), name="static")
 
 
-@app.post("/systems/", response_model=schemas.System)
+@app.post(BASE_ROUTE + "/systems/", response_model=schemas.System)
 def create_system(system: schemas.SystemCreate, db: Session = Depends(get_db)):
     return crud.create_system(db=db, system=system)
 
 
-@app.get("/systems/", response_model=List[schemas.System])
+@app.get(BASE_ROUTE + "/systems/", response_model=List[schemas.System])
 def read_systems(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     systems = crud.get_systems(db, skip=skip, limit=limit)
     return systems
 
-@app.get("/systems/{system_id}", response_model=schemas.System)
+@app.get(BASE_ROUTE + "/systems/{system_id}", response_model=schemas.System)
 def read_system(system_id: int, db: Session = Depends(get_db)):
     system = crud.get_system(db, system_id)
     return system
 
-@app.get("/systems/{system_id}/comments", response_model=List[schemas.Comment])
+@app.get(BASE_ROUTE + "/systems/{system_id}/comments", response_model=List[schemas.Comment])
 def read_system_comments(system_id: int, db: Session = Depends(get_db)):
     system = crud.get_system_comments(db, system_id)
     return system
 
 
-@app.post("/countries/", response_model=schemas.Country)
+@app.post(BASE_ROUTE + "/countries/", response_model=schemas.Country)
 def create_country(country: schemas.CountryCreate, db: Session = Depends(get_db)):
     return crud.create_country(db=db, country=country)
 
 
-@app.get("/countries/", response_model=List[schemas.Country])
+@app.get(BASE_ROUTE + "/countries/", response_model=List[schemas.Country])
 def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     countries = crud.get_countries(db, skip=skip, limit=limit)
     return countries
 
 
-@app.post("/contributors/", response_model=schemas.Contributor)
+@app.post(BASE_ROUTE + "/contributors/", response_model=schemas.Contributor)
 def create_contributor(contributor: schemas.ContributorCreate, db: Session = Depends(get_db)):
     return crud.create_contributor(db=db, contributor=contributor)
 
 
-@app.get("/contributors/", response_model=List[schemas.Contributor])
+@app.get(BASE_ROUTE + "/contributors/", response_model=List[schemas.Contributor])
 def read_contributors(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     contributors = crud.get_contributors(db, skip=skip, limit=limit)
     return contributors
 
 
-@app.post("/geometries/", response_model=schemas.Geometry)
+@app.post(BASE_ROUTE + "/geometries/", response_model=schemas.Geometry)
 def create_geometry(geometry: schemas.GeometryCreate, db: Session = Depends(get_db)):
     return crud.create_geometry(db=db, geometry=geometry)
 
 
-@app.get("/geometries/", response_model=List[schemas.Geometry])
+@app.get(BASE_ROUTE + "/geometries/", response_model=List[schemas.Geometry])
 def read_geometries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     geometries = crud.get_geometries(db, skip=skip, limit=limit)
     return geometries
 
 
-@app.post("/meshes/", response_model=schemas.Mesh)
+@app.post(BASE_ROUTE + "/meshes/", response_model=schemas.Mesh)
 def create_mesh(mesh: schemas.MeshCreate, db: Session = Depends(get_db)):
     return crud.create_mesh(db=db, mesh=mesh)
 
 
-@app.get("/meshes/", response_model=List[schemas.Mesh])
+@app.get(BASE_ROUTE + "/meshes/", response_model=List[schemas.Mesh])
 def read_meshes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     meshes = crud.get_meshes(db, skip=skip, limit=limit)
     return meshes
 
 
-@app.post("/tools/", response_model=schemas.Tool)
+@app.post(BASE_ROUTE + "/tools/", response_model=schemas.Tool)
 def create_tool(tool: schemas.ToolCreate, db: Session = Depends(get_db)):
     return crud.create_tool(db=db, tool=tool)
 
 
-@app.get("/tools/", response_model=List[schemas.Tool])
+@app.get(BASE_ROUTE + "/tools/", response_model=List[schemas.Tool])
 def read_tools(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     tools = crud.get_tools(db, skip=skip, limit=limit)
     return tools
 
 
-@app.post("/cbaero-settings/", response_model=schemas.CBAeroSetting)
+@app.post(BASE_ROUTE + "/cbaero-settings/", response_model=schemas.CBAeroSetting)
 def create_cbaero_setting(cbaero_setting: schemas.CBAeroSettingCreate, db: Session = Depends(get_db)):
     return crud.create_cbaero_setting(db=db, cbaero_setting=cbaero_setting)
 
 
-@app.get("/cbaero-settings/", response_model=List[schemas.CBAeroSetting])
+@app.get(BASE_ROUTE + "/cbaero-settings/", response_model=List[schemas.CBAeroSetting])
 def read_cbaero_settings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     cbaero_settings = crud.get_cbaero_settings(db, skip=skip, limit=limit)
     return cbaero_settings
 
 
-@app.post("/cart3d-settings/", response_model=schemas.Cart3DSetting)
+@app.post(BASE_ROUTE + "/cart3d-settings/", response_model=schemas.Cart3DSetting)
 def create_cart3d_setting(cart3d_setting: schemas.Cart3DSettingCreate, db: Session = Depends(get_db)):
     return crud.create_cart3d_setting(db=db, cart3d_setting=cart3d_setting)
 
 
-@app.get("/cart3d-settings/", response_model=List[schemas.Cart3DSetting])
+@app.get(BASE_ROUTE + "/cart3d-settings/", response_model=List[schemas.Cart3DSetting])
 def read_cart3d_settings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_cart3d_settings(db, skip=skip, limit=limit)
 
 
-@app.post("/tool-settings/", response_model=schemas.ToolSetting)
+@app.post(BASE_ROUTE + "/tool-settings/", response_model=schemas.ToolSetting)
 def create_tool_setting(tool_setting: schemas.ToolSettingCreate, db: Session = Depends(get_db)):
     return crud.create_tool_setting(db=db, tool_setting=tool_setting)
 
 
-@app.get("/tool-settings/", response_model=List[schemas.ToolSetting])
+@app.get(BASE_ROUTE + "/tool-settings/", response_model=List[schemas.ToolSetting])
 def read_tool_settings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_tool_settings(db, skip=skip, limit=limit)
 
 
-@app.post("/configured-tools/", response_model=schemas.ConfiguredTool)
+@app.post(BASE_ROUTE + "/configured-tools/", response_model=schemas.ConfiguredTool)
 def create_configured_tool(configured_tool: schemas.ConfiguredToolCreate, db: Session = Depends(get_db)):
     return crud.create_configured_tool(db=db, configured_tool=configured_tool)
 
 
-@app.get("/configured-tools/", response_model=List[schemas.ConfiguredTool])
+@app.get(BASE_ROUTE + "/configured-tools/", response_model=List[schemas.ConfiguredTool])
 def read_configured_tools(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_configured_tools(db, skip=skip, limit=limit)
 
 
-@app.post("/tool-mesh-associations/", response_model=schemas.ToolMeshAssociation)
+@app.post(BASE_ROUTE + "/tool-mesh-associations/", response_model=schemas.ToolMeshAssociation)
 def create_tool_mesh_association(tool_mesh_association: schemas.ToolMeshAssociationCreate, db: Session = Depends(get_db)):
     return crud.create_tool_mesh_association(db=db, tool_mesh_association=tool_mesh_association)
 
 
-@app.get("/tool-mesh-associations/", response_model=List[schemas.ToolMeshAssociation])
+@app.get(BASE_ROUTE + "/tool-mesh-associations/", response_model=List[schemas.ToolMeshAssociation])
 def read_tool_mesh_associations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_tool_mesh_associations(db, skip=skip, limit=limit)
 
 
-@app.post("/tool-geometry-associations/", response_model=schemas.ToolGeometryAssociation)
+@app.post(BASE_ROUTE + "/tool-geometry-associations/", response_model=schemas.ToolGeometryAssociation)
 def create_tool_geometry_association(tool_geometry_association: schemas.ToolGeometryAssociationCreate, db: Session = Depends(get_db)):
     return crud.create_tool_geometry_association(db=db, tool_geometry_association=tool_geometry_association)
 
 
-@app.get("/tool-geometry-associations/", response_model=List[schemas.ToolGeometryAssociation])
+@app.get(BASE_ROUTE + "/tool-geometry-associations/", response_model=List[schemas.ToolGeometryAssociation])
 def read_tool_geometry_associations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_tool_geometry_associations(db, skip=skip, limit=limit)
 
 
-@app.post("/aero-results/", response_model=schemas.AeroResult)
+@app.post(BASE_ROUTE + "/aero-results/", response_model=schemas.AeroResult)
 def create_aero_result(aero_result: schemas.AeroResultCreate, db: Session = Depends(get_db)):
     return crud.create_aero_result(db=db, aero_result=aero_result)
 
 
-@app.get("/aero-results/", response_model=List[schemas.AeroResult])
+@app.get(BASE_ROUTE + "/aero-results/", response_model=List[schemas.AeroResult])
 def read_aero_results(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_aero_results(db, skip=skip, limit=limit)
 
 
-@app.post("/comments/", response_model=schemas.Comment)
+@app.post(BASE_ROUTE + "/comments/", response_model=schemas.Comment)
 def create_comment(comment: schemas.CommentCreate, db: Session = Depends(get_db)):
     return crud.create_comment(db=db, comment=comment)
 
 
-@app.get("/comments/", response_model=List[schemas.Comment])
+@app.get(BASE_ROUTE + "/comments/", response_model=List[schemas.Comment])
 def read_comments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_comments(db, skip=skip, limit=limit)
 

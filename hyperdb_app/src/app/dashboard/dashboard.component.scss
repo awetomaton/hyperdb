@@ -1,0 +1,12 @@
+.dashboard-row{
+    width: 100%;
+}
+
+.dashboard-item{
+    display: inline-block; 
+    margin: 1em;
+    width: calc(50% - 2em); 
+    vertical-align: top;
+    box-shadow: 0 0 3px #ccc;
+    border-radius: 0.25em;
+}

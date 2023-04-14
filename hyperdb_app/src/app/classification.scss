@@ -1,0 +1,20 @@
+$unclassified: #00a000;
+$secret: #ff0000;
+$top-secret: #ffff00;
+
+
+.classification {
+    font-weight: bold;
+}
+
+.unclassified {
+    background-color: $unclassified;
+}
+
+.secret {
+    background-color: $secret;
+}
+
+.top-secret {
+    background-color: $top-secret;
+}
