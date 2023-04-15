@@ -13,6 +13,8 @@ import { ClassificationComponent } from './classification/classification.compone
 import { SystemsComponent } from './systems/systems.component';
 import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { HttpClientModule } from '@angular/common/http';
     MatToolbarModule,
     MatButtonModule,
     MatTableModule,
-    HttpClientModule
+    HttpClientModule,
+    MatCheckboxModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

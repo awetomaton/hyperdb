@@ -57,6 +57,16 @@ def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     countries = crud.get_countries(db, skip=skip, limit=limit)
     return countries
 
+@app.post(BASE_ROUTE + "/country-system-associations/", response_model=schemas.CountrySystemAssociation)
+def create_country_system_association(country_system_association: schemas.CountrySystemAssociationCreate, db: Session = Depends(get_db)):
+    return crud.create_country_system_association(db=db, country_system_association=country_system_association)
+
+
+@app.get(BASE_ROUTE + "/country-system-associations/", response_model=List[schemas.CountrySystemAssociation])
+def read_country_system_associations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    countries = crud.get_country_system_association(db, skip=skip, limit=limit)
+    return countries
+
 
 @app.post(BASE_ROUTE + "/contributors/", response_model=schemas.Contributor)
 def create_contributor(contributor: schemas.ContributorCreate, db: Session = Depends(get_db)):
@@ -179,8 +189,8 @@ def create_comment(comment: schemas.CommentCreate, db: Session = Depends(get_db)
 
 
 @app.get(BASE_ROUTE + "/comments/", response_model=List[schemas.Comment])
-def read_comments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_comments(db, skip=skip, limit=limit)
+def read_comments(type: schemas.CommentType | None = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_comments(db, type=type, skip=skip, limit=limit)
 
 
 if __name__ == "__main__":

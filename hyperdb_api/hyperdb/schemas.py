@@ -1,4 +1,14 @@
+from enum import Enum
 from pydantic import BaseModel
+
+
+class CommentType(str, Enum):
+    contributor = 'contributor'
+    system = 'system'
+    geometry = 'geometry'
+    mesh = 'mesh'
+    tool_mesh_association = 'tool_mesh_association'
+    configured_tool = 'configured_tool'
 
 
 class SystemBase(BaseModel):
@@ -27,6 +37,22 @@ class CountryCreate(CountryBase):
 
 
 class Country(CountryBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class CountrySystemAssociationBase(BaseModel):
+    system_fk: int
+    country_fk: int
+
+
+class CountrySystemAssociationCreate(CountrySystemAssociationBase):
+    pass
+
+
+class CountrySystemAssociation(CountrySystemAssociationBase):
     id: int
 
     class Config:
@@ -133,8 +159,8 @@ class Cart3DSetting(Cart3DSettingBase):
 
 
 class ToolSettingBase(BaseModel):
-    cbaero_settings_fk: int
-    cart3d_settings_fk: int
+    cbaero_settings_fk: int | None = None
+    cart3d_settings_fk: int | None = None
 
 
 class ToolSettingCreate(ToolSettingBase):
@@ -223,12 +249,12 @@ class AeroResult(AeroResultBase):
 class CommentBase(BaseModel):
     title: str
     body: str
-    contributor_fk: int
-    system_fk: int
-    geometry_fk: int
-    mesh_fk: int
-    tool_mesh_association_fk: int
-    configured_tool_fk: int
+    contributor_fk: int | None = None
+    system_fk: int | None = None
+    geometry_fk: int | None = None
+    mesh_fk: int | None = None
+    tool_mesh_association_fk: int | None = None
+    configured_tool_fk: int | None = None
 
 
 class CommentCreate(CommentBase):

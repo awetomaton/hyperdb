@@ -4,7 +4,10 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { System } from './interfaces/system';
 import { Geometry } from './interfaces/geometry';
+import { Comment } from './interfaces/comment';
+import { Mesh } from './interfaces/mesh';
 import { Tool } from './interfaces/tool';
+import { CountrySystemAssociation } from './interfaces/country_system_association';
 import { Contributor } from './interfaces/contributor';
 import { MessageService } from './message.service';
 
@@ -21,6 +24,32 @@ export class HyperdbService {
   };
 
   constructor(private http: HttpClient, private messageService: MessageService) { }
+
+  getComments(type?: string): Observable<Comment[]> {
+    let url = this.apiUrl + 'comments'
+    if (type != undefined) {
+      url += "?type=" + type;
+    }
+
+    return this.http.get<Comment[]>(url)
+      .pipe(
+        catchError(this.handleError<Comment[]>('getComments', []))
+      );
+  }
+
+  getSystemCountryAssociations(): Observable<CountrySystemAssociation[]> {
+    return this.http.get<CountrySystemAssociation[]>(this.apiUrl + 'systems')
+      .pipe(
+        catchError(this.handleError<CountrySystemAssociation[]>('getCountrySystemAssociations', []))
+      );
+  }
+
+  getMeshes(): Observable<Mesh[]> {
+    return this.http.get<Mesh[]>(this.apiUrl + 'meshes')
+      .pipe(
+        catchError(this.handleError<Mesh[]>('getMeshes', []))
+      );
+  }
 
   getSystems(): Observable<System[]> {
     return this.http.get<System[]>(this.apiUrl + 'systems')

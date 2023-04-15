@@ -40,6 +40,18 @@ def create_country(db: Session, country: schemas.CountryCreate):
     return db_item
 
 
+def get_country_system_association(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.CountrySystemAssociation).offset(skip).limit(limit).all()
+
+
+def create_country_system_association(db: Session, country_system_association: schemas.CountrySystemAssociationCreate):
+    db_item = models.CountrySystemAssociation(**country_system_association.dict())
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+
 def get_contributors(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Contributor).offset(skip).limit(limit).all()
 
@@ -172,8 +184,12 @@ def create_aero_result(db: Session, aero_result: schemas.AeroResultCreate):
     return db_item
 
 
-def get_comments(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Comment).offset(skip).limit(limit).all()
+def get_comments(db: Session, type: str | None = None, skip: int = 0, limit: int = 100):
+    query = db.query(models.Comment)
+    if type is not None:
+        model_attr = getattr(models.Comment, type + "_fk")
+        query = query.filter(model_attr != None)
+    return query.offset(skip).limit(limit).all()
 
 
 def create_comment(db: Session, comment: schemas.CommentCreate):
