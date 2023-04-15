@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 from hyperdb.database import Base
 from names import get_full_name
 import random
-import uuid
 
 
 class ToDictMixin(object):
@@ -24,7 +23,7 @@ class System(Base, ToDictMixin):
 
     @classmethod
     def generate_random(cls):
-        name = str(uuid.uuid1())
+        name = get_full_name().lower().replace(" ", "_")
         classification = "UNCLASSIFIED"
 
         return cls(name=name, classification=classification)
@@ -94,7 +93,7 @@ class Geometry(Base, ToDictMixin):
 
     @classmethod
     def generate_random(cls, contributors: List[Contributor], systems: List[System]):
-        file = str(uuid.uuid1()) + ".IGS"
+        file = get_full_name().lower().replace(" ", "_") + ".IGS"
         contributor_ids = [contributor.id for contributor in contributors]
         contributor_fk = random.choice(contributor_ids)
         system_ids = [system.id for system in systems]
@@ -115,7 +114,7 @@ class Mesh(Base, ToDictMixin):
 
     @classmethod
     def generate_random(cls, contributors: List[Contributor], geometries: List[Geometry]):
-        file = str(uuid.uuid1()) + ".MSH"
+        file = get_full_name().lower().replace(" ", "_") + ".MSH"
         contributor_ids = [contributor.id for contributor in contributors]
         contributor_fk = random.choice(contributor_ids)
         geometry_ids = [geometry.id for geometry in geometries]
@@ -136,7 +135,7 @@ class Tool(Base, ToDictMixin):
 
     @classmethod
     def generate_random(cls):
-        name = str(uuid.uuid1())
+        name = get_full_name().lower().replace(" ", "_")
         version = "{}.{}.{}".format(random.randint(0, 9), random.randint(0, 9), random.randint(0, 9))
 
         return cls(name=name, version=version)
@@ -154,7 +153,7 @@ class CBAeroSetting(Base, ToDictMixin):
 
     @classmethod
     def generate_random(cls):
-        conf_file = str(uuid.uuid1()) + ".conf"
+        conf_file = get_full_name().lower().replace(" ", "_") + ".conf"
         hash = str(random.randint(0, 100000))
         return cls(conf_file=conf_file, hash=hash)
 
@@ -171,7 +170,7 @@ class Cart3DSetting(Base, ToDictMixin):
 
     @classmethod
     def generate_random(cls):
-        cntl_file = str(uuid.uuid1()) + ".cntl"
+        cntl_file = get_full_name().lower().replace(" ", "_") + ".cntl"
         hash = str(random.randint(0, 100000))
         return cls(cntl_file=cntl_file, hash=hash)
 
@@ -312,12 +311,12 @@ class Comment(Base, ToDictMixin):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(64))
     body = Column(String(256))
-    contributor_fk = mapped_column(ForeignKey("contributors.id"))
-    system_fk = mapped_column(ForeignKey("systems.id"))
-    geometry_fk = mapped_column(ForeignKey("geometries.id"))
-    mesh_fk = mapped_column(ForeignKey("meshes.id"))
-    tool_mesh_association_fk = mapped_column(ForeignKey("tool_mesh_associations.id"))
-    configured_tool_fk = mapped_column(ForeignKey("configured_tools.id"))
+    contributor_fk = mapped_column(ForeignKey("contributors.id"), nullable=True)
+    system_fk = mapped_column(ForeignKey("systems.id"), nullable=True)
+    geometry_fk = mapped_column(ForeignKey("geometries.id"), nullable=True)
+    mesh_fk = mapped_column(ForeignKey("meshes.id"), nullable=True)
+    tool_mesh_association_fk = mapped_column(ForeignKey("tool_mesh_associations.id"), nullable=True)
+    configured_tool_fk = mapped_column(ForeignKey("configured_tools.id"), nullable=True)
 
     @classmethod
     def generate_random(cls, 

@@ -4,33 +4,33 @@
         <a mat-button [routerLink]="['/systems/']" class="button-header"><h2 class="button-header-h">Systems</h2></a>
         <mat-nav-list role="list">
             <a mat-list-item [routerLink]="['/systems/' + system.id]" *ngFor="let system of systems">
-                {{system.name}}<classification class="inline-classification"></classification>
+                {{system.name}} <classification [classification]="system.classification"></classification>
             </a>
         </mat-nav-list>
     </div>
     <div class="dashboard-item">
-        <a mat-button [routerLink]="['/systems/']" class="button-header"><h2 class="button-header-h">Geometries</h2></a>
+        <a mat-button [routerLink]="['/geometries/']" class="button-header"><h2 class="button-header-h">Geometries</h2></a>
         <mat-nav-list role="list">
-            <a mat-list-item [routerLink]="['/systems/' + system.id]" *ngFor="let system of systems">
-                {{system.name}}<classification class="inline-classification"></classification>
+            <a mat-list-item [routerLink]="['/geometries/' + geometry.id]" *ngFor="let geometry of geometries">
+                {{geometry.file}} <classification [classification]="geometry.classification"></classification>
             </a>
         </mat-nav-list>
     </div>
 </div>
 <div class="dashboard-row">
     <div class="dashboard-item">
-        <a mat-button [routerLink]="['/systems/']" class="button-header"><h2 class="button-header-h">Contributors</h2></a>
+        <a mat-button [routerLink]="['/contributors/']" class="button-header"><h2 class="button-header-h">Contributors</h2></a>
         <mat-nav-list role="list">
-            <a mat-list-item [routerLink]="['/systems/' + system.id]" *ngFor="let system of systems">
-                {{system.name}}<classification class="inline-classification"></classification>
+            <a mat-list-item [routerLink]="['/contributors/' + contributor.id]" *ngFor="let contributor of contributors">
+                {{contributor.name}}
             </a>
         </mat-nav-list>
     </div>
     <div class="dashboard-item">
-        <a mat-button [routerLink]="['/systems/']" class="button-header"><h2 class="button-header-h">Tools</h2></a>
+        <a mat-button [routerLink]="['/tools/']" class="button-header"><h2 class="button-header-h">Tools</h2></a>
         <mat-nav-list role="list">
-            <a mat-list-item [routerLink]="['/systems/' + system.id]" *ngFor="let system of systems">
-                {{system.name}}<classification class="inline-classification"></classification>
+            <a mat-list-item [routerLink]="['/tools/' + tool.id]" *ngFor="let tool of tools">
+                {{tool.name}}
             </a>
         </mat-nav-list>
     </div>

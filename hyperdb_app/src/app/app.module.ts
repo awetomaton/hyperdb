@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ClassificationComponent } from './classification/classification.component';
 import { SystemsComponent } from './systems/systems.component';
+import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
@@ -29,6 +30,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatListModule,
     MatToolbarModule,
     MatButtonModule,
+    MatTableModule,
     HttpClientModule
   ],
   providers: [],
