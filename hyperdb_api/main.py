@@ -37,6 +37,12 @@ def read_systems(skip: int = 0, limit: int = 100, db: Session = Depends(get_db))
     return systems
 
 
+@app.get(BASE_ROUTE + "/systems/comments", response_model=List[schemas.Comment])
+def read_systems_comments(db: Session = Depends(get_db)):
+    system = crud.retrieve_systems_comments(db)
+    return system
+
+
 @app.get(BASE_ROUTE + "/systems/{system_id}", response_model=schemas.System)
 def read_system(system_id: int, db: Session = Depends(get_db)):
     system = crud.retrieve_system(db, system_id)
@@ -52,6 +58,12 @@ def delete_system(system_id: int = 0, db: Session = Depends(get_db)):
 @app.get(BASE_ROUTE + "/systems/{system_id}/comments", response_model=List[schemas.Comment])
 def read_system_comments(system_id: int, db: Session = Depends(get_db)):
     system = crud.retrieve_system_comments(db, system_id)
+    return system
+
+
+@app.get(BASE_ROUTE + "/systems/{system_id}/geometries", response_model=List[schemas.Geometry])
+def read_system_geometries(system_id: int, db: Session = Depends(get_db)):
+    system = crud.retrieve_system_geometries(db, system_id)
     return system
 
 
@@ -90,8 +102,15 @@ def create_geometry(geometry: schemas.GeometryCreate, db: Session = Depends(get_
 
 @app.get(BASE_ROUTE + "/geometries/", response_model=List[schemas.Geometry])
 def read_geometries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    geometries = crud.get_geometries(db, skip=skip, limit=limit)
+    geometries = crud.retrieve_geometries(db, skip=skip, limit=limit)
     return geometries
+
+
+@app.delete(BASE_ROUTE + "/geometries/{geometry_id}")
+def delete_geometry(geometry_id: int = 0, db: Session = Depends(get_db)):
+    countries = crud.destroy_geometry(db, geometry_id=geometry_id)
+    return countries
+
 
 
 @app.post(BASE_ROUTE + "/meshes/", response_model=schemas.Mesh)
@@ -193,8 +212,8 @@ def create_comment(comment: schemas.CommentCreate, db: Session = Depends(get_db)
 
 
 @app.get(BASE_ROUTE + "/comments/", response_model=List[schemas.Comment])
-def read_comments(type: schemas.CommentType | None = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_comments(db, type=type, skip=skip, limit=limit)
+def read_comments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_comments(db, skip=skip, limit=limit)
 
 
 if __name__ == "__main__":

@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { System } from './interfaces/system';
+import { System, NewSystem } from './interfaces/system';
 import { Geometry } from './interfaces/geometry';
-import { Comment } from './interfaces/comment';
+import { Comment, NewComment } from './interfaces/comment';
 import { Mesh } from './interfaces/mesh';
 import { Tool } from './interfaces/tool';
-import { Country } from './interfaces/country';
+import { Country, NewCountry } from './interfaces/country';
 import { Contributor } from './interfaces/contributor';
 import { MessageService } from './message.service';
 
@@ -25,15 +25,18 @@ export class HyperdbService {
 
   constructor(private http: HttpClient, private messageService: MessageService) { }
 
-  getComments(type?: string): Observable<Comment[]> {
+  getComments(): Observable<Comment[]> {
     let url = this.apiUrl + 'comments'
-    if (type != undefined) {
-      url += "?type=" + type;
-    }
-
     return this.http.get<Comment[]>(url)
       .pipe(
         catchError(this.handleError<Comment[]>('getComments', []))
+      );
+  }
+
+  postComment(comment: NewComment): Observable<Comment> {
+    return this.http.post<Comment>(this.apiUrl + 'comments', comment)
+      .pipe(
+        catchError(this.handleError<Comment>('postComment'))
       );
   }
 
@@ -41,6 +44,13 @@ export class HyperdbService {
     return this.http.get<Country[]>(this.apiUrl + 'countries')
       .pipe(
         catchError(this.handleError<Country[]>('getCountries', []))
+      );
+  }
+
+  postCountry(country: NewCountry): Observable<Country> {
+    return this.http.post<Country>(this.apiUrl + 'countries', country)
+      .pipe(
+        catchError(this.handleError<Country>('postCountry'))
       );
   }
 
@@ -53,6 +63,25 @@ export class HyperdbService {
 
   getSystem(id: number): Observable<System> {
     return this.http.get<System>(this.apiUrl + 'systems/' + id)
+  }
+
+  postSystem(system: NewSystem): Observable<System> {
+    return this.http.post<System>(this.apiUrl + 'systems', system)
+      .pipe(
+        catchError(this.handleError<System>('postSystem'))
+      );
+  }
+
+  getSystemsComments(): Observable<Comment[]> {
+    return this.http.get<Comment[]>(this.apiUrl + 'systems/comments')
+  }
+
+  getSystemComments(id: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(this.apiUrl + 'systems/' + id + "/comments")
+  }
+
+  getSystemGeometries(id: number): Observable<Geometry[]> {
+    return this.http.get<Geometry[]>(this.apiUrl + 'systems/' + id + "/geometries")
   }
 
   getSystems(): Observable<System[]> {
@@ -73,6 +102,13 @@ export class HyperdbService {
     return this.http.get<Geometry[]>(this.apiUrl + 'geometries')
       .pipe(
         catchError(this.handleError<Geometry[]>('getGeometries', []))
+      );
+  }
+
+  deleteGeometry(id: number): Observable<null> {
+    return this.http.delete<null>(this.apiUrl + 'geometries/' + id)
+      .pipe(
+        catchError(this.handleError<null>('deleteGeometries', null))
       );
   }
 

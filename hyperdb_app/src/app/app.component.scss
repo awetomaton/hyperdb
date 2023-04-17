@@ -1,6 +1,6 @@
 .button-header{
     width: 100%;
-    justify-content: left;
+    justify-content: center;
 }
 
 .button-header-h {
@@ -9,4 +9,27 @@
 
 h1 {
     text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+.dashboard-row{
+    width: 100%;
+}
+
+.dashboard-item{
+    display: inline-block; 
+    margin: 1em;
+    width: calc(50% - 4em); 
+    vertical-align: top;
+    box-shadow: 0 0 3px #ccc;
+    border-radius: 0.25em;
+    padding: 1em;
+}
+
+.dashboard-item-centered{
+    left: calc(25%);
+    position: absolute;
 }

@@ -1,0 +1,56 @@
+<h1>
+    <span *ngIf="geometry.id != -1">Geometry Details</span>
+    <span *ngIf="geometry.id == -1">Create New Geometry</span>
+</h1>
+<div class="dashboard-row">
+    <div class="dashboard-item" [ngClass]="{'dashboard-item-centered': system.id == -1}">
+        <h2>Properties</h2>
+        <form>
+            <p>
+                File
+            </p>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>System</mat-label>
+                    <input type="text"
+                        matInput
+                        [formControl]="countryControl"
+                        maxlength="3"
+                        [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let system of systems | async" [value]="system">
+                        {{system.name}}
+                    </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>Classification</mat-label>
+                    <input type="text"
+                        matInput
+                        [formControl]="classificationControl">
+                </mat-form-field>
+            </p>
+        </form>
+        <mat-divider></mat-divider>
+        <p style="display: flex; justify-content: right; margin-top: 1em;">
+            <button
+                mat-raised-button color="primary" 
+                (click)="save()" 
+                [disabled]="!geometryForm.valid">Save
+            </button>
+        </p>
+        
+    </div>
+    <div class="dashboard-item" *ngIf="geometry.id != -1">
+        <a mat-button [routerLink]="['/meshes/']" class="button-header"><h2 class="button-header-h">Meshes</h2></a>
+        <mat-nav-list role="list">
+            <a mat-list-item [routerLink]="['/meshes/' + mesh.id]" *ngFor="let mesh of meshes">
+                {{mesh.file}}
+            </a>
+        </mat-nav-list>
+    </div>
+</div>
+
+<hyperdb-comments *ngIf="geometry.id != -1"></hyperdb-comments>

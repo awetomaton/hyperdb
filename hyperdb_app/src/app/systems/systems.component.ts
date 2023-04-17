@@ -47,7 +47,7 @@ export class SystemsComponent implements OnInit {
     .subscribe(systems => {
       this.hyperdbService.getGeometries()
       .subscribe(geometries => {
-        this.hyperdbService.getComments('system')
+        this.hyperdbService.getSystemsComments()
         .subscribe(comments => {
           this.hyperdbService.getMeshes()
           .subscribe(meshes => {

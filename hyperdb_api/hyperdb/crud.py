@@ -15,6 +15,13 @@ def retrieve_systems(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.System).offset(skip).limit(limit).all()
 
 
+def retrieve_systems_comments(db: Session, skip: int = 0, limit: int = 100):
+    query = db.query(models.Comment)
+    model_attr = getattr(models.Comment, "system_fk")
+    query = query.filter(model_attr != None)
+    return query.offset(skip).limit(limit).all()
+    
+
 def destroy_system(db: Session, system_id: int):
     system = db.query(models.System).filter(models.System.id == system_id).first()
     db.delete(system)
@@ -31,7 +38,11 @@ def retrieve_system(db: Session, system_id):
 def retrieve_system_comments(db: Session, system_id):
     """https://stackoverflow.com/questions/43880531/select-specific-column-value-with-sqlalchamey-based-on-filter
     """
-    return models.Comment.query.filter(models.Comment.system_fk == system_id).all()
+    return db.query(models.Comment).filter(models.Comment.system_fk == system_id).all()
+
+
+def retrieve_system_geometries(db: Session, system_id):
+    return db.query(models.Geometry).filter(models.Geometry.system_fk == system_id).all()
 
 
 def retrieve_countries(db: Session, skip: int = 0, limit: int = 100):
@@ -64,16 +75,22 @@ def create_contributor(db: Session, contributor: schemas.ContributorCreate):
     return db_item
 
 
-def get_geometries(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Geometry).offset(skip).limit(limit).all()
-
-
 def create_geometry(db: Session, geometry: schemas.GeometryCreate):
     db_item = models.Geometry(**geometry.dict())
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
     return db_item
+
+
+def retrieve_geometries(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Geometry).offset(skip).limit(limit).all()
+
+
+def destroy_geometry(db: Session, geometry_id: int):
+    geometry = db.query(models.Geometry).filter(models.Geometry.id == geometry_id).first()
+    db.delete(geometry)
+    db.commit()
 
 
 def get_meshes(db: Session, skip: int = 0, limit: int = 100):
@@ -184,11 +201,8 @@ def create_aero_result(db: Session, aero_result: schemas.AeroResultCreate):
     return db_item
 
 
-def get_comments(db: Session, type: str | None = None, skip: int = 0, limit: int = 100):
+def get_comments(db: Session, skip: int = 0, limit: int = 100):
     query = db.query(models.Comment)
-    if type is not None:
-        model_attr = getattr(models.Comment, type + "_fk")
-        query = query.filter(model_attr != None)
     return query.offset(skip).limit(limit).all()
 
 

@@ -1,1 +1,94 @@
-<h1>System - </h1>
+<h1>
+    <span *ngIf="system.id != -1">System Details</span>
+    <span *ngIf="system.id == -1">Create New System</span>
+</h1>
+<div class="dashboard-row">
+    <div class="dashboard-item" [ngClass]="{'dashboard-item-centered': system.id == -1}">
+        <h2>Properties</h2>
+        <form>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>System Name</mat-label>
+                    <input matInput placeholder="Placeholder" [(ngModel)]="system.name" name="name">
+                    <button *ngIf="system.name" matSuffix mat-icon-button aria-label="Clear" (click)="system.name=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>Country</mat-label>
+                    <input type="text"
+                        matInput
+                        [formControl]="countryControl"
+                        maxlength="3"
+                        [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let country of filteredCountries | async" [value]="country.alpha_three_code">
+                        {{country.alpha_three_code}}
+                    </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>Classification</mat-label>
+                    <input type="text"
+                        matInput
+                        [formControl]="classificationControl">
+                </mat-form-field>
+            </p>
+        </form>
+        <mat-divider></mat-divider>
+        <p style="display: flex; justify-content: right; margin-top: 1em;">
+            <button
+                mat-raised-button color="primary" 
+                (click)="save()" 
+                [disabled]="!systemForm.valid">Save
+            </button>
+        </p>
+        
+    </div>
+    <div class="dashboard-item" *ngIf="system.id != -1">
+        <a mat-button [routerLink]="['/geometries/']" class="button-header"><h2 class="button-header-h">Geometries</h2></a>
+        <mat-nav-list role="list">
+            <a mat-list-item [routerLink]="['/geometry/' + geometry.id]" *ngFor="let geometry of geometries">
+                {{geometry.file}} <classification [classification]="geometry.classification"></classification>
+            </a>
+        </mat-nav-list>
+    </div>
+</div>
+
+<div class="dashboard-item dashboard-item-centered" *ngIf="system.id != -1">
+    <h2>Comments</h2>
+    <form>
+        <p>
+            <mat-form-field appearance="fill">
+                <mat-label>Title</mat-label>
+                <input matInput [formControl]="commentTitleControl">
+                <button *ngIf="newComment.title" matSuffix mat-icon-button aria-label="Clear" (click)="newComment.title=''">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="fill">
+                <mat-label>Body</mat-label>
+                <textarea matInput [formControl]="commentBodyControl"></textarea>
+              </mat-form-field>
+        </p>
+        <p style="display: flex; justify-content: right;">
+            <button 
+                mat-raised-button color="primary" 
+                clickable
+                (click)="saveComment()"
+                [disabled]="!commentForm.valid">Comment
+            </button>
+        </p>
+    </form>
+    <div *ngFor="let comment of comments;">
+        <mat-divider></mat-divider>
+        <h3><strong>{{comment.title}}</strong></h3>
+        <p>{{comment.body}}</p>
+    </div>
+</div>

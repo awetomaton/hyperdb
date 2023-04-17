@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,7 +16,14 @@ import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input'; 
 import { SystemComponent } from './system/system.component';
+import { GeometriesComponent } from './geometries/geometries.component';
+import { GeometryComponent } from './geometry/geometry.component';
+import { CommentsComponent } from './comments/comments.component';
 
 @NgModule({
   declarations: [
@@ -23,12 +31,18 @@ import { SystemComponent } from './system/system.component';
     DashboardComponent,
     ClassificationComponent,
     SystemsComponent,
-    SystemComponent
+    SystemComponent,
+    GeometriesComponent,
+    GeometryComponent,
+    CommentsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
+    MatAutocompleteModule,
     MatCardModule,
     MatGridListModule,
     MatListModule,
@@ -37,6 +51,9 @@ import { SystemComponent } from './system/system.component';
     MatTableModule,
     HttpClientModule,
     MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
     FontAwesomeModule
   ],
   providers: [],
