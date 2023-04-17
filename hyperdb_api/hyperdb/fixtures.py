@@ -7,7 +7,6 @@ def create_fixtures(
         db: Session,
         num_systems: int = 4, 
         num_countries = 5, 
-        num_country_system_associations=10,
         num_contributors=5,
         num_geometries=15,
         num_meshes=30,
@@ -36,27 +35,21 @@ def create_fixtures(
     db.query(models.Mesh).delete()
     db.query(models.Geometry).delete()
     db.query(models.Contributor).delete()
-    db.query(models.CountrySystemAssociation).delete()
     db.query(models.Country).delete()
     db.query(models.System).delete()
     db.commit()
 
-    systems = [models.System.generate_random() for _ in range(num_systems)]
-    for system in systems:
-        db.add(system)
-        db.commit()
-        db.refresh(system)
     countries = [models.Country.generate_random(i) for i in range(num_countries)]
     db.commit()
     for country in countries:
         db.add(country)
         db.commit()
         db.refresh(country)
-    country_system_associations = [models.CountrySystemAssociation.generate_random(countries, systems) for _ in range(num_country_system_associations)]
-    for item in country_system_associations:
-        db.add(item)
+    systems = [models.System.generate_random(countries) for _ in range(num_systems)]
+    for system in systems:
+        db.add(system)
         db.commit()
-        db.refresh(item)
+        db.refresh(system)
     contributors = [models.Contributor.generate_random() for _ in range(num_contributors)]
     for item in contributors:
         db.add(item)

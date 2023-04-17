@@ -3,23 +3,6 @@ from hyperdb import models
 from hyperdb import schemas
 
 
-def get_systems(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.System).offset(skip).limit(limit).all()
-
-
-def get_system(db: Session, system_id):
-    """
-    Based on https://stackoverflow.com/questions/6750017/how-to-query-database-by-id-using-sqlalchemy
-    """
-    return models.System.query.get(system_id)
-
-
-def get_system_comments(db: Session, system_id):
-    """https://stackoverflow.com/questions/43880531/select-specific-column-value-with-sqlalchamey-based-on-filter
-    """
-    return models.Comment.query.filter(models.Comment.system_fk == system_id).all()
-
-
 def create_system(db: Session, system: schemas.SystemCreate):
     db_item = models.System(**system.dict())
     db.add(db_item)
@@ -28,24 +11,41 @@ def create_system(db: Session, system: schemas.SystemCreate):
     return db_item
 
 
-def get_countries(db: Session, skip: int = 0, limit: int = 100):
+def retrieve_systems(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.System).offset(skip).limit(limit).all()
+
+
+def destroy_system(db: Session, system_id: int):
+    system = db.query(models.System).filter(models.System.id == system_id).first()
+    db.delete(system)
+    db.commit()
+
+
+def retrieve_system(db: Session, system_id):
+    """
+    Based on https://stackoverflow.com/questions/6750017/how-to-query-database-by-id-using-sqlalchemy
+    """
+    return db.query(models.System).get(system_id)
+
+
+def retrieve_system_comments(db: Session, system_id):
+    """https://stackoverflow.com/questions/43880531/select-specific-column-value-with-sqlalchamey-based-on-filter
+    """
+    return models.Comment.query.filter(models.Comment.system_fk == system_id).all()
+
+
+def retrieve_countries(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Country).offset(skip).limit(limit).all()
+
+
+def destroy_country(db: Session, country_id: int):
+    country = db.query(models.Country).filter(models.Country.id == country_id).first()
+    db.delete(country)
+    db.commit()
 
 
 def create_country(db: Session, country: schemas.CountryCreate):
     db_item = models.Country(**country.dict())
-    db.add(db_item)
-    db.commit()
-    db.refresh(db_item)
-    return db_item
-
-
-def get_country_system_association(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.CountrySystemAssociation).offset(skip).limit(limit).all()
-
-
-def create_country_system_association(db: Session, country_system_association: schemas.CountrySystemAssociationCreate):
-    db_item = models.CountrySystemAssociation(**country_system_association.dict())
     db.add(db_item)
     db.commit()
     db.refresh(db_item)

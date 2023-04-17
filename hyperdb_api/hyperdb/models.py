@@ -2,7 +2,7 @@ from typing import List
 import lorem
 import pycountry
 from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from hyperdb.database import Base
 from names import get_full_name
 import random
@@ -20,13 +20,15 @@ class System(Base, ToDictMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     name = Column(String(128))
     classification = Column(String(128))
+    country_fk: Mapped[int] = mapped_column(ForeignKey("countries.id", ondelete='SET NULL'), nullable=True)
 
     @classmethod
-    def generate_random(cls):
+    def generate_random(cls, countries):
         name = get_full_name().lower().replace(" ", "_")
         classification = "UNCLASSIFIED"
+        country_fk = random.choice([country.id for country in countries])
 
-        return cls(name=name, classification=classification)
+        return cls(name=name, classification=classification, country_fk=country_fk)
 
 
 class Country(Base, ToDictMixin):
@@ -34,33 +36,13 @@ class Country(Base, ToDictMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     alpha_three_code = Column(String(3), unique=True)
-    icon = Column(String(128), unique=True)
+    icon = Column(String(128), unique=True, nullable=True)
 
     @classmethod
     def generate_random(cls, instance):
         country = list(pycountry.countries)[instance % len(pycountry.countries)]
 
         return cls(alpha_three_code=country.alpha_3)
-
-
-class CountrySystemAssociation(Base, ToDictMixin):
-    """
-    Based on https://docs.sqlalchemy.org/en/20/core/metadata.html#sqlalchemy.schema.Column.index
-    """
-    __tablename__ = "country_system_associations"
-
-    id = Column(Integer, primary_key=True, index=True)
-    system_fk: Mapped[int] = mapped_column(ForeignKey("systems.id"))
-    country_fk: Mapped[int] = mapped_column(ForeignKey("countries.id"))
-
-    @classmethod
-    def generate_random(cls, countries: List[Country], systems: List[System]):
-        country_ids = [country.id for country in countries]
-        system_ids = [system.id for system in systems]
-        country_fk = random.choice(country_ids)
-        system_fk = random.choice(system_ids)
-
-        return cls(country_fk=country_fk, system_fk=system_fk)
 
 
 class Contributor(Base, ToDictMixin):
@@ -87,8 +69,8 @@ class Geometry(Base, ToDictMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     file = Column(String(128), unique=True)
-    contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id"))
-    system_fk: Mapped[int] = mapped_column(ForeignKey("systems.id"))
+    contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
+    system_fk: Mapped[int] = mapped_column(ForeignKey("systems.id", ondelete="CASCADE"))
     classification = Column(String(128))
 
     @classmethod
@@ -109,8 +91,8 @@ class Mesh(Base, ToDictMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     file = Column(String(128), unique=True)
-    contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id"))
-    geometry_fk: Mapped[int] = mapped_column(ForeignKey("geometries.id"))
+    contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
+    geometry_fk: Mapped[int] = mapped_column(ForeignKey("geometries.id", ondelete="CASCADE"))
 
     @classmethod
     def generate_random(cls, contributors: List[Contributor], geometries: List[Geometry]):
@@ -183,8 +165,8 @@ class ToolSetting(Base, ToDictMixin):
     
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    cbaero_settings_fk: Mapped[int] = mapped_column(ForeignKey("cbaero_settings.id"), nullable=True)
-    cart3d_settings_fk: Mapped[int] = mapped_column(ForeignKey("cart3d_settings.id"), nullable=True)
+    cbaero_settings_fk: Mapped[int] = mapped_column(ForeignKey("cbaero_settings.id", ondelete="CASCADE"), nullable=True)
+    cart3d_settings_fk: Mapped[int] = mapped_column(ForeignKey("cart3d_settings.id", ondelete="CASCADE"), nullable=True)
 
     @classmethod
     def generate_random(cls, cbaero_settings, cart3d_settings):
@@ -209,7 +191,7 @@ class ConfiguredTool(Base, ToDictMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tool_fk: Mapped[int] = mapped_column(ForeignKey("tools.id"))
-    tool_settings_fk: Mapped[int] = mapped_column(ForeignKey("tool_settings.id"))
+    tool_settings_fk: Mapped[int] = mapped_column(ForeignKey("tool_settings.id", ondelete="CASCADE"))
 
     @classmethod
     def generate_random(cls, tools: List[Tool], tool_settings: List[ToolSetting]):
@@ -228,8 +210,8 @@ class ToolMeshAssociation(Base, ToDictMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id"))
-    mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id"))
-    tool_fk: Mapped[int] = mapped_column(ForeignKey("tools.id"))
+    mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"))
+    tool_fk: Mapped[int] = mapped_column(ForeignKey("tools.id", ondelete="CASCADE"))
     configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id"))
 
     @classmethod
@@ -256,10 +238,10 @@ class ToolGeometryAssociation(Base, ToDictMixin):
     
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id"))
-    geometry_fk: Mapped[int] = mapped_column(ForeignKey("geometries.id"))
-    tool_fk: Mapped[int] = mapped_column(ForeignKey("tools.id"))
-    configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id"))
+    contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
+    geometry_fk: Mapped[int] = mapped_column(ForeignKey("geometries.id", ondelete="CASCADE"))
+    tool_fk: Mapped[int] = mapped_column(ForeignKey("tools.id", ondelete="CASCADE"))
+    configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"))
 
     @classmethod
     def generate_random(cls, contributors: List[Contributor], geometries: List[Geometry], tools: List[Tool], configured_tools: List[ConfiguredTool]):
@@ -285,7 +267,7 @@ class AeroResult(Base, ToDictMixin):
     lift_coefficient = Column(Float)
     drag_coefficient = Column(Float)
     configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id"))
-    mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id"))
+    mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"))
 
     @classmethod
     def generate_random(cls, configured_tools: List[ConfiguredTool], meshes: List[Mesh]):
@@ -311,12 +293,12 @@ class Comment(Base, ToDictMixin):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(64))
     body = Column(String(256))
-    contributor_fk = mapped_column(ForeignKey("contributors.id"), nullable=True)
-    system_fk = mapped_column(ForeignKey("systems.id"), nullable=True)
-    geometry_fk = mapped_column(ForeignKey("geometries.id"), nullable=True)
-    mesh_fk = mapped_column(ForeignKey("meshes.id"), nullable=True)
-    tool_mesh_association_fk = mapped_column(ForeignKey("tool_mesh_associations.id"), nullable=True)
-    configured_tool_fk = mapped_column(ForeignKey("configured_tools.id"), nullable=True)
+    contributor_fk = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"), nullable=True)
+    system_fk = mapped_column(ForeignKey("systems.id", ondelete="CASCADE"), nullable=True)
+    geometry_fk = mapped_column(ForeignKey("geometries.id", ondelete="CASCADE"), nullable=True)
+    mesh_fk = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"), nullable=True)
+    tool_mesh_association_fk = mapped_column(ForeignKey("tool_mesh_associations.id", ondelete="CASCADE"), nullable=True)
+    configured_tool_fk = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"), nullable=True)
 
     @classmethod
     def generate_random(cls, 

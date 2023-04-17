@@ -14,6 +14,7 @@ class CommentType(str, Enum):
 class SystemBase(BaseModel):
     name: str
     classification: str
+    country_fk: int | None
 
 
 class SystemCreate(SystemBase):
@@ -29,7 +30,7 @@ class System(SystemBase):
 
 class CountryBase(BaseModel):
     alpha_three_code: str
-    icon: str
+    icon: str | None
 
 
 class CountryCreate(CountryBase):

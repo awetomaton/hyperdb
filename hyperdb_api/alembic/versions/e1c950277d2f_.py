@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: db0199480d96
+Revision ID: e1c950277d2f
 Revises: 
-Create Date: 2023-04-15 06:59:03.839880
+Create Date: 2023-04-16 20:50:37.035749
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'db0199480d96'
+revision = 'e1c950277d2f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -47,12 +47,6 @@ def upgrade() -> None:
     sa.UniqueConstraint('alpha_three_code'),
     sa.UniqueConstraint('icon')
     )
-    op.create_table('systems',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=128), nullable=True),
-    sa.Column('classification', sa.String(length=128), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('tools',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=True),
@@ -60,32 +54,20 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name', 'version', name='tool_version_uk')
     )
-    op.create_table('country_system_associations',
+    op.create_table('systems',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('system_fk', sa.Integer(), nullable=False),
-    sa.Column('country_fk', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['country_fk'], ['countries.id'], ),
-    sa.ForeignKeyConstraint(['system_fk'], ['systems.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_country_system_associations_id'), 'country_system_associations', ['id'], unique=False)
-    op.create_table('geometries',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('file', sa.String(length=128), nullable=True),
-    sa.Column('contributor_fk', sa.Integer(), nullable=False),
-    sa.Column('system_fk', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=128), nullable=True),
     sa.Column('classification', sa.String(length=128), nullable=True),
-    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ),
-    sa.ForeignKeyConstraint(['system_fk'], ['systems.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('file')
+    sa.Column('country_fk', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['country_fk'], ['countries.id'], ondelete='SET NULL'),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('tool_settings',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('cbaero_settings_fk', sa.Integer(), nullable=True),
     sa.Column('cart3d_settings_fk', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['cart3d_settings_fk'], ['cart3d_settings.id'], ),
-    sa.ForeignKeyConstraint(['cbaero_settings_fk'], ['cbaero_settings.id'], ),
+    sa.ForeignKeyConstraint(['cart3d_settings_fk'], ['cart3d_settings.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['cbaero_settings_fk'], ['cbaero_settings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('cbaero_settings_fk', 'cart3d_settings_fk', name='tool_settings_uk')
     )
@@ -94,19 +76,42 @@ def upgrade() -> None:
     sa.Column('tool_fk', sa.Integer(), nullable=False),
     sa.Column('tool_settings_fk', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['tool_fk'], ['tools.id'], ),
-    sa.ForeignKeyConstraint(['tool_settings_fk'], ['tool_settings.id'], ),
+    sa.ForeignKeyConstraint(['tool_settings_fk'], ['tool_settings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('tool_fk', 'tool_settings_fk', name='tool_configuration_uk')
+    )
+    op.create_table('geometries',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('file', sa.String(length=128), nullable=True),
+    sa.Column('contributor_fk', sa.Integer(), nullable=False),
+    sa.Column('system_fk', sa.Integer(), nullable=False),
+    sa.Column('classification', sa.String(length=128), nullable=True),
+    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['system_fk'], ['systems.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('file')
     )
     op.create_table('meshes',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('file', sa.String(length=128), nullable=True),
     sa.Column('contributor_fk', sa.Integer(), nullable=False),
     sa.Column('geometry_fk', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ),
-    sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ),
+    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('file')
+    )
+    op.create_table('tool_geometry_associations',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('contributor_fk', sa.Integer(), nullable=False),
+    sa.Column('geometry_fk', sa.Integer(), nullable=False),
+    sa.Column('tool_fk', sa.Integer(), nullable=False),
+    sa.Column('configured_tool_fk', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['tool_fk'], ['tools.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('aero_results',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -117,22 +122,10 @@ def upgrade() -> None:
     sa.Column('configured_tool_fk', sa.Integer(), nullable=False),
     sa.Column('mesh_fk', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ),
-    sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ),
+    sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_aero_results_id'), 'aero_results', ['id'], unique=False)
-    op.create_table('tool_geometry_associations',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('contributor_fk', sa.Integer(), nullable=False),
-    sa.Column('geometry_fk', sa.Integer(), nullable=False),
-    sa.Column('tool_fk', sa.Integer(), nullable=False),
-    sa.Column('configured_tool_fk', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ),
-    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ),
-    sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ),
-    sa.ForeignKeyConstraint(['tool_fk'], ['tools.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('tool_mesh_associations',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('contributor_fk', sa.Integer(), nullable=False),
@@ -141,8 +134,8 @@ def upgrade() -> None:
     sa.Column('configured_tool_fk', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ),
     sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ),
-    sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ),
-    sa.ForeignKeyConstraint(['tool_fk'], ['tools.id'], ),
+    sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['tool_fk'], ['tools.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('comments',
@@ -155,12 +148,12 @@ def upgrade() -> None:
     sa.Column('mesh_fk', sa.Integer(), nullable=True),
     sa.Column('tool_mesh_association_fk', sa.Integer(), nullable=True),
     sa.Column('configured_tool_fk', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ),
-    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ),
-    sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ),
-    sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ),
-    sa.ForeignKeyConstraint(['system_fk'], ['systems.id'], ),
-    sa.ForeignKeyConstraint(['tool_mesh_association_fk'], ['tool_mesh_associations.id'], ),
+    sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['system_fk'], ['systems.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['tool_mesh_association_fk'], ['tool_mesh_associations.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_comments_id'), 'comments', ['id'], unique=False)
@@ -172,17 +165,15 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_comments_id'), table_name='comments')
     op.drop_table('comments')
     op.drop_table('tool_mesh_associations')
-    op.drop_table('tool_geometry_associations')
     op.drop_index(op.f('ix_aero_results_id'), table_name='aero_results')
     op.drop_table('aero_results')
+    op.drop_table('tool_geometry_associations')
     op.drop_table('meshes')
+    op.drop_table('geometries')
     op.drop_table('configured_tools')
     op.drop_table('tool_settings')
-    op.drop_table('geometries')
-    op.drop_index(op.f('ix_country_system_associations_id'), table_name='country_system_associations')
-    op.drop_table('country_system_associations')
-    op.drop_table('tools')
     op.drop_table('systems')
+    op.drop_table('tools')
     op.drop_table('countries')
     op.drop_table('contributors')
     op.drop_table('cbaero_settings')

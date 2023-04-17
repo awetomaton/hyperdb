@@ -7,7 +7,7 @@ import { Geometry } from './interfaces/geometry';
 import { Comment } from './interfaces/comment';
 import { Mesh } from './interfaces/mesh';
 import { Tool } from './interfaces/tool';
-import { CountrySystemAssociation } from './interfaces/country_system_association';
+import { Country } from './interfaces/country';
 import { Contributor } from './interfaces/contributor';
 import { MessageService } from './message.service';
 
@@ -37,10 +37,10 @@ export class HyperdbService {
       );
   }
 
-  getSystemCountryAssociations(): Observable<CountrySystemAssociation[]> {
-    return this.http.get<CountrySystemAssociation[]>(this.apiUrl + 'systems')
+  getCountries(): Observable<Country[]> {
+    return this.http.get<Country[]>(this.apiUrl + 'countries')
       .pipe(
-        catchError(this.handleError<CountrySystemAssociation[]>('getCountrySystemAssociations', []))
+        catchError(this.handleError<Country[]>('getCountries', []))
       );
   }
 
@@ -51,10 +51,21 @@ export class HyperdbService {
       );
   }
 
+  getSystem(id: number): Observable<System> {
+    return this.http.get<System>(this.apiUrl + 'systems/' + id)
+  }
+
   getSystems(): Observable<System[]> {
     return this.http.get<System[]>(this.apiUrl + 'systems')
       .pipe(
         catchError(this.handleError<System[]>('getSystems', []))
+      );
+  }
+
+  deleteSystem(id: number): Observable<null> {
+    return this.http.delete<null>(this.apiUrl + 'systems/' + id)
+      .pipe(
+        catchError(this.handleError<null>('deleteSystems', null))
       );
   }
 

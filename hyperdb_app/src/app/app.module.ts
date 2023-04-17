@@ -15,13 +15,15 @@ import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SystemComponent } from './system/system.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     ClassificationComponent,
-    SystemsComponent
+    SystemsComponent,
+    SystemComponent
   ],
   imports: [
     BrowserModule,

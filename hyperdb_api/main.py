@@ -33,17 +33,25 @@ def create_system(system: schemas.SystemCreate, db: Session = Depends(get_db)):
 
 @app.get(BASE_ROUTE + "/systems/", response_model=List[schemas.System])
 def read_systems(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    systems = crud.get_systems(db, skip=skip, limit=limit)
+    systems = crud.retrieve_systems(db, skip=skip, limit=limit)
     return systems
+
 
 @app.get(BASE_ROUTE + "/systems/{system_id}", response_model=schemas.System)
 def read_system(system_id: int, db: Session = Depends(get_db)):
-    system = crud.get_system(db, system_id)
+    system = crud.retrieve_system(db, system_id)
     return system
+
+
+@app.delete(BASE_ROUTE + "/systems/{system_id}")
+def delete_system(system_id: int = 0, db: Session = Depends(get_db)):
+    countries = crud.destroy_system(db, system_id=system_id)
+    return countries
+
 
 @app.get(BASE_ROUTE + "/systems/{system_id}/comments", response_model=List[schemas.Comment])
 def read_system_comments(system_id: int, db: Session = Depends(get_db)):
-    system = crud.get_system_comments(db, system_id)
+    system = crud.retrieve_system_comments(db, system_id)
     return system
 
 
@@ -54,17 +62,13 @@ def create_country(country: schemas.CountryCreate, db: Session = Depends(get_db)
 
 @app.get(BASE_ROUTE + "/countries/", response_model=List[schemas.Country])
 def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    countries = crud.get_countries(db, skip=skip, limit=limit)
+    countries = crud.retrieve_countries(db, skip=skip, limit=limit)
     return countries
 
-@app.post(BASE_ROUTE + "/country-system-associations/", response_model=schemas.CountrySystemAssociation)
-def create_country_system_association(country_system_association: schemas.CountrySystemAssociationCreate, db: Session = Depends(get_db)):
-    return crud.create_country_system_association(db=db, country_system_association=country_system_association)
 
-
-@app.get(BASE_ROUTE + "/country-system-associations/", response_model=List[schemas.CountrySystemAssociation])
-def read_country_system_associations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    countries = crud.get_country_system_association(db, skip=skip, limit=limit)
+@app.delete(BASE_ROUTE + "/countries/{country_id}")
+def delete_country(country_id: int = 0, db: Session = Depends(get_db)):
+    countries = crud.destroy_country(db, country_id=country_id)
     return countries
 
 

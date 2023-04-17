@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { HyperdbService } from '../hyperdb.service';
+import { Country } from '../interfaces/country';
+import { System } from '../interfaces/system';
 
 
 export interface SystemsSummary {
-  selected: boolean;
-  name: string;
-  country: string | null;
+  system: System;
+  country: Country | null;
   classification: string;
   geometries: number;
   meshes: number;
@@ -23,15 +24,22 @@ export interface SystemsSummary {
   ]
 })
 export class SystemsComponent implements OnInit {
-  displayedColumns = ['selected', 'name', 'country', 'classification', 'geometries', 'meshes', 'comments'];
+  displayedColumns = ['name', 'country', 'classification', 'geometries', 'meshes', 'comments', 'delete'];
   systemsSummary: SystemsSummary[] = [];
-  faDownload = faDownload;
+  faTrash = faTrash;
   faPlus = faPlus;
 
   constructor(private hyperdbService: HyperdbService) { }
 
   ngOnInit(): void {
     this.getSystemsSummary();
+  }
+
+  onDeleteSystem(system: System): void{
+    this.hyperdbService.deleteSystem(system.id)
+    .subscribe(response => {
+      this.getSystemsSummary();
+    })
   }
 
   getSystemsSummary(): void {
@@ -41,10 +49,10 @@ export class SystemsComponent implements OnInit {
       .subscribe(geometries => {
         this.hyperdbService.getComments('system')
         .subscribe(comments => {
-          this.hyperdbService.getSystemCountryAssociations()
-          .subscribe(country_system_associations => {
-            this.hyperdbService.getMeshes()
-            .subscribe(meshes => {
+          this.hyperdbService.getMeshes()
+          .subscribe(meshes => {
+            this.hyperdbService.getCountries()
+            .subscribe(countries => {
               let newSystemsSummary: SystemsSummary[] = []
               for (let system of systems) {
                 let numComments = 0;
@@ -70,12 +78,16 @@ export class SystemsComponent implements OnInit {
                   }
                 }
 
-                let country: string | null = null;
+                let associated_country: Country | null = null;     
+                for (let country of countries) {
+                  if (country.id == system.country_fk) {
+                    associated_country = country;
+                  }
+                }
 
                 let systemSummary: SystemsSummary = {
-                  selected: false,
-                  name: system.name,
-                  country: country,
+                  system: system,
+                  country: associated_country,
                   classification: system.classification,
                   geometries: numGeometries,
                   meshes: numMeshes,
