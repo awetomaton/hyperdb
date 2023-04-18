@@ -7,3 +7,4 @@ pycountry
 pydantic
 pydantic[email]
 pyscopg2-binary
+python-multipart

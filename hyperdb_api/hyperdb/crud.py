@@ -11,6 +11,17 @@ def create_system(db: Session, system: schemas.SystemCreate):
     return db_item
 
 
+def update_system(db: Session, system: schemas.System):
+    db_item = db.query(models.System).get(system.id)
+    for k, v in system.dict().items():
+        if k == "id":
+            continue
+        setattr(db_item, k, v)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+
 def retrieve_systems(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.System).offset(skip).limit(limit).all()
 
@@ -83,8 +94,38 @@ def create_geometry(db: Session, geometry: schemas.GeometryCreate):
     return db_item
 
 
+def update_geometry(db: Session, geometry: schemas.Geometry):
+    db_item = db.query(models.Geometry).get(geometry.id)
+    for k, v in geometry.dict().items():
+        if k == "id":
+            continue
+        setattr(db_item, k, v)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+
 def retrieve_geometries(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Geometry).offset(skip).limit(limit).all()
+
+
+def retrieve_geometries_comments(db: Session, skip: int = 0, limit: int = 100):
+    query = db.query(models.Comment)
+    model_attr = getattr(models.Comment, "geometry_fk")
+    query = query.filter(model_attr != None)
+    return query.offset(skip).limit(limit).all()
+
+
+def retrieve_geometry(db: Session, geometry_id: int):
+    return db.query(models.Geometry).get(geometry_id)
+
+
+def retrieve_geometry_comments(db: Session, geometry_id: int):
+    return db.query(models.Comment).filter(models.Comment.geometry_fk == geometry_id).all()
+
+
+def retrieve_geometry_meshes(db: Session, geometry_id: int):
+    return db.query(models.Mesh).filter(models.Mesh.geometry_fk == geometry_id).all()
 
 
 def destroy_geometry(db: Session, geometry_id: int):

@@ -3,25 +3,36 @@
     <span *ngIf="geometry.id == -1">Create New Geometry</span>
 </h1>
 <div class="dashboard-row">
-    <div class="dashboard-item" [ngClass]="{'dashboard-item-centered': system.id == -1}">
+    <div class="dashboard-item" [ngClass]="{'dashboard-item-centered': geometry.id == -1}">
         <h2>Properties</h2>
         <form>
+            <input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
+            <div class="file-upload">
+                <button mat-mini-fab color="primary" class="upload-btn"
+                (click)="fileUpload.click()">
+                    <mat-icon>attach_file</mat-icon>
+                </button>
+                <span> {{geometry.file | basename}}</span>
+            </div>
+            <p></p>
             <p>
-                File
+                <mat-form-field appearance="fill">
+                    <mat-label>Contributor</mat-label>
+                    <mat-select [formControl]="contributorControl">
+                        <mat-option *ngFor="let contributor of contributors" [value]="contributor.name">
+                            {{contributor.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="fill">
                     <mat-label>System</mat-label>
-                    <input type="text"
-                        matInput
-                        [formControl]="countryControl"
-                        maxlength="3"
-                        [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option *ngFor="let system of systems | async" [value]="system">
-                        {{system.name}}
-                    </mat-option>
-                    </mat-autocomplete>
+                    <mat-select [formControl]="systemControl">
+                        <mat-option *ngFor="let system of systems" [value]="system.name">
+                            {{system.name}}
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
             </p>
             <p>
@@ -38,7 +49,7 @@
             <button
                 mat-raised-button color="primary" 
                 (click)="save()" 
-                [disabled]="!geometryForm.valid">Save
+                [disabled]="!geometryForm.valid && this.geometry.file">Save
             </button>
         </p>
         
@@ -53,4 +64,10 @@
     </div>
 </div>
 
-<hyperdb-comments *ngIf="geometry.id != -1"></hyperdb-comments>
+<hyperdb-comments 
+    *ngIf="geometry.id != -1"
+    [comments]="comments"
+    [object]="geometry"
+    [objectType]="'geometry'"
+    (postedComment)="getComments()">
+</hyperdb-comments>

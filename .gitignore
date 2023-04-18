@@ -2,3 +2,4 @@
 *.pyc
 hyperdb_api/hyperdb/data/*.json
 .env
+hyperdb_api/static/*

@@ -17,7 +17,10 @@ export interface GeometrySummary {
 @Component({
   selector: 'app-geometries',
   templateUrl: './geometries.component.html',
-  styleUrls: ['./geometries.component.scss']
+  styleUrls: [
+    './geometries.component.scss',
+    '../app.component.scss',
+  ]
 })
 export class GeometriesComponent implements OnInit{
   displayedColumns = ['file', 'system', 'classification', 'meshes', 'comments', 'delete'];

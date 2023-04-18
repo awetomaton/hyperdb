@@ -1,17 +1,28 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, UploadFile
 from fastapi.staticfiles import StaticFiles
 import os
+from pathlib import Path
+import shutil
 from sqlalchemy.orm import Session
 from typing import List
 import uvicorn
 from hyperdb.database import SessionLocal
 from hyperdb import schemas
 from hyperdb import crud
+import uuid
 
 
 app = FastAPI()
 BASE_ROUTE = '/api'
-
+HYPERDB_FILES_DIR = os.environ.get("HYPERDB_FILES_DIR", "static")
+if not os.path.isdir(HYPERDB_FILES_DIR):
+    os.mkdir(HYPERDB_FILES_DIR)
+HYPERDB_GEOMETRIES_DIR = os.path.join(HYPERDB_FILES_DIR, "geometries")
+if not os.path.isdir(HYPERDB_GEOMETRIES_DIR):
+    os.mkdir(HYPERDB_GEOMETRIES_DIR)
+HYPERDB_MESHES_DIR = os.path.join(HYPERDB_FILES_DIR, "meshes")
+if not os.path.isdir(HYPERDB_MESHES_DIR):
+    os.mkdir(HYPERDB_MESHES_DIR)
 
 # Dependency
 def get_db():
@@ -23,12 +34,40 @@ def get_db():
 
 
 # Based on https://fastapi.tiangolo.com/tutorial/static-files/
-app.mount(BASE_ROUTE + "/static", StaticFiles(directory="static"), name="static")
+app.mount(BASE_ROUTE + "/files", StaticFiles(directory=HYPERDB_FILES_DIR), name="files")
+
+
+def file_upload(file: UploadFile, directory: str):
+    #subdir = os.path.join(directory, str(uuid.uuid4()))
+    #os.mkdir(subdir)
+    subdir = directory
+    destination = Path(os.path.join(subdir, str(file.filename)))
+    try:
+        with destination.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    finally:
+        file.file.close()
+    return str(destination)
+
+
+@app.post(BASE_ROUTE + "/upload-geometry/", response_model=dict)
+async def create_upload_geometry(file: UploadFile):
+    return {"filepath": file_upload(file, HYPERDB_GEOMETRIES_DIR)}
+
+
+@app.post(BASE_ROUTE + "/upload-mesh/")
+async def create_upload_mesh(file: UploadFile):
+    return {"filepath": file_upload(file, HYPERDB_MESHES_DIR)}
 
 
 @app.post(BASE_ROUTE + "/systems/", response_model=schemas.System)
 def create_system(system: schemas.SystemCreate, db: Session = Depends(get_db)):
     return crud.create_system(db=db, system=system)
+
+
+@app.put(BASE_ROUTE + "/systems/{system_id}", response_model=schemas.System)
+def update_system(system: schemas.System, db: Session = Depends(get_db)):
+    return crud.update_system(db=db, system=system)
 
 
 @app.get(BASE_ROUTE + "/systems/", response_model=List[schemas.System])
@@ -57,14 +96,14 @@ def delete_system(system_id: int = 0, db: Session = Depends(get_db)):
 
 @app.get(BASE_ROUTE + "/systems/{system_id}/comments", response_model=List[schemas.Comment])
 def read_system_comments(system_id: int, db: Session = Depends(get_db)):
-    system = crud.retrieve_system_comments(db, system_id)
-    return system
+    comments = crud.retrieve_system_comments(db, system_id)
+    return comments
 
 
 @app.get(BASE_ROUTE + "/systems/{system_id}/geometries", response_model=List[schemas.Geometry])
 def read_system_geometries(system_id: int, db: Session = Depends(get_db)):
-    system = crud.retrieve_system_geometries(db, system_id)
-    return system
+    geometries = crud.retrieve_system_geometries(db, system_id)
+    return geometries
 
 
 @app.post(BASE_ROUTE + "/countries/", response_model=schemas.Country)
@@ -100,17 +139,44 @@ def create_geometry(geometry: schemas.GeometryCreate, db: Session = Depends(get_
     return crud.create_geometry(db=db, geometry=geometry)
 
 
+@app.put(BASE_ROUTE + "/geometries/{geometry_id}", response_model=schemas.Geometry)
+def update_geometry(geometry: schemas.Geometry, db: Session = Depends(get_db)):
+    return crud.update_geometry(db=db, geometry=geometry)
+
+
 @app.get(BASE_ROUTE + "/geometries/", response_model=List[schemas.Geometry])
 def read_geometries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     geometries = crud.retrieve_geometries(db, skip=skip, limit=limit)
     return geometries
 
 
+@app.get(BASE_ROUTE + "/geometries/comments", response_model=List[schemas.Comment])
+def read_geometries_comments(db: Session = Depends(get_db)):
+    comments = crud.retrieve_geometries_comments(db)
+    return comments
+
+
+@app.get(BASE_ROUTE + "/geometries/{geometry_id}", response_model=schemas.Geometry)
+def read_geometry(geometry_id: int, db: Session = Depends(get_db)):
+    comments = crud.retrieve_geometry(db, geometry_id)
+    return comments
+
+
+@app.get(BASE_ROUTE + "/geometries/{geometry_id}/comments", response_model=List[schemas.Comment])
+def read_geometry_comments(geometry_id: int, db: Session = Depends(get_db)):
+    comments = crud.retrieve_geometry_comments(db, geometry_id)
+    return comments
+
+
+@app.get(BASE_ROUTE + "/geometries/{geometry_id}/meshes", response_model=List[schemas.Mesh])
+def read_geometry_meshes(geometry_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_geometry_meshes(db, geometry_id)
+
+
 @app.delete(BASE_ROUTE + "/geometries/{geometry_id}")
 def delete_geometry(geometry_id: int = 0, db: Session = Depends(get_db)):
     countries = crud.destroy_geometry(db, geometry_id=geometry_id)
     return countries
-
 
 
 @app.post(BASE_ROUTE + "/meshes/", response_model=schemas.Mesh)

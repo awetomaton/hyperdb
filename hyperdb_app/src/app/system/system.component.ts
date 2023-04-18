@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from "@angular/router";
 import { HyperdbService } from '../hyperdb.service';
-import { Comment, NewComment } from '../interfaces/comment';
+import { Comment } from '../interfaces/comment';
 import { System, NewSystem } from '../interfaces/system';
 import { Country, NewCountry } from '../interfaces/country';
 import { Observable } from 'rxjs';
@@ -19,17 +19,6 @@ import { Geometry } from '../interfaces/geometry';
   ]
 })
 export class SystemComponent implements OnInit {
-  newComment: Comment = {
-    'id': -1, 
-    'title': '', 
-    'body': '',
-    'contributor_fk': -1, 
-    'system_fk': -1, 
-    'geometry_fk': -1, 
-    'mesh_fk': -1, 
-    'tool_mesh_association_fk': -1, 
-    'configured_tool_fk': -1
-  }
   comments: Comment[] = [];
   system: System = {'classification': '', 'country_fk': null, 'id': -1, 'name': ''};
   countries: Country[] = [];
@@ -46,18 +35,6 @@ export class SystemComponent implements OnInit {
   systemForm = new FormGroup({
     country: this.countryControl,
     classification: this.classificationControl,
-  });
-  commentTitleControl = new FormControl('title', [
-    Validators.required,
-    Validators.minLength(1),
-  ])
-  commentBodyControl = new FormControl('body', [
-    Validators.required,
-    Validators.minLength(1),
-  ])
-  commentForm = new FormGroup({
-    title: this.commentTitleControl,
-    body: this.commentBodyControl,
   });
 
   constructor(private route: ActivatedRoute, private hyperdbService: HyperdbService, private router: Router){
@@ -81,8 +58,10 @@ export class SystemComponent implements OnInit {
         this.hyperdbService.getCountries()
         .subscribe(countries => {
           for (let country of countries) {
-            this.countryControl.setValue(country.alpha_three_code);
-            break;
+            if (system.country_fk == country.id) {
+              this.countryControl.setValue(country.alpha_three_code);
+              break;
+            }
           }
           this.countries = countries;
         })
@@ -132,43 +111,45 @@ export class SystemComponent implements OnInit {
       };
       this.hyperdbService.postCountry(newCountry)
       .subscribe(country => {
-        this.postSystem(country.id);
+        this.saveSystem(country.id);
       })
     } else{
-      this.postSystem(countryFk);
+      this.saveSystem(countryFk);
     }
   }
 
-  postSystem(countryFk: number): void {
-    let newSystem: NewSystem;
-    newSystem = {
-      'name': this.system.name, 
-      'classification': this.classificationControl.value == null ? '': this.classificationControl.value, 
-      'country_fk': countryFk
-    };
-    this.hyperdbService.postSystem(newSystem)
-    .subscribe(system => {
-      this.router.navigate(['/systems', system.id])
-    })
-  }
-  saveComment(): void {
-    let comment: NewComment = {
-      'title': this.commentTitleControl.value == null ? '': this.commentTitleControl.value , 
-      'body': this.commentBodyControl.value == null ? '': this.commentBodyControl.value, 
-      'contributor_fk': null, 
-      'system_fk': this.system.id, 
-      'geometry_fk': null, 
-      'mesh_fk': null, 
-      'tool_mesh_association_fk': null, 
-      'configured_tool_fk': null
-    }
-    this.hyperdbService.postComment(comment)
-    .subscribe(_ => {
-      this.hyperdbService.getSystemComments(this.system.id)
-      .subscribe(comments => {
-        this.comments = comments;
-        this.commentForm.reset();
+  saveSystem(countryFk: number): void {
+    if (this.system.id == -1) {
+      let newSystem: NewSystem;
+      newSystem = {
+        'name': this.system.name, 
+        'classification': this.classificationControl.value == null ? '': this.classificationControl.value, 
+        'country_fk': countryFk
+      };
+      this.hyperdbService.postSystem(newSystem)
+      .subscribe(system => {
+        this.router.navigate(['/systems', system.id])
       })
+    } else {
+      let newSystem: System;
+      newSystem = {
+        'id': this.system.id,
+        'name': this.system.name, 
+        'classification': this.classificationControl.value == null ? '': this.classificationControl.value, 
+        'country_fk': countryFk
+      };
+      this.hyperdbService.putSystem(newSystem)
+      .subscribe(system => {
+        this.system = system;
+      })
+    }
+    
+  }
+
+  getComments(): void{
+    this.hyperdbService.getSystemComments(this.system.id)
+    .subscribe(comments => {
+      this.comments = comments;
     })
   }
 }

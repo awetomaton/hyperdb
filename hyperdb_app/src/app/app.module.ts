@@ -23,7 +23,11 @@ import { MatInputModule } from '@angular/material/input';
 import { SystemComponent } from './system/system.component';
 import { GeometriesComponent } from './geometries/geometries.component';
 import { GeometryComponent } from './geometry/geometry.component';
+import { BasenamePipe } from './pipes/basename';
+import { MatSelectModule } from '@angular/material/select';
+import { MatProgressBarModule } from '@angular/material/progress-bar'; 
 import { CommentsComponent } from './comments/comments.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +38,9 @@ import { CommentsComponent } from './comments/comments.component';
     SystemComponent,
     GeometriesComponent,
     GeometryComponent,
-    CommentsComponent
+    CommentsComponent,
+    FileUploadComponent,
+    BasenamePipe
   ],
   imports: [
     BrowserModule,
@@ -54,7 +60,9 @@ import { CommentsComponent } from './comments/comments.component';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    FontAwesomeModule
+    MatProgressBarModule,
+    MatSelectModule,
+    FontAwesomeModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

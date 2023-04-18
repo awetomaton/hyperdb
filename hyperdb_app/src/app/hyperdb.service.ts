@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { System, NewSystem } from './interfaces/system';
-import { Geometry } from './interfaces/geometry';
+import { Geometry, NewGeometry } from './interfaces/geometry';
 import { Comment, NewComment } from './interfaces/comment';
 import { Mesh } from './interfaces/mesh';
 import { Tool } from './interfaces/tool';
@@ -25,12 +25,19 @@ export class HyperdbService {
 
   constructor(private http: HttpClient, private messageService: MessageService) { }
 
+  uploadGeometry(form: FormData): Observable<any> {
+    return this.http.post(this.apiUrl + 'upload-geometry/', form, {
+        reportProgress: true,
+        observe: 'events'
+    })
+  }
+
   getComments(): Observable<Comment[]> {
     let url = this.apiUrl + 'comments'
     return this.http.get<Comment[]>(url)
-      .pipe(
-        catchError(this.handleError<Comment[]>('getComments', []))
-      );
+    .pipe(
+      catchError(this.handleError<Comment[]>('getComments', []))
+    );
   }
 
   postComment(comment: NewComment): Observable<Comment> {
@@ -72,6 +79,13 @@ export class HyperdbService {
       );
   }
 
+  putSystem(system: System): Observable<System> {
+    return this.http.put<System>(this.apiUrl + 'systems/' + system.id, system)
+      .pipe(
+        catchError(this.handleError<System>('putSystem'))
+      );
+  }
+
   getSystemsComments(): Observable<Comment[]> {
     return this.http.get<Comment[]>(this.apiUrl + 'systems/comments')
   }
@@ -103,6 +117,32 @@ export class HyperdbService {
       .pipe(
         catchError(this.handleError<Geometry[]>('getGeometries', []))
       );
+  }
+
+  getGeometry(id: number): Observable<Geometry> {
+    return this.http.get<Geometry>(this.apiUrl + 'geometries/' + id)
+  }
+
+  postGeometry(geometry: NewGeometry): Observable<Geometry> {
+    return this.http.post<Geometry>(this.apiUrl + 'geometries', geometry)
+      .pipe(
+        catchError(this.handleError<Geometry>('postGeometry'))
+      );
+  }
+
+  putGeometry(geometry: Geometry): Observable<Geometry> {
+    return this.http.put<Geometry>(this.apiUrl + 'geometries/' + geometry.id, geometry)
+      .pipe(
+        catchError(this.handleError<Geometry>('putGeometry'))
+      );
+  }
+
+  getGeometryComments(id: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(this.apiUrl + 'geometries/' + id + "/comments")
+  }
+  
+  getGeometryMeshes(id: number): Observable<Mesh[]> {
+    return this.http.get<Mesh[]>(this.apiUrl + 'geometries/' + id + "/meshes")
   }
 
   deleteGeometry(id: number): Observable<null> {
