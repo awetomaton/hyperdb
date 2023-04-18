@@ -48,11 +48,10 @@
         <p style="display: flex; justify-content: right; margin-top: 1em;">
             <button
                 mat-raised-button color="primary" 
-                (click)="save()" 
+                (click)="saveProperties()" 
                 [disabled]="!geometryForm.valid && this.geometry.file">Save
             </button>
         </p>
-        
     </div>
     <div class="dashboard-item" *ngIf="geometry.id != -1">
         <a mat-button [routerLink]="['/meshes/']" class="button-header"><h2 class="button-header-h">Meshes</h2></a>
@@ -64,10 +63,48 @@
     </div>
 </div>
 
-<hyperdb-comments 
-    *ngIf="geometry.id != -1"
-    [comments]="comments"
-    [object]="geometry"
-    [objectType]="'geometry'"
-    (postedComment)="getComments()">
-</hyperdb-comments>
+<div class="dashboard-row" *ngIf="geometry.id != -1">
+    <div class="dashboard-item">
+        <h2>Tool Associations</h2>
+        <div *ngFor="let toolTree of toolTrees">
+            <mat-checkbox
+                [checked]="allToolSelected(toolTree)"
+                [indeterminate]="someToolSelected(toolTree)"
+                (change)="selectAllTool(toolTree, $event.checked)">
+                {{toolTree.name}}
+            </mat-checkbox>
+            <ul>
+                <li *ngFor="let toolVersion of toolTree.toolVersions">
+                    <mat-checkbox
+                        [checked]="allVersionSelected(toolVersion)"
+                        [indeterminate]="someVersionSelected(toolVersion)"
+                        (change)="selectAllVersion(toolVersion, $event.checked)">
+                        {{toolTree.name}} ({{toolVersion.version}})
+                    </mat-checkbox>
+                    <ul>
+                        <li *ngFor="let configuration of toolVersion.configurations">
+                            <mat-checkbox [(ngModel)]="configuration.associated">
+                                {{configuration.configuredTool.name}}
+                            </mat-checkbox>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <mat-divider></mat-divider>
+        <p style="display: flex; justify-content: right; margin-top: 1em;">
+            <button
+                mat-raised-button color="primary" 
+                (click)="saveAssociations()" 
+                [disabled]="!geometryForm.valid && this.geometry.file">Save
+            </button>
+        </p>
+    </div>
+    <hyperdb-comments 
+        class="dashboard-item"
+        [comments]="comments"
+        [object]="geometry"
+        [objectType]="'geometry'"
+        (postedComment)="getComments()">
+    </hyperdb-comments>
+</div>

@@ -1,11 +1,12 @@
+import bcrypt
 from typing import List
 import lorem
 import pycountry
-from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from hyperdb.database import Base
+from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float, Text
+from sqlalchemy.orm import Mapped, mapped_column, validates
 from names import get_full_name
 import random
+from hyperdb.database import Base
 
 
 class ToDictMixin(object):
@@ -52,6 +53,8 @@ class Contributor(Base, ToDictMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name = Column(String(64))
+    username = Column(Text)
+    password = Column(Text)
     email = Column(String(64), unique=True)
 
     @classmethod
@@ -116,11 +119,9 @@ class Tool(Base, ToDictMixin):
     version = Column(String(32))
 
     @classmethod
-    def generate_random(cls):
-        name = get_full_name().lower().replace(" ", "_")
+    def generate_random(cls, tool_names: List[str]):
         version = "{}.{}.{}".format(random.randint(0, 9), random.randint(0, 9), random.randint(0, 9))
-
-        return cls(name=name, version=version)
+        return cls(name=random.choice(tool_names), version=version)
 
 
 class CBAeroSetting(Base, ToDictMixin):
@@ -183,23 +184,23 @@ class ToolSetting(Base, ToDictMixin):
 
 
 class ConfiguredTool(Base, ToDictMixin):
-    """
-    """
     __tablename__ = "configured_tools"
     __table_args__ = (UniqueConstraint('tool_fk', 'tool_settings_fk', name='tool_configuration_uk'),)
     
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    name = Column(String(128))
     tool_fk: Mapped[int] = mapped_column(ForeignKey("tools.id"))
     tool_settings_fk: Mapped[int] = mapped_column(ForeignKey("tool_settings.id", ondelete="CASCADE"))
 
     @classmethod
     def generate_random(cls, tools: List[Tool], tool_settings: List[ToolSetting]):
         tool_ids = [tool.id for tool in tools]
+        name = get_full_name().lower().replace(" ", "_")
         tool_fk = random.choice(tool_ids)
         tool_setting_ids = [tool_setting.id for tool_setting in tool_settings]
         tool_settings_fk = random.choice(tool_setting_ids)
-        return cls(tool_fk=tool_fk, tool_settings_fk=tool_settings_fk)
+        return cls(tool_fk=tool_fk, name=name, tool_settings_fk=tool_settings_fk)
 
 
 class ToolMeshAssociation(Base, ToDictMixin):
@@ -211,23 +212,19 @@ class ToolMeshAssociation(Base, ToDictMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id"))
     mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"))
-    tool_fk: Mapped[int] = mapped_column(ForeignKey("tools.id", ondelete="CASCADE"))
     configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id"))
 
     @classmethod
-    def generate_random(cls, contributors: List[Contributor], meshes: List[Mesh], tools: List[Tool], configured_tools: List[ConfiguredTool]):
+    def generate_random(cls, contributors: List[Contributor], meshes: List[Mesh], configured_tools: List[ConfiguredTool]):
         contributor_ids = [item.id for item in contributors]
         mesh_ids = [item.id for item in meshes]
-        tool_ids = [item.id for item in tools]
         configured_tool_ids = [item.id for item in configured_tools]
         contributor_fk = random.choice(contributor_ids)
         mesh_fk = random.choice(mesh_ids)
-        tool_fk = random.choice(tool_ids)
         configured_tool_fk = random.choice(configured_tool_ids)
 
         return cls(contributor_fk=contributor_fk, 
                    mesh_fk=mesh_fk, 
-                   tool_fk=tool_fk, 
                    configured_tool_fk=configured_tool_fk)
 
 
@@ -240,19 +237,17 @@ class ToolGeometryAssociation(Base, ToDictMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
     geometry_fk: Mapped[int] = mapped_column(ForeignKey("geometries.id", ondelete="CASCADE"))
-    tool_fk: Mapped[int] = mapped_column(ForeignKey("tools.id", ondelete="CASCADE"))
     configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"))
 
     @classmethod
-    def generate_random(cls, contributors: List[Contributor], geometries: List[Geometry], tools: List[Tool], configured_tools: List[ConfiguredTool]):
+    def generate_random(cls, contributors: List[Contributor], geometries: List[Geometry], configured_tools: List[ConfiguredTool]):
         contributor_fk = random.choice([item.id for item in contributors])
         geometry_fk = random.choice([item.id for item in geometries])
-        tool_fk = random.choice([item.id for item in tools])
         configured_tool_fk = random.choice([item.id for item in configured_tools])
 
         return cls(contributor_fk=contributor_fk, 
                    geometry_fk=geometry_fk, 
-                   tool_fk=tool_fk, configured_tool_fk=configured_tool_fk)
+                   configured_tool_fk=configured_tool_fk)
 
 
 class AeroResult(Base, ToDictMixin):
@@ -293,7 +288,7 @@ class Comment(Base, ToDictMixin):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(64))
     body = Column(String(256))
-    contributor_fk = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"), nullable=True)
+    contributor_fk = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
     system_fk = mapped_column(ForeignKey("systems.id", ondelete="CASCADE"), nullable=True)
     geometry_fk = mapped_column(ForeignKey("geometries.id", ondelete="CASCADE"), nullable=True)
     mesh_fk = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"), nullable=True)

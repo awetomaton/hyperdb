@@ -1,7 +1,9 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Comment, NewComment } from '../interfaces/comment';
 import { HyperdbService } from '../hyperdb.service';
+import { Contributor } from '../interfaces/contributor';
+
 
 @Component({
   selector: 'hyperdb-comments',
@@ -11,14 +13,19 @@ import { HyperdbService } from '../hyperdb.service';
     '../app.component.scss',
   ]
 })
-export class CommentsComponent {
+export class CommentsComponent implements OnInit {
   @Input() comments: Comment[];
   @Input() object: any;
   @Input() objectType: string;
   @Output() postedComment = new EventEmitter<null>();
+  contributors: Contributor[];
+  contributorsById: Object;
   commentTitleControl = new FormControl('title', [
     Validators.required,
     Validators.minLength(1),
+  ])
+  contributorControl = new FormControl('contributor', [
+    Validators.required,
   ])
   commentBodyControl = new FormControl('body', [
     Validators.required,
@@ -26,21 +33,45 @@ export class CommentsComponent {
   ])
   commentForm = new FormGroup({
     title: this.commentTitleControl,
+    contributor: this.contributorControl,
     body: this.commentBodyControl,
   });
 
   constructor(private hyperdbService: HyperdbService){}
 
+  ngOnInit(): void {
+    this.commentForm.reset();
+    this.hyperdbService.getContributors()
+    .subscribe(contributors => {
+      this.contributors = contributors;
+    })
+  }
+
+  getCommentContributorName(comment: Comment): string {
+    let name: string = '';
+    for (let contributor of this.contributors) {
+      if (comment.contributor_fk == contributor.id) {
+        name = contributor.name;
+        break;
+      }
+    }
+    return name;
+  }
+
   save(): void {
-    let contributor_fk: number | null = null;
+    let contributor_fk: number = -1;
+    for (let contributor of this.contributors) {
+      if (this.contributorControl.value == contributor.name){
+        contributor_fk = contributor.id;
+        break;
+      }
+    }
     let system_fk: number | null = null;
     let geometry_fk: number | null = null;
     let mesh_fk: number | null = null;
     let tool_mesh_association_fk: number | null = null;
     let configured_tool_fk: number | null = null;
-    if (this.objectType == 'contributor') {
-      contributor_fk = this.object.id;
-    } else if (this.objectType == 'system') {
+    if (this.objectType == 'system') {
       system_fk = this.object.id;
     } else if (this.objectType == 'geometry') {
       geometry_fk = this.object.id;

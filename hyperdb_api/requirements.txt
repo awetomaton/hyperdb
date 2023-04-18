@@ -1,4 +1,5 @@
 alembic
+bcrypt
 fastapi
 lorem
 sqlalchemy
@@ -8,3 +9,5 @@ pydantic
 pydantic[email]
 pyscopg2-binary
 python-multipart
+python-jose[cryptography]
+passlib[bcrypt]

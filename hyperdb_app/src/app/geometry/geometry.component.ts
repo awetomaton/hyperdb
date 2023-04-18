@@ -6,10 +6,13 @@ import { HttpEventType } from '@angular/common/http';
 import { Comment } from '../interfaces/comment';
 import { Geometry, NewGeometry } from '../interfaces/geometry';
 import { Mesh } from '../interfaces/mesh';
-import { map, startWith } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { System } from '../interfaces/system';
 import { Contributor } from '../interfaces/contributor';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToolTree } from '../interfaces/tool_tree';
+import { ToolVersion } from '../interfaces/tool_version';
+import { AssociatedConfiguredTool } from '../interfaces/configured_tool';
+import { NewToolGeometryAssociation }  from '../interfaces/tool_geometry_association';
 
 
 @Component({
@@ -27,6 +30,7 @@ export class GeometryComponent implements OnInit {
   contributors: Contributor[] = [];
   geometry: Geometry = {'id': -1, 'file': '', 'contributor_fk': -1, 'system_fk': -1, 'classification': ''};
   meshes: Mesh[] = [];
+  toolTrees: ToolTree[] = [];
   fileFormData: FormData | null;
   fileControl = new FormControl('file', [
     Validators.required,
@@ -48,7 +52,7 @@ export class GeometryComponent implements OnInit {
     classification: this.classificationControl,
   });
 
-  constructor(private route: ActivatedRoute, private hyperdbService: HyperdbService, private router: Router){
+  constructor(private route: ActivatedRoute, private hyperdbService: HyperdbService, private router: Router, private snackBar: MatSnackBar){
     this.route.params.subscribe( params => {
       let id: number;
       if (params['id'] != 'new') {
@@ -85,6 +89,57 @@ export class GeometryComponent implements OnInit {
           }
           this.contributors = contributors;
         })
+        
+        this.hyperdbService.getTools()
+        .subscribe(tools => {
+          this.hyperdbService.getConfiguredTools()
+          .subscribe(configuredTools => {
+            this.hyperdbService.getGeometryTools(this.geometry.id)
+            .subscribe(geometryToolAssociations => {
+              let toolTrees: ToolTree[] = [];
+              let toolDict: any = {};
+              for (let tool of tools) {
+                if (!(tool.name in toolDict)) {
+                  toolDict[tool.name] = [];
+                }
+                toolDict[tool.name].push(tool)
+              }
+              
+              for (const toolName in toolDict) {
+                let toolVersions: ToolVersion[] = [];
+                for (let tool of toolDict[toolName]) {
+                  let associatedConfiguredTools: AssociatedConfiguredTool[] = [];
+                  for (let configuredTool of configuredTools) {
+                    if (configuredTool.id != tool.id) {
+                      continue;
+                    }
+                    let associated = false;
+                    for (let geometryToolAssociation of geometryToolAssociations) {
+                      if (geometryToolAssociation.configured_tool_fk == configuredTool.id) {
+                        associated = true;
+                        break;
+                      }
+                    }
+                    let associatedConfiguredTool: AssociatedConfiguredTool = {
+                      'associated': associated,
+                      'configuredTool': configuredTool
+                    }
+                    associatedConfiguredTools.push(associatedConfiguredTool);
+                  }
+                  let toolVersion: ToolVersion = {
+                    'id': tool.id,
+                    'version': tool.version,
+                    'configurations': associatedConfiguredTools
+                  };
+                  toolVersions.push(toolVersion);
+                }
+                let toolTree: ToolTree = {'name': toolName, 'toolVersions': toolVersions}
+                toolTrees.push(toolTree);
+              }
+              this.toolTrees = toolTrees;
+            })
+          })
+        })
       })
 
       this.hyperdbService.getGeometryComments(this.geometry.id)
@@ -109,6 +164,64 @@ export class GeometryComponent implements OnInit {
     }
   }
 
+  allToolSelected(toolTree: ToolTree): boolean {
+    for (let toolVersion of toolTree.toolVersions) {
+      if (!this.allVersionSelected(toolVersion)) {
+        return false
+      }
+    }
+    return true;
+  }
+
+  someToolSelected(toolTree: ToolTree): boolean {
+    let anyUnselected = false;
+    let someSelected = false;
+    for (let toolVersion of toolTree.toolVersions) {
+      for (let configuredTool of toolVersion.configurations) {
+        if (configuredTool.associated) {
+          someSelected = true;
+        } else {
+          anyUnselected = true;
+        }
+      }
+    }
+    return anyUnselected && someSelected;
+  }
+
+  selectAllTool(toolTree: ToolTree, checked: boolean): void {
+    for (let toolVersion of toolTree.toolVersions) {
+      this.selectAllVersion(toolVersion, checked);
+    }
+  }
+
+  allVersionSelected(toolVersion: ToolVersion): boolean {
+    for (let configuredTool of toolVersion.configurations) {
+      if (!configuredTool.associated) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  someVersionSelected(toolVersion: ToolVersion): boolean {
+    let anyUnselected = false;
+    let someSelected = false;
+    for (let configuredTool of toolVersion.configurations) {
+      if (configuredTool.associated) {
+        someSelected = true;
+      } else {
+        anyUnselected = true;
+      }
+    }
+    return anyUnselected && someSelected;
+  }
+
+  selectAllVersion(toolVersion: ToolVersion, checked: boolean): void {
+    for (let configuredTool of toolVersion.configurations) {
+      configuredTool.associated = checked;
+    }
+  }
+
   getComments(): void{
     this.hyperdbService.getGeometryComments(this.geometry.id)
     .subscribe(comments => {
@@ -116,7 +229,7 @@ export class GeometryComponent implements OnInit {
     })
   }
 
-  save(): void {
+  saveProperties(): void {
     if (this.fileFormData != null) {
       this.hyperdbService.uploadGeometry(this.fileFormData)
       .subscribe(event => {
@@ -172,8 +285,38 @@ export class GeometryComponent implements OnInit {
       this.hyperdbService.putGeometry(newGeometry)
       .subscribe(geometry => {
         this.geometry = geometry;
+        this.snackBar.open("Success", 'Dismiss', {
+            duration: 1000
+        })
       })  
     }
+  }
+
+  saveAssociations(): void {
+    this.hyperdbService.deleteGeometryTools(this.geometry.id)
+    .subscribe(_ => {
+      let associations: NewToolGeometryAssociation[] = [];
+      for (let toolTree of this.toolTrees) {
+        for (let toolVersion of toolTree.toolVersions) {
+          for (let associatedConfiguredTool of toolVersion.configurations) {
+            if (associatedConfiguredTool.associated) {
+              associations.push({
+                'configured_tool_fk': associatedConfiguredTool.configuredTool.id,
+                'geometry_fk': this.geometry.id,
+                'contributor_fk': -1,
+              })
+            }
+          }
+        }
+      }
+      
+      this.hyperdbService.postToolGeometryAssociations(associations)
+      .subscribe(savedAssociations => {
+        this.snackBar.open("Success", 'Dismiss', {
+          duration: 1000
+        })
+      })
+    })
   }
 
   onFileSelected(event: any): void{

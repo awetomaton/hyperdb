@@ -65,7 +65,8 @@ def create_fixtures(
         db.add(item)
         db.commit()
         db.refresh(item)
-    tools = [models.Tool.generate_random() for _ in range(num_tools)]
+    tool_names = ["CBAero", "Cart3D", "Fun3D"]
+    tools = [models.Tool.generate_random(tool_names) for _ in range(num_tools)]
     for item in tools:
         db.add(item)
         db.commit()
@@ -90,12 +91,12 @@ def create_fixtures(
         db.add(item)
         db.commit()
         db.refresh(item)
-    tool_mesh_associations = [models.ToolMeshAssociation.generate_random(contributors, meshes, tools, configured_tools) for _ in range(num_tool_mesh_associations)]
+    tool_mesh_associations = [models.ToolMeshAssociation.generate_random(contributors, meshes, configured_tools) for _ in range(num_tool_mesh_associations)]
     for item in tool_mesh_associations:
         db.add(item)
         db.commit()
         db.refresh(item)
-    tool_geometry_associations = [models.ToolGeometryAssociation.generate_random(contributors, geometries, tools, configured_tools) for _ in range(num_tool_geometry_associations)]
+    tool_geometry_associations = [models.ToolGeometryAssociation.generate_random(contributors, geometries, configured_tools) for _ in range(num_tool_geometry_associations)]
     for item in tool_geometry_associations:
         db.add(item)
         db.commit()

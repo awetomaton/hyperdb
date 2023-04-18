@@ -173,6 +173,16 @@ def read_geometry_meshes(geometry_id: int, db: Session = Depends(get_db)):
     return crud.retrieve_geometry_meshes(db, geometry_id)
 
 
+@app.get(BASE_ROUTE + "/geometries/{geometry_id}/tools", response_model=List[schemas.ToolGeometryAssociation])
+def read_geometry_tools(geometry_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_geometry_tools(db, geometry_id)
+
+
+@app.delete(BASE_ROUTE + "/geometries/{geometry_id}/tools")
+def delete_geometry_tools(geometry_id: int, db: Session = Depends(get_db)):
+    return crud.destroy_geometry_tools(db, geometry_id)
+
+
 @app.delete(BASE_ROUTE + "/geometries/{geometry_id}")
 def delete_geometry(geometry_id: int = 0, db: Session = Depends(get_db)):
     countries = crud.destroy_geometry(db, geometry_id=geometry_id)
@@ -255,6 +265,13 @@ def read_tool_mesh_associations(skip: int = 0, limit: int = 100, db: Session = D
 @app.post(BASE_ROUTE + "/tool-geometry-associations/", response_model=schemas.ToolGeometryAssociation)
 def create_tool_geometry_association(tool_geometry_association: schemas.ToolGeometryAssociationCreate, db: Session = Depends(get_db)):
     return crud.create_tool_geometry_association(db=db, tool_geometry_association=tool_geometry_association)
+
+
+@app.post(BASE_ROUTE + "/tool-geometry-associations-bulk/", response_model=List[schemas.ToolGeometryAssociation])
+def create_tool_geometry_associations(
+    associations: List[schemas.ToolGeometryAssociationCreate], 
+    db: Session = Depends(get_db)):
+    return crud.create_tool_geometry_associations(db, associations)
 
 
 @app.get(BASE_ROUTE + "/tool-geometry-associations/", response_model=List[schemas.ToolGeometryAssociation])

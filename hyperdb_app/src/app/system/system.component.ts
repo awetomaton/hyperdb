@@ -5,6 +5,7 @@ import { HyperdbService } from '../hyperdb.service';
 import { Comment } from '../interfaces/comment';
 import { System, NewSystem } from '../interfaces/system';
 import { Country, NewCountry } from '../interfaces/country';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Geometry } from '../interfaces/geometry';
@@ -37,7 +38,12 @@ export class SystemComponent implements OnInit {
     classification: this.classificationControl,
   });
 
-  constructor(private route: ActivatedRoute, private hyperdbService: HyperdbService, private router: Router){
+  constructor(
+    private route: ActivatedRoute, 
+    private hyperdbService: HyperdbService, 
+    private router: Router, 
+    private snackBar: MatSnackBar){
+
     this.route.params.subscribe( params => {
       let id: number;
       if (params['id'] != 'new') {
@@ -75,6 +81,11 @@ export class SystemComponent implements OnInit {
       this.hyperdbService.getSystemGeometries(this.system.id)
       .subscribe(geometries => {
         this.geometries = geometries;
+      })
+    } else {
+      this.hyperdbService.getCountries()
+      .subscribe(countries => {
+        this.countries = countries;
       })
     }
 
@@ -141,6 +152,9 @@ export class SystemComponent implements OnInit {
       this.hyperdbService.putSystem(newSystem)
       .subscribe(system => {
         this.system = system;
+        this.snackBar.open("Success", 'Dismiss', {
+          duration: 1000
+        });
       })
     }
     

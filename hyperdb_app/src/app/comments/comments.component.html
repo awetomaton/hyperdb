@@ -1,4 +1,4 @@
-<div class="dashboard-item dashboard-item-centered">
+<div>
     <h2>Comments</h2>
     <form>
         <p>
@@ -11,6 +11,16 @@
                     (click)="commentTitleControl.setValue('')">
                     <mat-icon>close</mat-icon>
                 </button>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="fill">
+                <mat-label>Contributor</mat-label>
+                <mat-select [formControl]="contributorControl">
+                    <mat-option *ngFor="let contributor of contributors" [value]="contributor.name">
+                        {{contributor.name}}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
         </p>
         <p>
@@ -30,7 +40,7 @@
     </form>
     <div *ngFor="let comment of comments;">
         <mat-divider></mat-divider>
-        <h3><strong>{{comment.title}}</strong></h3>
+        <h3><strong>{{comment.title}}</strong> - {{getCommentContributorName(comment)}}</h3>
         <p>{{comment.body}}</p>
     </div>
 </div>

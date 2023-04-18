@@ -10,6 +10,8 @@ import { Tool } from './interfaces/tool';
 import { Country, NewCountry } from './interfaces/country';
 import { Contributor } from './interfaces/contributor';
 import { MessageService } from './message.service';
+import { NewToolGeometryAssociation, ToolGeometryAssociation } from './interfaces/tool_geometry_association';
+import { ConfiguredTool } from './interfaces/configured_tool';
 
 
 @Injectable({
@@ -140,6 +142,20 @@ export class HyperdbService {
   getGeometryComments(id: number): Observable<Comment[]> {
     return this.http.get<Comment[]>(this.apiUrl + 'geometries/' + id + "/comments")
   }
+
+  getGeometryTools(id: number): Observable<ToolGeometryAssociation[]> {
+    return this.http.get<ToolGeometryAssociation[]>(this.apiUrl + 'geometries/' + id + "/tools")
+      .pipe(
+        catchError(this.handleError<ToolGeometryAssociation[]>('getGeometryTools'))
+      );
+  }
+
+  deleteGeometryTools(id: number): Observable<null> {
+    return this.http.delete<null>(this.apiUrl + 'geometries/' + id + "/tools")
+      .pipe(
+        catchError(this.handleError<null>('deleteGeometryTools', null))
+      );
+  }
   
   getGeometryMeshes(id: number): Observable<Mesh[]> {
     return this.http.get<Mesh[]>(this.apiUrl + 'geometries/' + id + "/meshes")
@@ -148,7 +164,7 @@ export class HyperdbService {
   deleteGeometry(id: number): Observable<null> {
     return this.http.delete<null>(this.apiUrl + 'geometries/' + id)
       .pipe(
-        catchError(this.handleError<null>('deleteGeometries', null))
+        catchError(this.handleError<null>('deleteGeometry', null))
       );
   }
 
@@ -166,6 +182,20 @@ export class HyperdbService {
       );
   }
 
+  getConfiguredTools(): Observable<ConfiguredTool[]> {
+    return this.http.get<ConfiguredTool[]>(this.apiUrl + 'configured-tools')
+      .pipe(
+        catchError(this.handleError<ConfiguredTool[]>('getConfiguredTools', []))
+      );
+  }
+
+  postToolGeometryAssociations(associations: NewToolGeometryAssociation[]): Observable<ToolGeometryAssociation[]> {
+    return this.http.post<ToolGeometryAssociation[]>(this.apiUrl + 'tool-geometry-associations-bulk', associations)
+      .pipe(
+        catchError(this.handleError<ToolGeometryAssociation[]>('postToolGeometryAssociations'))
+      );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.
@@ -177,7 +207,7 @@ export class HyperdbService {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.log(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -189,6 +219,6 @@ export class HyperdbService {
 
   /** Log a message */
   private log(message: string) {
-    this.messageService.add(`HeroService: ${message}`);
+    this.messageService.add(`HyperdbService: ${message}`);
   }
 }

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e1c950277d2f
+Revision ID: c37699c98f35
 Revises: 
-Create Date: 2023-04-16 20:50:37.035749
+Create Date: 2023-04-18 15:35:29.691831
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e1c950277d2f'
+revision = 'c37699c98f35'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -73,6 +73,7 @@ def upgrade() -> None:
     )
     op.create_table('configured_tools',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=128), nullable=True),
     sa.Column('tool_fk', sa.Integer(), nullable=False),
     sa.Column('tool_settings_fk', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['tool_fk'], ['tools.id'], ),
@@ -105,12 +106,10 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('contributor_fk', sa.Integer(), nullable=False),
     sa.Column('geometry_fk', sa.Integer(), nullable=False),
-    sa.Column('tool_fk', sa.Integer(), nullable=False),
     sa.Column('configured_tool_fk', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['tool_fk'], ['tools.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('aero_results',
@@ -130,12 +129,10 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('contributor_fk', sa.Integer(), nullable=False),
     sa.Column('mesh_fk', sa.Integer(), nullable=False),
-    sa.Column('tool_fk', sa.Integer(), nullable=False),
     sa.Column('configured_tool_fk', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ),
     sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ),
     sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['tool_fk'], ['tools.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('comments',

@@ -176,6 +176,7 @@ class ToolSetting(ToolSettingBase):
 
 
 class ConfiguredToolBase(BaseModel):
+    name: str
     tool_fk: int
     tool_settings_fk: int
 
@@ -194,7 +195,6 @@ class ConfiguredTool(ConfiguredToolBase):
 class ToolMeshAssociationBase(BaseModel):
     contributor_fk: int
     mesh_fk: int
-    tool_fk: int
     configured_tool_fk: int
 
 
@@ -212,7 +212,6 @@ class ToolMeshAssociation(ToolMeshAssociationBase):
 class ToolGeometryAssociationBase(BaseModel):
     contributor_fk: int
     geometry_fk: int
-    tool_fk: int
     configured_tool_fk: int
 
 

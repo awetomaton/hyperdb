@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from typing import List
 from hyperdb import models
 from hyperdb import schemas
 
@@ -124,6 +125,16 @@ def retrieve_geometry_comments(db: Session, geometry_id: int):
     return db.query(models.Comment).filter(models.Comment.geometry_fk == geometry_id).all()
 
 
+def retrieve_geometry_tools(db: Session, geometry_id: int):
+    return db.query(models.ToolGeometryAssociation).filter(
+        models.ToolGeometryAssociation.geometry_fk == geometry_id).all()
+
+
+def destroy_geometry_tools(db: Session, geometry_id: int):
+    db.query(models.ToolGeometryAssociation).filter(models.ToolGeometryAssociation.geometry_fk == geometry_id).delete()
+    db.commit()
+
+
 def retrieve_geometry_meshes(db: Session, geometry_id: int):
     return db.query(models.Mesh).filter(models.Mesh.geometry_fk == geometry_id).all()
 
@@ -228,6 +239,15 @@ def create_tool_geometry_association(db: Session, tool_geometry_association: sch
     db.commit()
     db.refresh(db_item)
     return db_item
+
+
+def create_tool_geometry_associations(db: Session, associations: List[schemas.ToolGeometryAssociationCreate]):
+    db_items = [models.Geometry(**association.dict()) for association in associations]
+    db.bulk_save_objects(db_items)
+    db.commit()
+    for db_item in db_items:
+        db.refresh(db_item)
+    return db_items
 
 
 def get_aero_results(db: Session, skip: int = 0, limit: int = 100):

@@ -27,7 +27,10 @@ import { BasenamePipe } from './pipes/basename';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar'; 
 import { CommentsComponent } from './comments/comments.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { ContributorsComponent } from './contributors/contributors.component';
+import { ContributorComponent } from './contributor/contributor.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,9 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     GeometryComponent,
     CommentsComponent,
     FileUploadComponent,
-    BasenamePipe
+    BasenamePipe,
+    ContributorsComponent,
+    ContributorComponent
   ],
   imports: [
     BrowserModule,
@@ -62,6 +67,7 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     MatIconModule,
     MatProgressBarModule,
     MatSelectModule,
+    MatSnackBarModule,
     FontAwesomeModule,
   ],
   providers: [],
