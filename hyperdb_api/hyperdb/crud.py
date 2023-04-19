@@ -79,6 +79,22 @@ def get_contributors(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Contributor).offset(skip).limit(limit).all()
 
 
+def retrieve_contributor(
+        db: Session, 
+        id: int | None = None, 
+        email: str | None = None, 
+        name: str | None = None
+    ):
+    query = db.query(models.Contributor)
+    if id is not None:
+        query = query.filter(models.Contributor.id == id).first()
+    elif email is not None:
+        query = query.filter(models.Contributor.email == email).first()
+    elif name is not None:
+        query = query.filter(models.Contributor.name == name).first()
+    return query
+
+
 def create_contributor(db: Session, contributor: schemas.ContributorCreate):
     db_item = models.Contributor(**contributor.dict())
     db.add(db_item)

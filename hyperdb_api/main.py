@@ -1,14 +1,18 @@
-from fastapi import Depends, FastAPI, HTTPException, UploadFile
+from datetime import timedelta
+from fastapi import Depends, FastAPI, HTTPException, UploadFile, status
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
+from jose import JWTError, jwt
 import os
 from pathlib import Path
 import shutil
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Annotated
 import uvicorn
 from hyperdb.database import SessionLocal
 from hyperdb import schemas
 from hyperdb import crud
+from hyperdb import security
 import uuid
 
 
@@ -31,6 +35,63 @@ def get_db():
         yield db
     finally:
         db.close()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+async def get_current_user(
+        token: Annotated[str, Depends(oauth2_scheme)],
+        db: Session = Depends(get_db)
+    ):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, security.SECRET_KEY, algorithms=[security.ALGORITHM])
+        email: str = str(payload.get("sub"))
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(email=email)
+    except JWTError:
+        raise credentials_exception
+    user = crud.retrieve_contributor(db, email=str(token_data.email))
+    if user is None:
+        raise credentials_exception
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[schemas.Contributor, Depends(get_current_user)]
+):
+    return current_user
+
+
+@app.post("/token", response_model=schemas.Token)
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Session = Depends(get_db)
+):
+    user = security.authenticate_user(db, email=form_data.username, password=form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = security.create_access_token(
+        data={"sub": getattr(user, 'email')}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get(BASE_ROUTE + "/me/", response_model=schemas.Contributor)
+async def read_users_me(
+    current_user: Annotated[schemas.Contributor, Depends(get_current_active_user)]
+):
+    return current_user
 
 
 # Based on https://fastapi.tiangolo.com/tutorial/static-files/

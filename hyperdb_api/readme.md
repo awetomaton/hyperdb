@@ -119,3 +119,6 @@ the database **including** the `alembic_version` table which stores database mig
 content in the `env.py` file, delete the `alembic` directory, and then copy the `env.py` content back. Then the 
 developer can run `alembic init alembic` to create migrations from scratch. Run `alembic revision --autogenerate` to 
 automatically create a migration.
+
+
+Produce secret key with `openssl rand -hex 32` as per https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/.

@@ -50,7 +50,7 @@ def create_fixtures(
         db.add(system)
         db.commit()
         db.refresh(system)
-    contributors = [models.Contributor.generate_random() for _ in range(num_contributors)]
+    contributors = [models.Contributor.generate_random("hyperhub")] + [models.Contributor.generate_random() for _ in range(num_contributors-1)]
     for item in contributors:
         db.add(item)
         db.commit()

@@ -1,4 +1,3 @@
-import bcrypt
 from typing import List
 import lorem
 import pycountry
@@ -7,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, validates
 from names import get_full_name
 import random
 from hyperdb.database import Base
+from hyperdb import security
 
 
 class ToDictMixin(object):
@@ -52,17 +52,18 @@ class Contributor(Base, ToDictMixin):
     __tablename__ = "contributors"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name = Column(String(64))
-    username = Column(Text)
+    name = Column(Text)
     password = Column(Text)
-    email = Column(String(64), unique=True)
+    email = Column(Text, unique=True)
 
     @classmethod
-    def generate_random(cls):
-        name = get_full_name()
+    def generate_random(cls, name=None):
+        if name is None:
+            name = get_full_name()
         email = name.replace(" ", ".") + "@hyperdb.com"
+        password = security.get_password_hash("password")
 
-        return cls(name=name, email=email)
+        return cls(name=name, email=email, password=password)
 
 
 class Geometry(Base, ToDictMixin):

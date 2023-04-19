@@ -2,6 +2,15 @@ from enum import Enum
 from pydantic import BaseModel
 
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: str | None = None
+
+
 class CommentType(str, Enum):
     contributor = 'contributor'
     system = 'system'
@@ -66,7 +75,7 @@ class ContributorBase(BaseModel):
 
 
 class ContributorCreate(ContributorBase):
-    pass
+    password: str
 
 
 class Contributor(ContributorBase):
