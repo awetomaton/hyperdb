@@ -31,6 +31,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { ContributorsComponent } from './contributors/contributors.component';
 import { ContributorComponent } from './contributor/contributor.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DialogModule } from '@angular/cdk/dialog';
+import { LoginDialog } from './dialogs/login-dialog/login_dialog';
+
 
 @NgModule({
   declarations: [
@@ -45,7 +49,8 @@ import { ContributorComponent } from './contributor/contributor.component';
     FileUploadComponent,
     BasenamePipe,
     ContributorsComponent,
-    ContributorComponent
+    ContributorComponent,
+    LoginDialog
   ],
   imports: [
     BrowserModule,
@@ -67,6 +72,8 @@ import { ContributorComponent } from './contributor/contributor.component';
     MatIconModule,
     MatProgressBarModule,
     MatSelectModule,
+    DialogModule,
+    MatDialogModule,
     MatSnackBarModule,
     FontAwesomeModule,
   ],

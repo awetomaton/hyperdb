@@ -27,6 +27,10 @@ export class HyperdbService {
 
   constructor(private http: HttpClient, private messageService: MessageService) { }
 
+  login(form: FormData): Observable<any> {
+    return this.http.post(this.apiUrl + 'token', form)
+  }
+
   uploadGeometry(form: FormData): Observable<any> {
     return this.http.post(this.apiUrl + 'upload-geometry/', form, {
         reportProgress: true,

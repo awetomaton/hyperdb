@@ -1,9 +1,14 @@
 <mat-toolbar>
   <strong>
-    <a [routerLink]="['/']" style="color:black; text-decoration:none;">HyperDB
-
-    </a>
+    <a [routerLink]="['/']" style="color:black; text-decoration:none;">HyperDB</a>
   </strong>
+  <div class="user-control">
+    <button mat-raised-button (click)="openDialog('0ms', '0ms')">
+      <strong>
+        <a>Login</a>
+      </strong>
+    </button>
+  </div>
 </mat-toolbar>
 
 <div style="padding: 1em">

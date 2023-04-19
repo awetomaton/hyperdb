@@ -68,7 +68,7 @@ async def get_current_active_user(
     return current_user
 
 
-@app.post("/token", response_model=schemas.Token)
+@app.post(BASE_ROUTE + "/token", response_model=schemas.Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db)

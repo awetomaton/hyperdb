@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Login</h1>
+<div mat-dialog-content>
+    <form>
+        <mat-form-field appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput [formControl]="emailControl">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" [formControl]="passwordControl">
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button (click)="login()" [disabled]="!loginForm.valid" cdkFocusInitial>Login</button>
+</div>
