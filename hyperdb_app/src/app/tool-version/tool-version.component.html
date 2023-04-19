@@ -1,1 +1,40 @@
-<p>tool-version works!</p>
+<h1>
+    <span *ngIf="!newTool">{{tool.name}} ({{tool.version}}) Details</span>
+    <span *ngIf="newTool">Create New {{tool.name}} Version</span>
+</h1>
+<div class="dashboard-row">
+    <div class="dashboard-item dashboard-item-centered" *ngIf="newTool">
+        <form>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>Version</mat-label>
+                    <input matInput placeholder="(x.y.z)" [(ngModel)]="tool.version" name="version">
+                    <button *ngIf="tool.version" matSuffix mat-icon-button aria-label="Clear" (click)="tool.version=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </p>
+        </form>
+        <mat-divider></mat-divider>
+        <p style="display: flex; justify-content: right; margin-top: 1em;">
+            <button
+                mat-raised-button color="primary" 
+                (click)="save()" 
+                [disabled]="!tool.version">Save
+            </button>
+        </p>
+    </div>
+    <div class="dashboard-item dashboard-item-centered" *ngIf="!newTool">
+        <h2 class="button-header-h">Configurations</h2>
+        <mat-nav-list *ngFor="let configuredTool of configuredTools" role="list" style="display: flex;">
+            <a mat-list-item [routerLink]="['configurations/' + configuredTool.id]">
+                {{configuredTool.name}}
+            </a>
+            <button 
+            mat-mini-fab color="warn" 
+            (click)="onDeleteConfiguration(configuredTool)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+            </button>
+        </mat-nav-list>
+    </div>
+</div>

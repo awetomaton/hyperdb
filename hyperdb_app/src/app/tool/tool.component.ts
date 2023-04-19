@@ -57,6 +57,10 @@ export class ToolComponent implements OnInit {
       return;
     }
 
+    this.getToolSummary();
+  }
+
+  getToolSummary(): void {
     this.hyperdbService.getTools(this.tool.name).subscribe(tools => {
       this.hyperdbService.getConfiguredTools().subscribe(configuredTools => {
         let toolVersionSummaries: ToolVersionSummary[] = [];
@@ -89,6 +93,14 @@ export class ToolComponent implements OnInit {
   }
 
   onDeleteToolVersion(tool: Tool): void {
-
+    this.hyperdbService.deleteTool(tool.id)
+    .subscribe(response => {
+      if (response) {
+        this.snackBar.open("Success", 'Dismiss', {
+          duration: 1000
+        })
+      }
+      this.getToolSummary();
+    })
   }
 }

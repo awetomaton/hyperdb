@@ -299,14 +299,25 @@ def create_tool(tool: schemas.ToolCreate, db: Session = Depends(get_db)):
 
 
 @app.get(BASE_ROUTE + "/tools/", response_model=List[schemas.Tool])
-def read_tools(name: str | None = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    tools = crud.retrieve_tools(db, name=name, skip=skip, limit=limit)
+def read_tools(name: str | None = None, version: str | None = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    tools = crud.retrieve_tools(db, name=name, version=version, skip=skip, limit=limit)
     return tools
 
 
 @app.get(BASE_ROUTE + "/tools/{tool_id}", response_model=schemas.Tool)
 def read_tool(tool_id: int, db: Session = Depends(get_db)):
     return crud.retrieve_tool(db, id=tool_id)
+
+
+@app.get(BASE_ROUTE + "/tools/{tool_id}/configurations", response_model=List[schemas.ConfiguredTool])
+def read_tool_configurations(tool_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_tool_configurations(db, id=tool_id)
+
+
+@app.delete(BASE_ROUTE + "/tools/{tool_id}")
+def delete_tool(tool_id: int, db: Session = Depends(get_db)):
+    crud.destroy_tool(db, id=tool_id)
+    return {'success': True}
 
 
 @app.post(BASE_ROUTE + "/cbaero-settings/", response_model=schemas.CBAeroSetting)
@@ -348,6 +359,16 @@ def create_configured_tool(configured_tool: schemas.ConfiguredToolCreate, db: Se
 @app.get(BASE_ROUTE + "/configured-tools/", response_model=List[schemas.ConfiguredTool])
 def read_configured_tools(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_configured_tools(db, skip=skip, limit=limit)
+
+
+@app.get(BASE_ROUTE + "/configured-tools/{id}/geometry-associations", response_model=schemas.ToolGeometryAssociation)
+def read_configured_tool_geometry_associations(id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_configured_tool_geometry_associations(db, id=id)
+
+
+@app.get(BASE_ROUTE + "/configured-tools/{id}/mesh-associations", response_model=schemas.ToolGeometryAssociation)
+def read_configured_tool_mesh_associations(id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_configured_mesh_associations(db, id=id)
 
 
 @app.post(BASE_ROUTE + "/tool-mesh-associations/", response_model=schemas.ToolMeshAssociation)

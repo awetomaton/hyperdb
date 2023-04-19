@@ -239,7 +239,7 @@ class ToolGeometryAssociation(Base, ToDictMixin):
     contributor_fk: Mapped[int] = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
     geometry_fk: Mapped[int] = mapped_column(ForeignKey("geometries.id", ondelete="CASCADE"))
     configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"))
-
+    
     @classmethod
     def generate_random(cls, contributors: List[Contributor], geometries: List[Geometry], configured_tools: List[ConfiguredTool]):
         contributor_fk = random.choice([item.id for item in contributors])

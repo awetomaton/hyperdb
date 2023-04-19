@@ -248,14 +248,24 @@ export class HyperdbService {
       );
   }
 
-  getTools(name?: string): Observable<Tool[]> {
+  getTools(name?: string, version?: string): Observable<Tool[]> {
     let url = this.apiUrl + 'tools';
     if (name) {
       url += "?name=" + name;
     }
+    if (version) {
+      url += "&version=" + version;
+    }
     return this.http.get<Tool[]>(url)
       .pipe(
         catchError(this.handleError<Tool[]>('getTools', []))
+      );
+  }
+
+  getToolConfigurations(toolId: number): Observable<ConfiguredTool[]> {
+    return this.http.get<ConfiguredTool[]>(this.apiUrl + 'tools/' + toolId + '/configurations')
+      .pipe(
+        catchError(this.handleError<ConfiguredTool[]>('getToolConfigurations'))
       );
   }
 
@@ -277,6 +287,13 @@ export class HyperdbService {
     return this.http.get<ConfiguredTool[]>(this.apiUrl + 'configured-tools')
       .pipe(
         catchError(this.handleError<ConfiguredTool[]>('getConfiguredTools', []))
+      );
+  }
+
+  deleteConfiguredTool(id: number): Observable<DeleteResponse> {
+    return this.http.delete<DeleteResponse>(this.apiUrl + 'configured-tools/' + id, this.httpOptions)
+      .pipe(
+        catchError(this.handleError<DeleteResponse>('deleteConfiguredTool'))
       );
   }
 

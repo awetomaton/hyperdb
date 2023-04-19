@@ -194,15 +194,27 @@ def create_mesh(db: Session, mesh: schemas.MeshCreate):
     return db_item
 
 
-def retrieve_tools(db: Session, name: str | None = None, skip: int = 0, limit: int = 100):
+def retrieve_tools(db: Session, name: str | None = None, version: str | None = None, skip: int = 0, limit: int = 100):
     query = db.query(models.Tool) 
     if name is not None:
         query = query.filter(models.Tool.name == name)
+    if version is not None:
+        query = query.filter(models.Tool.version == version)
     return query.offset(skip).limit(limit).all()
 
 
 def retrieve_tool(db: Session, id: int):
     return db.query(models.Tool).filter(models.Tool.id == id).first()
+
+
+def retrieve_tool_configurations(db: Session, id: int):
+    return db.query(models.ConfiguredTool).filter(models.ConfiguredTool.tool_fk == id).all()
+
+
+def destroy_tool(db: Session, id: int):
+    tool = db.query(models.Tool).filter(models.Tool.id == id).first()
+    db.delete(tool)
+    db.commit()
 
 
 def create_tool(db: Session, tool: schemas.ToolCreate):
@@ -251,6 +263,14 @@ def create_tool_setting(db: Session, tool_setting: schemas.ToolSettingCreate):
 
 def get_configured_tools(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.ConfiguredTool).offset(skip).limit(limit).all()
+
+
+def retrieve_configured_tool_geometry_associations(db: Session, id: int):
+    return db.query(models.ToolGeometryAssociation).filter(models.ToolGeometryAssociation.configured_tool_fk == id).all()
+
+
+def retrieve_configured_mesh_associations(db: Session, id: int):
+    return db.query(models.ToolMeshAssociation).filter(models.ToolMeshAssociation.configured_tool_fk == id).all()
 
 
 def create_configured_tool(db: Session, configured_tool: schemas.ConfiguredToolCreate):
