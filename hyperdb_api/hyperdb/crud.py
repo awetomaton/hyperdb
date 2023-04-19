@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.orm import Session, load_only
 from typing import List
 from hyperdb import models
 from hyperdb import schemas
@@ -93,6 +94,10 @@ def retrieve_contributor(
     elif name is not None:
         query = query.filter(models.Contributor.name == name).first()
     return query
+
+
+def retrieve_contributor_comments(db: Session, contributor_id: int | None = None):
+    return db.query(models.Comment).filter(models.Comment.contributor_fk == contributor_id).all()
 
 
 def create_contributor(db: Session, contributor: schemas.ContributorCreate):
@@ -283,9 +288,38 @@ def get_comments(db: Session, skip: int = 0, limit: int = 100):
     return query.offset(skip).limit(limit).all()
 
 
+def retrieve_comment_meta(db: Session):
+    stmt = select(models.Comment).options(load_only(
+        models.Comment.contributor_fk,
+        models.Comment.system_fk,
+        models.Comment.geometry_fk,
+        models.Comment.mesh_fk,
+        models.Comment.tool_mesh_association_fk,
+        models.Comment.configured_tool_fk,
+        )
+    )
+    comments = db.scalars(stmt).all()
+    comments_meta = [schemas.CommentMeta(
+        id = comment.id, # type: ignore
+        contributor_fk = comment.contributor_fk,
+        system_fk = comment.system_fk,
+        geometry_fk = comment.geometry_fk,
+        mesh_fk = comment.mesh_fk,
+        tool_mesh_association_fk = comment.tool_mesh_association_fk,
+        configured_tool_fk = comment.configured_tool_fk,
+    ) for comment in comments]
+    return comments_meta
+
+
 def create_comment(db: Session, comment: schemas.CommentCreate):
     db_item = models.Comment(**comment.dict())
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
     return db_item
+
+
+def destroy_comment(db: Session, comment_id: int):
+    comment = db.query(models.Comment).filter(models.Comment.id == comment_id).first()
+    db.delete(comment)
+    db.commit()

@@ -1,1 +1,25 @@
-<p>contributor works!</p>
+<h1><a href="mailto:{{contributor.email}}">{{contributor.name}}</a></h1>
+
+<div class="dashboard-row">
+    <div class="dashboard-item">
+        <h2>Geometries</h2>
+    </div>
+    <div class="dashboard-item">
+        <h2>Tool Geometry Associations</h2>
+    </div>
+</div>
+<div class="dashboard-row">
+    <div class="dashboard-item">
+        <h2>Meshes</h2>
+    </div>
+    <div class="dashboard-item">
+        <h2>Tool Mesh Associations</h2>
+    </div>
+</div>
+<hyperdb-comments 
+    class="dashboard-item dashboard-item-centered"
+    [comments]="comments"
+    [object]="contributor"
+    [objectType]="'contributor'"
+    (commentsChanged)="getComments()">
+</hyperdb-comments>

@@ -275,3 +275,13 @@ class Comment(CommentBase):
 
     class Config:
         orm_mode = True
+
+
+class CommentMeta(BaseModel):
+    id: int | None = None
+    contributor_fk: int | None = None
+    system_fk: int | None = None
+    geometry_fk: int | None = None
+    mesh_fk: int | None = None
+    tool_mesh_association_fk: int | None = None
+    configured_tool_fk: int | None = None

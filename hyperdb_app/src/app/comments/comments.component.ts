@@ -2,8 +2,10 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Comment, NewComment } from '../interfaces/comment';
 import { HyperdbService } from '../hyperdb.service';
-import { Contributor } from '../interfaces/contributor';
 import { ContributorService } from '../contributor.service';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Contributor } from '../interfaces/contributor';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -18,7 +20,8 @@ export class CommentsComponent implements OnInit {
   @Input() comments: Comment[];
   @Input() object: any;
   @Input() objectType: string;
-  @Output() postedComment = new EventEmitter<null>();
+  @Output() commentsChanged = new EventEmitter<null>();
+  faTrash = faTrash;
   contributors: Contributor[] = [];
   contributorsById: Object;
   commentTitleControl = new FormControl('title', [
@@ -34,13 +37,29 @@ export class CommentsComponent implements OnInit {
     body: this.commentBodyControl,
   });
 
-  constructor(private hyperdbService: HyperdbService, public contributorService: ContributorService){}
+  constructor(
+    private hyperdbService: HyperdbService, 
+    public contributorService: ContributorService,
+    private snackBar: MatSnackBar, 
+  ){}
 
   ngOnInit(): void {
     this.commentForm.reset();
     this.hyperdbService.getContributors()
     .subscribe(contributors => {
       this.contributors = contributors;
+    })
+  }
+
+  onDeleteComment(comment: Comment): void {
+    this.hyperdbService.deleteComment(comment)
+    .subscribe( response => {
+      if (response != undefined) {
+        this.snackBar.open("Success", 'Dismiss', {
+          duration: 1000
+        })
+        this.commentsChanged.emit();
+      }
     })
   }
 
@@ -86,9 +105,14 @@ export class CommentsComponent implements OnInit {
       'configured_tool_fk': configured_tool_fk
     }
     this.hyperdbService.postComment(comment)
-    .subscribe(_ => {
-      this.commentForm.reset();
-      this.postedComment.emit();
+    .subscribe(response => {
+      if (response) {
+        this.snackBar.open("Success", 'Dismiss', {
+          duration: 1000
+        })
+        this.commentForm.reset();
+        this.commentsChanged.emit();
+      }
     })
   }
 }

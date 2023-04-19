@@ -1,6 +1,6 @@
 <div>
     <h2>Comments</h2>
-    <form *ngIf="contributorService.contributor">
+    <form *ngIf="contributorService.contributor && objectType != 'contributor'">
         <p>
             <mat-form-field appearance="fill">
                 <mat-label>Title</mat-label>
@@ -30,7 +30,12 @@
     </form>
     <div *ngFor="let comment of comments;">
         <mat-divider></mat-divider>
-        <h3><strong>{{comment.title}}</strong> - {{getCommentContributorName(comment)}}</h3>
+        <h3>
+            <button mat-mini-fab color="warn" *ngIf="contributorService.contributor && comment.contributor_fk == contributorService.contributor.id" (click)="onDeleteComment(comment)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+            </button>
+            <strong> {{comment.title}}</strong> - {{getCommentContributorName(comment)}} 
+        </h3>
         <p>{{comment.body}}</p>
     </div>
 </div>

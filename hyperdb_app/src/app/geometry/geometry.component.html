@@ -6,14 +6,17 @@
     <div class="dashboard-item" [ngClass]="{'dashboard-item-centered': geometry.id == -1}">
         <h2>Properties</h2>
         <form>
-            <input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
-            <div class="file-upload">
-                <button mat-mini-fab color="primary" class="upload-btn"
-                (click)="fileUpload.click()">
-                    <mat-icon>attach_file</mat-icon>
-                </button>
-                <span> {{geometry.file | basename}}</span>
+            <div *ngIf="geometry.id == -1">
+                <input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
+                <div class="file-upload">
+                    <button mat-mini-fab color="primary" class="upload-btn"
+                    (click)="fileUpload.click()">
+                        <mat-icon>attach_file</mat-icon>
+                    </button>
+                    <span> {{geometry.file | basename}}</span>
+                </div>
             </div>
+            <h3 *ngIf="geometry.id != -1">File: {{geometry.file | basename}}</h3>
             <p></p>
             <h3 *ngIf="geometry.id != -1">Contributor: {{contributor.name}}</h3>
             <p>
@@ -96,6 +99,6 @@
         [comments]="comments"
         [object]="geometry"
         [objectType]="'geometry'"
-        (postedComment)="getComments()">
+        (commentsChanged)="getComments()">
     </hyperdb-comments>
 </div>

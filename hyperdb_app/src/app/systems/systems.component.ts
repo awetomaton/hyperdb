@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { HyperdbService } from '../hyperdb.service';
 import { Country } from '../interfaces/country';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { System } from '../interfaces/system';
 import { ContributorService } from '../contributor.service';
 
@@ -30,7 +31,11 @@ export class SystemsComponent implements OnInit {
   faTrash = faTrash;
   faPlus = faPlus;
 
-  constructor(private hyperdbService: HyperdbService, public contributorService: ContributorService) { }
+  constructor(
+    private hyperdbService: HyperdbService, 
+    public contributorService: ContributorService,
+    private snackBar: MatSnackBar, 
+    ) { }
 
   ngOnInit(): void {
     this.getSystemsSummary();
@@ -39,6 +44,11 @@ export class SystemsComponent implements OnInit {
   onDeleteSystem(system: System): void{
     this.hyperdbService.deleteSystem(system.id)
     .subscribe(response => {
+      if (response) {
+        this.snackBar.open("Success", 'Dismiss', {
+          duration: 1000
+        })
+      }
       this.getSystemsSummary();
     })
   }

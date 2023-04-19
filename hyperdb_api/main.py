@@ -151,8 +151,8 @@ def read_system(system_id: int, db: Session = Depends(get_db)):
 
 @app.delete(BASE_ROUTE + "/systems/{system_id}")
 def delete_system(system_id: int = 0, db: Session = Depends(get_db)):
-    countries = crud.destroy_system(db, system_id=system_id)
-    return countries
+    crud.destroy_system(db, system_id=system_id)
+    return {'success': True}
 
 
 @app.get(BASE_ROUTE + "/systems/{system_id}/comments", response_model=List[schemas.Comment])
@@ -180,8 +180,8 @@ def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 
 @app.delete(BASE_ROUTE + "/countries/{country_id}")
 def delete_country(country_id: int = 0, db: Session = Depends(get_db)):
-    countries = crud.destroy_country(db, country_id=country_id)
-    return countries
+    crud.destroy_country(db, country_id=country_id)
+    return {'success': True}
 
 
 @app.post(BASE_ROUTE + "/contributors/", response_model=schemas.Contributor)
@@ -193,6 +193,17 @@ def create_contributor(contributor: schemas.ContributorCreate, db: Session = Dep
 def read_contributors(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     contributors = crud.get_contributors(db, skip=skip, limit=limit)
     return contributors
+
+
+@app.get(BASE_ROUTE + "/contributors/{contributor_id}", response_model=schemas.Contributor)
+def read_contributor(contributor_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_contributor(db=db, id=contributor_id)
+
+
+@app.get(BASE_ROUTE + "/contributors/{contributor_id}/comments", response_model=List[schemas.Comment])
+def read_contributor_comments(contributor_id: int, db: Session = Depends(get_db)):
+    comments = crud.retrieve_contributor_comments(db, contributor_id=contributor_id)
+    return comments
 
 
 @app.post(BASE_ROUTE + "/geometries/", response_model=schemas.Geometry)
@@ -241,13 +252,14 @@ def read_geometry_tools(geometry_id: int, db: Session = Depends(get_db)):
 
 @app.delete(BASE_ROUTE + "/geometries/{geometry_id}/tools")
 def delete_geometry_tools(geometry_id: int, db: Session = Depends(get_db)):
-    return crud.destroy_geometry_tools(db, geometry_id)
+    crud.destroy_geometry_tools(db, geometry_id)
+    return {'success': True}
 
 
 @app.delete(BASE_ROUTE + "/geometries/{geometry_id}")
 def delete_geometry(geometry_id: int = 0, db: Session = Depends(get_db)):
-    countries = crud.destroy_geometry(db, geometry_id=geometry_id)
-    return countries
+    crud.destroy_geometry(db, geometry_id=geometry_id)
+    return {'success': True}
 
 
 @app.post(BASE_ROUTE + "/meshes/", response_model=schemas.Mesh)
@@ -359,6 +371,17 @@ def create_comment(comment: schemas.CommentCreate, db: Session = Depends(get_db)
 @app.get(BASE_ROUTE + "/comments/", response_model=List[schemas.Comment])
 def read_comments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_comments(db, skip=skip, limit=limit)
+
+
+@app.get(BASE_ROUTE + "/comments/meta", response_model=List[schemas.CommentMeta])
+def read_comments_meta(db: Session = Depends(get_db)):
+    return crud.retrieve_comment_meta(db)
+
+
+@app.delete(BASE_ROUTE + "/comments/{comment_id}")
+def delete_comment(comment_id: int = 0, db: Session = Depends(get_db)):
+    crud.destroy_comment(db, comment_id=comment_id)
+    return {'success': True}
 
 
 if __name__ == "__main__":

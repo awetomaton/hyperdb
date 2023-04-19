@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { System, NewSystem } from './interfaces/system';
 import { Geometry, NewGeometry } from './interfaces/geometry';
-import { Comment, NewComment } from './interfaces/comment';
+import { Comment, CommentMeta, NewComment } from './interfaces/comment';
 import { Mesh } from './interfaces/mesh';
 import { Tool } from './interfaces/tool';
 import { Country, NewCountry } from './interfaces/country';
@@ -12,6 +12,8 @@ import { Contributor } from './interfaces/contributor';
 import { MessageService } from './message.service';
 import { NewToolGeometryAssociation, ToolGeometryAssociation } from './interfaces/tool_geometry_association';
 import { ConfiguredTool } from './interfaces/configured_tool';
+import { ToolMeshAssociation } from './interfaces/tool_mesh_association';
+import { DeleteResponse } from './interfaces/delete_response';
 
 
 @Injectable({
@@ -56,10 +58,25 @@ export class HyperdbService {
     );
   }
 
+  getCommentsMeta(): Observable<CommentMeta[]> {
+    let url = this.apiUrl + 'comments/meta'
+    return this.http.get<CommentMeta[]>(url)
+    .pipe(
+      catchError(this.handleError<CommentMeta[]>('getComments', []))
+    );
+  }
+
   postComment(comment: NewComment): Observable<Comment> {
     return this.http.post<Comment>(this.apiUrl + 'comments', comment)
       .pipe(
         catchError(this.handleError<Comment>('postComment'))
+      );
+  }
+
+  deleteComment(comment: Comment): Observable<DeleteResponse> {
+    return this.http.delete<DeleteResponse>(this.apiUrl + 'comments/' + comment.id)
+      .pipe(
+        catchError(this.handleError<DeleteResponse>('deleteComment'))
       );
   }
 
@@ -121,10 +138,10 @@ export class HyperdbService {
       );
   }
 
-  deleteSystem(id: number): Observable<null> {
-    return this.http.delete<null>(this.apiUrl + 'systems/' + id)
+  deleteSystem(id: number): Observable<DeleteResponse> {
+    return this.http.delete<DeleteResponse>(this.apiUrl + 'systems/' + id)
       .pipe(
-        catchError(this.handleError<null>('deleteSystems', null))
+        catchError(this.handleError<DeleteResponse>('deleteSystems'))
       );
   }
 
@@ -164,10 +181,10 @@ export class HyperdbService {
       );
   }
 
-  deleteGeometryTools(id: number): Observable<null> {
-    return this.http.delete<null>(this.apiUrl + 'geometries/' + id + "/tools")
+  deleteGeometryTools(id: number): Observable<DeleteResponse> {
+    return this.http.delete<DeleteResponse>(this.apiUrl + 'geometries/' + id + "/tools")
       .pipe(
-        catchError(this.handleError<null>('deleteGeometryTools', null))
+        catchError(this.handleError<DeleteResponse>('deleteGeometryTools'))
       );
   }
   
@@ -175,10 +192,10 @@ export class HyperdbService {
     return this.http.get<Mesh[]>(this.apiUrl + 'geometries/' + id + "/meshes")
   }
 
-  deleteGeometry(id: number): Observable<null> {
-    return this.http.delete<null>(this.apiUrl + 'geometries/' + id)
+  deleteGeometry(id: number): Observable<DeleteResponse> {
+    return this.http.delete<DeleteResponse>(this.apiUrl + 'geometries/' + id)
       .pipe(
-        catchError(this.handleError<null>('deleteGeometry', null))
+        catchError(this.handleError<DeleteResponse>('deleteGeometry'))
       );
   }
 
@@ -186,6 +203,20 @@ export class HyperdbService {
     return this.http.get<Contributor[]>(this.apiUrl + 'contributors')
       .pipe(
         catchError(this.handleError<Contributor[]>('getContributors', []))
+      );
+  }
+
+  getContributor(id: number): Observable<Contributor> {
+    return this.http.get<Contributor>(this.apiUrl + 'contributors/' + id)
+      .pipe(
+        catchError(this.handleError<Contributor>('getContributor'))
+      );
+  }
+
+  getContributorComments(id: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(this.apiUrl + 'contributors/' + id + '/comments')
+      .pipe(
+        catchError(this.handleError<Comment[]>('getContributorComments', []))
       );
   }
 
@@ -200,6 +231,20 @@ export class HyperdbService {
     return this.http.get<ConfiguredTool[]>(this.apiUrl + 'configured-tools')
       .pipe(
         catchError(this.handleError<ConfiguredTool[]>('getConfiguredTools', []))
+      );
+  }
+
+  getToolGeometryAssociations(): Observable<ToolGeometryAssociation[]> {
+    return this.http.get<ToolGeometryAssociation[]>(this.apiUrl + 'tool-geometry-associations')
+      .pipe(
+        catchError(this.handleError<ToolGeometryAssociation[]>('getToolGeometryAssociations', []))
+      );
+  }
+
+  getToolMeshAssociations(): Observable<ToolMeshAssociation[]> {
+    return this.http.get<ToolMeshAssociation[]>(this.apiUrl + 'tool-mesh-associations')
+      .pipe(
+        catchError(this.handleError<ToolMeshAssociation[]>('getToolMeshAssociations', []))
       );
   }
 

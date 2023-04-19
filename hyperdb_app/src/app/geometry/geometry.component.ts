@@ -287,7 +287,10 @@ export class GeometryComponent implements OnInit {
 
   saveAssociations(): void {
     this.hyperdbService.deleteGeometryTools(this.geometry.id)
-    .subscribe(_ => {
+    .subscribe(response => {
+      if (response == undefined) {
+        return;
+      }
       let associations: NewToolGeometryAssociation[] = [];
       for (let toolTree of this.toolTrees) {
         for (let toolVersion of toolTree.toolVersions) {

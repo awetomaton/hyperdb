@@ -1,1 +1,39 @@
-<p>contributors works!</p>
+<h1>Contributors</h1>
+
+<table mat-table [dataSource]="contributorSummaries" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> <a [routerLink]="['/contributors/' + element.contributor.id]">{{element.contributor.name}}</a> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="geometries">
+        <th mat-header-cell *matHeaderCellDef> Geometries </th>
+        <td mat-cell *matCellDef="let element"> {{element.geometries}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tool-geometry-associations">
+        <th mat-header-cell *matHeaderCellDef> Tool Geometry Associations </th>
+        <td mat-cell *matCellDef="let element"> {{element.toolGeometryAssociations}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="meshes">
+        <th mat-header-cell *matHeaderCellDef> Meshes </th>
+        <td mat-cell *matCellDef="let element"> {{element.meshes}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tool-mesh-associations">
+        <th mat-header-cell *matHeaderCellDef> Tool Mesh Associations </th>
+        <td mat-cell *matCellDef="let element"> {{element.toolMeshAssociations}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="comments">
+        <th mat-header-cell *matHeaderCellDef> Comments </th>
+        <td mat-cell *matCellDef="let element"> {{element.comments}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+  

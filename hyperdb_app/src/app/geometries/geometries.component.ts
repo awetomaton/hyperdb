@@ -4,6 +4,7 @@ import { System } from '../interfaces/system';
 import { Geometry } from '../interfaces/geometry';
 import { HyperdbService } from '../hyperdb.service';
 import { ContributorService } from '../contributor.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 export interface GeometrySummary {
@@ -29,7 +30,11 @@ export class GeometriesComponent implements OnInit{
   faTrash = faTrash;
   faPlus = faPlus;
 
-  constructor(private hyperdbService: HyperdbService, public contributorService: ContributorService) { }
+  constructor(
+    private hyperdbService: HyperdbService, 
+    public contributorService: ContributorService,
+    private snackBar: MatSnackBar,
+    ) { }
 
   ngOnInit(): void {
     this.getGeometriesSummary();
@@ -38,7 +43,12 @@ export class GeometriesComponent implements OnInit{
   onDeleteGeometry(geometry: Geometry): void{
     this.hyperdbService.deleteGeometry(geometry.id)
     .subscribe(response => {
-      this.getGeometriesSummary();
+      if (response) {
+        this.snackBar.open("Success", 'Dismiss', {
+          duration: 1000
+        })
+        this.getGeometriesSummary();
+      }
     })
   }
 
