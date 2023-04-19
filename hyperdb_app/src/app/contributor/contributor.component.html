@@ -3,17 +3,41 @@
 <div class="dashboard-row">
     <div class="dashboard-item">
         <h2>Geometries</h2>
+        <mat-nav-list role="list">
+            <div *ngFor="let geometry of geometries" style="display: flex">
+                <a mat-list-item [routerLink]="['/geometries/' + geometry.id]">
+                    {{geometry.file | basename}} <classification [classification]="geometry.classification"></classification>
+                </a>
+            </div>
+        </mat-nav-list>
     </div>
     <div class="dashboard-item">
         <h2>Tool Geometry Associations</h2>
+        <mat-nav-list role="list">
+            <a mat-list-item [routerLink]="['/geometries/' + toolGeometryAssociation.geometry.id]" *ngFor="let toolGeometryAssociation of toolGeometryAssociations">
+                {{toolGeometryAssociation.tool.name}} ({{toolGeometryAssociation.tool.version}}) {{toolGeometryAssociation.configuredTool.name}} - {{toolGeometryAssociation.geometry.file | basename}}
+            </a>
+        </mat-nav-list>
     </div>
 </div>
 <div class="dashboard-row">
     <div class="dashboard-item">
         <h2>Meshes</h2>
+        <mat-nav-list role="list">
+            <div *ngFor="let mesh of meshes" style="display: flex">
+                <a mat-list-item [routerLink]="['/meshes/' + mesh.id]">
+                    {{mesh.file | basename}}
+                </a>
+            </div>
+        </mat-nav-list>
     </div>
     <div class="dashboard-item">
         <h2>Tool Mesh Associations</h2>
+        <mat-nav-list role="list">
+            <a mat-list-item [routerLink]="['/meshes/' + toolMeshAssociation.mesh.id]" *ngFor="let toolMeshAssociation of toolMeshAssociations">
+                {{toolMeshAssociation.tool.name}} ({{toolMeshAssociation.tool.version}}) {{toolMeshAssociation.configuredTool.name}} - {{toolMeshAssociation.mesh.file | basename}}
+            </a>
+        </mat-nav-list>
     </div>
 </div>
 <hyperdb-comments 

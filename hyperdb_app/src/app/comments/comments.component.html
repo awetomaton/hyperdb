@@ -31,10 +31,19 @@
     <div *ngFor="let comment of comments;">
         <mat-divider></mat-divider>
         <h3>
-            <button mat-mini-fab color="warn" *ngIf="contributorService.contributor && comment.contributor_fk == contributorService.contributor.id" (click)="onDeleteComment(comment)">
+            <button 
+            mat-mini-fab color="warn" 
+            *ngIf="contributorService.contributor && comment.contributor_fk == contributorService.contributor.id" 
+            (click)="onDeleteComment(comment)"
+            style="margin-right: 1em">
                 <fa-icon [icon]="faTrash"></fa-icon>
             </button>
-            <strong> {{comment.title}}</strong> - {{getCommentContributorName(comment)}} 
+            <div *ngIf="objectType == 'contributor'" style="display: inline-block">
+                <a [routerLink]="[getRoute(comment)]" style="color:black; text-decoration:none;"><strong> {{comment.title}}</strong> - {{getCommentContributorName(comment)}} </a>
+            </div>
+            <div *ngIf="objectType != 'contributor'" style="display: inline-block">
+                <strong> {{comment.title}}</strong> - {{getCommentContributorName(comment)}} 
+            </div>
         </h3>
         <p>{{comment.body}}</p>
     </div>

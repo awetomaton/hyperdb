@@ -100,6 +100,22 @@ def retrieve_contributor_comments(db: Session, contributor_id: int | None = None
     return db.query(models.Comment).filter(models.Comment.contributor_fk == contributor_id).all()
 
 
+def retrieve_contributor_geometries(db: Session, contributor_id: int | None = None):
+    return db.query(models.Geometry).filter(models.Geometry.contributor_fk == contributor_id).all()
+
+
+def retrieve_contributor_tool_geometry_associations(db: Session, contributor_id: int | None = None):
+    return db.query(models.ToolGeometryAssociation).filter(models.ToolGeometryAssociation.contributor_fk == contributor_id).all()
+
+
+def retrieve_contributor_meshes(db: Session, contributor_id: int | None = None):
+    return db.query(models.Mesh).filter(models.Mesh.contributor_fk == contributor_id).all()
+
+
+def retrieve_contributor_tool_mesh_associations(db: Session, contributor_id: int | None = None):
+    return db.query(models.ToolMeshAssociation).filter(models.ToolMeshAssociation.contributor_fk == contributor_id).all()
+
+
 def create_contributor(db: Session, contributor: schemas.ContributorCreate):
     db_item = models.Contributor(**contributor.dict())
     db.add(db_item)
@@ -294,7 +310,6 @@ def retrieve_comment_meta(db: Session):
         models.Comment.system_fk,
         models.Comment.geometry_fk,
         models.Comment.mesh_fk,
-        models.Comment.tool_mesh_association_fk,
         models.Comment.configured_tool_fk,
         )
     )
@@ -305,7 +320,6 @@ def retrieve_comment_meta(db: Session):
         system_fk = comment.system_fk,
         geometry_fk = comment.geometry_fk,
         mesh_fk = comment.mesh_fk,
-        tool_mesh_association_fk = comment.tool_mesh_association_fk,
         configured_tool_fk = comment.configured_tool_fk,
     ) for comment in comments]
     return comments_meta

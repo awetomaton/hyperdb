@@ -106,7 +106,7 @@ def create_fixtures(
         db.add(item)
         db.commit()
         db.refresh(item)
-    comments = [models.Comment.generate_random(contributors, systems, geometries, meshes, tool_mesh_associations, configured_tools) for _ in range(num_comments)]
+    comments = [models.Comment.generate_random(contributors, systems, geometries, meshes, configured_tools) for _ in range(num_comments)]
     for item in comments:
         db.add(item)
         db.commit()

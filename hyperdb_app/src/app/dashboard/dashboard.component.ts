@@ -1,7 +1,6 @@
 import { Component, OnInit} from '@angular/core';
 import { System } from '../interfaces/system';
 import { Geometry } from '../interfaces/geometry';
-import { Tool } from '../interfaces/tool';
 import { Contributor } from '../interfaces/contributor';
 import { HyperdbService } from '../hyperdb.service';
 
@@ -19,7 +18,7 @@ export class DashboardComponent implements OnInit {
   contributors: Contributor[] = [];
   geometries: Geometry[] = [];
   systems: System[] = [];
-  tools: Tool[] = [];
+  toolNames: string[] = [];
 
   constructor(private hyperdbService: HyperdbService) { }
 
@@ -48,6 +47,14 @@ export class DashboardComponent implements OnInit {
 
   getTools(): void {
     this.hyperdbService.getTools()
-    .subscribe(tools => this.tools = tools);
+    .subscribe(tools => {
+      let toolNames: string[] = [];
+      for (let tool of tools) {
+        if (toolNames.indexOf(tool.name) == -1) {
+          toolNames.push(tool.name);
+        }
+      }
+      this.toolNames = toolNames
+    });
   }
 }

@@ -74,11 +74,24 @@ export class CommentsComponent implements OnInit {
     return name;
   }
 
+  getRoute(comment: Comment): string {
+    let url = '/';
+    if (comment.geometry_fk) {
+      url += 'geometries/' + comment.geometry_fk
+    } else if (comment.system_fk) {
+      url += 'systems/' + comment.system_fk
+    } else if (comment.mesh_fk) {
+      url += 'meshes/' + comment.mesh_fk
+    } else if (comment.configured_tool_fk) {
+      url += 'configured-tools/' + comment.configured_tool_fk
+    }
+    return url;
+  }
+
   save(): void {
     let system_fk: number | null = null;
     let geometry_fk: number | null = null;
     let mesh_fk: number | null = null;
-    let tool_mesh_association_fk: number | null = null;
     let configured_tool_fk: number | null = null;
     if (this.objectType == 'system') {
       system_fk = this.object.id;
@@ -86,8 +99,6 @@ export class CommentsComponent implements OnInit {
       geometry_fk = this.object.id;
     } else if (this.objectType == 'mesh') {
       mesh_fk = this.object.id;
-    } else if (this.objectType == 'tool_mesh_association') {
-      tool_mesh_association_fk = this.object.id;
     } else if (this.objectType == 'configured_tool') {
       configured_tool_fk = this.object.id;
     } else {
@@ -101,7 +112,6 @@ export class CommentsComponent implements OnInit {
       'system_fk': system_fk, 
       'geometry_fk': geometry_fk, 
       'mesh_fk': mesh_fk, 
-      'tool_mesh_association_fk': tool_mesh_association_fk, 
       'configured_tool_fk': configured_tool_fk
     }
     this.hyperdbService.postComment(comment)

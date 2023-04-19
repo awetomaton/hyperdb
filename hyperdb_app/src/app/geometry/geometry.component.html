@@ -48,7 +48,7 @@
         </p>
     </div>
     <div class="dashboard-item" *ngIf="geometry.id != -1">
-        <a mat-button [routerLink]="['/meshes/']" class="button-header"><h2 class="button-header-h">Meshes</h2></a>
+        <h2 class="button-header-h">Meshes</h2>
         <mat-nav-list role="list">
             <a mat-list-item [routerLink]="['/meshes/' + mesh.id]" *ngFor="let mesh of meshes">
                 {{mesh.file}}

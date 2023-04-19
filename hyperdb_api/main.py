@@ -206,6 +206,26 @@ def read_contributor_comments(contributor_id: int, db: Session = Depends(get_db)
     return comments
 
 
+@app.get(BASE_ROUTE + "/contributors/{contributor_id}/geometries", response_model=List[schemas.Geometry])
+def read_contributor_geometries(contributor_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_contributor_geometries(db, contributor_id=contributor_id)
+
+
+@app.get(BASE_ROUTE + "/contributors/{contributor_id}/tool-geometry-associations", response_model=List[schemas.ToolGeometryAssociation])
+def read_contributor_tool_geometry_associations(contributor_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_contributor_tool_geometry_associations(db, contributor_id=contributor_id)
+
+
+@app.get(BASE_ROUTE + "/contributors/{contributor_id}/meshes", response_model=List[schemas.Mesh])
+def read_contributor_meshes(contributor_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_contributor_meshes(db, contributor_id=contributor_id)
+
+
+@app.get(BASE_ROUTE + "/contributors/{contributor_id}/tool-mesh-associations", response_model=List[schemas.ToolMeshAssociation])
+def read_contributor_tool_mesh_associations(contributor_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_contributor_tool_mesh_associations(db, contributor_id=contributor_id)
+
+
 @app.post(BASE_ROUTE + "/geometries/", response_model=schemas.Geometry)
 def create_geometry(geometry: schemas.GeometryCreate, db: Session = Depends(get_db)):
     return crud.create_geometry(db=db, geometry=geometry)

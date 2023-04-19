@@ -220,6 +220,34 @@ export class HyperdbService {
       );
   }
 
+  getContributorGeometries(id: number): Observable<Geometry[]> {
+    return this.http.get<Geometry[]>(this.apiUrl + 'contributors/' + id + '/geometries')
+      .pipe(
+        catchError(this.handleError<Geometry[]>('getContributorGeometries', []))
+      );
+  }
+
+  getContributorToolGeometryAssociations(id: number): Observable<ToolGeometryAssociation[]> {
+    return this.http.get<ToolGeometryAssociation[]>(this.apiUrl + 'contributors/' + id + '/tool-geometry-associations')
+      .pipe(
+        catchError(this.handleError<ToolGeometryAssociation[]>('getContributorToolGeometryAssociations', []))
+      );
+  }
+
+  getContributorMeshes(id: number): Observable<Mesh[]> {
+    return this.http.get<Mesh[]>(this.apiUrl + 'contributors/' + id + '/meshes')
+      .pipe(
+        catchError(this.handleError<Mesh[]>('getContributorMeshes', []))
+      );
+  }
+
+  getContributorToolMeshAssociations(id: number): Observable<ToolMeshAssociation[]> {
+    return this.http.get<ToolMeshAssociation[]>(this.apiUrl + 'contributors/' + id + '/tool-mesh-associations')
+      .pipe(
+        catchError(this.handleError<ToolMeshAssociation[]>('getContributorToolMeshAssociations', []))
+      );
+  }
+
   getTools(): Observable<Tool[]> {
     return this.http.get<Tool[]>(this.apiUrl + 'tools')
       .pipe(

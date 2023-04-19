@@ -29,8 +29,8 @@
     <div class="dashboard-item">
         <a mat-button [routerLink]="['/tools/']" class="button-header"><h2 class="button-header-h">Tools</h2></a>
         <mat-nav-list role="list">
-            <a mat-list-item [routerLink]="['/tools/' + tool.id]" *ngFor="let tool of tools">
-                {{tool.name}}
+            <a mat-list-item [routerLink]="['/tools/' + tool]" *ngFor="let tool of toolNames">
+                {{tool}}
             </a>
         </mat-nav-list>
     </div>

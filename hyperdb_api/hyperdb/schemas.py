@@ -262,7 +262,6 @@ class CommentBase(BaseModel):
     system_fk: int | None = None
     geometry_fk: int | None = None
     mesh_fk: int | None = None
-    tool_mesh_association_fk: int | None = None
     configured_tool_fk: int | None = None
 
 
@@ -283,5 +282,4 @@ class CommentMeta(BaseModel):
     system_fk: int | None = None
     geometry_fk: int | None = None
     mesh_fk: int | None = None
-    tool_mesh_association_fk: int | None = None
     configured_tool_fk: int | None = None

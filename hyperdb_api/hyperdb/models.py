@@ -293,7 +293,6 @@ class Comment(Base, ToDictMixin):
     system_fk = mapped_column(ForeignKey("systems.id", ondelete="CASCADE"), nullable=True)
     geometry_fk = mapped_column(ForeignKey("geometries.id", ondelete="CASCADE"), nullable=True)
     mesh_fk = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"), nullable=True)
-    tool_mesh_association_fk = mapped_column(ForeignKey("tool_mesh_associations.id", ondelete="CASCADE"), nullable=True)
     configured_tool_fk = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"), nullable=True)
 
     @classmethod
@@ -302,7 +301,6 @@ class Comment(Base, ToDictMixin):
                         systems,
                         geometries,
                         meshes,
-                        tool_mesh_associations,
                         configured_tools
                         ):
 
@@ -314,7 +312,6 @@ class Comment(Base, ToDictMixin):
             ("system_fk", random.choice([item.id for item in systems])),
             ("geometry_fk", random.choice([item.id for item in geometries])),
             ("mesh_fk", random.choice([item.id for item in meshes])),
-            ("tool_mesh_association_fk", random.choice([item.id for item in tool_mesh_associations])),
             ("configured_tool_fk", random.choice([item.id for item in configured_tools]))
         ]
         foreign_key_index = random.randint(0, len(foreign_keys)-1)
