@@ -11,7 +11,7 @@
     <div *ngIf="contributorService.contributor">
       <button mat-button [matMenuTriggerFor]="menu">{{contributorService.contributor.name}}</button>
       <mat-menu #menu="matMenu">
-        <a mat-menu-item [routerLink]="['/users/' + contributorService.contributor.id]">
+        <a mat-menu-item [routerLink]="['/contributors/' + contributorService.contributor.id]">
           <mat-icon>face</mat-icon>
           <span>Contributor Page</span>
         </a>

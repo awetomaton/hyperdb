@@ -6,7 +6,7 @@ import { System, NewSystem } from './interfaces/system';
 import { Geometry, NewGeometry } from './interfaces/geometry';
 import { Comment, CommentMeta, NewComment } from './interfaces/comment';
 import { Mesh } from './interfaces/mesh';
-import { Tool } from './interfaces/tool';
+import { NewTool, Tool } from './interfaces/tool';
 import { Country, NewCountry } from './interfaces/country';
 import { Contributor } from './interfaces/contributor';
 import { MessageService } from './message.service';
@@ -248,10 +248,28 @@ export class HyperdbService {
       );
   }
 
-  getTools(): Observable<Tool[]> {
-    return this.http.get<Tool[]>(this.apiUrl + 'tools')
+  getTools(name?: string): Observable<Tool[]> {
+    let url = this.apiUrl + 'tools';
+    if (name) {
+      url += "?name=" + name;
+    }
+    return this.http.get<Tool[]>(url)
       .pipe(
         catchError(this.handleError<Tool[]>('getTools', []))
+      );
+  }
+
+  deleteTool(toolId: number): Observable<DeleteResponse> {
+    return this.http.delete<DeleteResponse>(this.apiUrl + 'tools/' + toolId)
+      .pipe(
+        catchError(this.handleError<DeleteResponse>('deleteTool'))
+      );
+  }
+
+  postTool(tool: NewTool): Observable<Tool> {
+    return this.http.post<Tool>(this.apiUrl + 'tools/', tool, this.httpOptions)
+      .pipe(
+        catchError(this.handleError<Tool>('postTool'))
       );
   }
 

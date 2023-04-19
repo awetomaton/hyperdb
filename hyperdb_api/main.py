@@ -299,9 +299,14 @@ def create_tool(tool: schemas.ToolCreate, db: Session = Depends(get_db)):
 
 
 @app.get(BASE_ROUTE + "/tools/", response_model=List[schemas.Tool])
-def read_tools(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    tools = crud.get_tools(db, skip=skip, limit=limit)
+def read_tools(name: str | None = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    tools = crud.retrieve_tools(db, name=name, skip=skip, limit=limit)
     return tools
+
+
+@app.get(BASE_ROUTE + "/tools/{tool_id}", response_model=schemas.Tool)
+def read_tool(tool_id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_tool(db, id=tool_id)
 
 
 @app.post(BASE_ROUTE + "/cbaero-settings/", response_model=schemas.CBAeroSetting)

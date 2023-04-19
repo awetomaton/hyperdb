@@ -35,6 +35,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { DialogModule } from '@angular/cdk/dialog';
 import { LoginDialog } from './dialogs/login-dialog/login_dialog';
+import { ToolsComponent } from './tools/tools.component';
+import { ToolComponent } from './tool/tool.component';
+import { ToolVersionComponent } from './tool-version/tool-version.component';
 
 
 @NgModule({
@@ -51,7 +54,10 @@ import { LoginDialog } from './dialogs/login-dialog/login_dialog';
     BasenamePipe,
     ContributorsComponent,
     ContributorComponent,
-    LoginDialog
+    LoginDialog,
+    ToolsComponent,
+    ToolComponent,
+    ToolVersionComponent
   ],
   imports: [
     BrowserModule,

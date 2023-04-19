@@ -1,0 +1,68 @@
+<h1>
+    <span *ngIf="!newTool">{{tool.name}} Details</span>
+    <span *ngIf="newTool">Create New Tool</span>
+</h1>
+<div class="dashboard-row">
+    <div *ngIf="newTool" class="dashboard-item dashboard-item-centered">
+        <h2>Properties</h2>
+        <form>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>Tool Name</mat-label>
+                    <input matInput placeholder="Tool Name" [(ngModel)]="tool.name" name="name">
+                    <button *ngIf="tool.name" matSuffix mat-icon-button aria-label="Clear" (click)="tool.name=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>Tool Version</mat-label>
+                    <input matInput placeholder="(x.y.z)" [(ngModel)]="tool.version" name="version">
+                    <button *ngIf="tool.version" matSuffix mat-icon-button aria-label="Clear" (click)="tool.version=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </p>
+        </form>
+        <mat-divider></mat-divider>
+        <p style="display: flex; justify-content: right; margin-top: 1em;">
+            <button
+                mat-raised-button color="primary" 
+                (click)="saveTool()" 
+                [disabled]="(!tool.version || !tool.name) || !contributorService.contributor">Save
+            </button>
+        </p>
+    </div>
+    <div *ngIf="!newTool">
+        <div class="button-row">
+            <a mat-raised-button color="primary" [routerLink]="['/tools/' +  tool.name + '/new']">Add <fa-icon [icon]="faPlus"></fa-icon></a>
+        </div>
+        <table mat-table [dataSource]="toolVersionSummaries" class="mat-elevation-z8">
+        
+            <ng-container matColumnDef="version">
+                <th mat-header-cell *matHeaderCellDef> Version </th>
+                <td mat-cell *matCellDef="let element"> 
+                    <a [routerLink]="['/tools/' + element.tool.name + '/' + element.tool.version]">{{element.tool.version}}</a> 
+                </td>
+            </ng-container>
+        
+            <ng-container matColumnDef="configurations">
+                <th mat-header-cell *matHeaderCellDef> Configurations </th>
+                <td mat-cell *matCellDef="let element"> {{element.configurations}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef> Delete </th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-mini-fab color="warn" (click)="onDeleteToolVersion(element.tool)">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                </td>
+            </ng-container>
+        
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+</div>

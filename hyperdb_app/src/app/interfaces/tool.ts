@@ -3,3 +3,9 @@ export interface Tool {
     name: string;
     version: string;
 }
+
+
+export interface NewTool {
+    name: string;
+    version: string;
+}

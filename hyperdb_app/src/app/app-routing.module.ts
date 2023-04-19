@@ -7,6 +7,9 @@ import { GeometriesComponent } from './geometries/geometries.component';
 import { GeometryComponent } from './geometry/geometry.component';
 import { ContributorsComponent } from './contributors/contributors.component';
 import { ContributorComponent } from './contributor/contributor.component';
+import { ToolsComponent } from './tools/tools.component';
+import { ToolComponent } from './tool/tool.component';
+import { ToolVersionComponent } from './tool-version/tool-version.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -15,7 +18,10 @@ const routes: Routes = [
   { path: 'geometries', component: GeometriesComponent },
   { path: 'geometries/:id', component: GeometryComponent },
   { path: 'systems', component: SystemsComponent },
-  { path: 'systems/:id', component: SystemComponent }
+  { path: 'systems/:id', component: SystemComponent },
+  { path: 'tools', component: ToolsComponent },
+  { path: 'tools/:name', component: ToolComponent },
+  { path: 'tools/:name/:version', component: ToolVersionComponent },
 ];
 
 @NgModule({

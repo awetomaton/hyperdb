@@ -157,7 +157,6 @@ export class SystemComponent implements OnInit {
         });
       })
     }
-    
   }
 
   getComments(): void{

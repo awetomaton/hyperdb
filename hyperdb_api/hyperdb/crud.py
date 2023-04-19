@@ -194,8 +194,15 @@ def create_mesh(db: Session, mesh: schemas.MeshCreate):
     return db_item
 
 
-def get_tools(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Tool).offset(skip).limit(limit).all()
+def retrieve_tools(db: Session, name: str | None = None, skip: int = 0, limit: int = 100):
+    query = db.query(models.Tool) 
+    if name is not None:
+        query = query.filter(models.Tool.name == name)
+    return query.offset(skip).limit(limit).all()
+
+
+def retrieve_tool(db: Session, id: int):
+    return db.query(models.Tool).filter(models.Tool.id == id).first()
 
 
 def create_tool(db: Session, tool: schemas.ToolCreate):
