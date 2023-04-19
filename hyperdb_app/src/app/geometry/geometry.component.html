@@ -15,16 +15,7 @@
                 <span> {{geometry.file | basename}}</span>
             </div>
             <p></p>
-            <p>
-                <mat-form-field appearance="fill">
-                    <mat-label>Contributor</mat-label>
-                    <mat-select [formControl]="contributorControl">
-                        <mat-option *ngFor="let contributor of contributors" [value]="contributor.name">
-                            {{contributor.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </p>
+            <h3 *ngIf="geometry.id != -1">Contributor: {{contributor.name}}</h3>
             <p>
                 <mat-form-field appearance="fill">
                     <mat-label>System</mat-label>
@@ -49,7 +40,7 @@
             <button
                 mat-raised-button color="primary" 
                 (click)="saveProperties()" 
-                [disabled]="!geometryForm.valid && this.geometry.file">Save
+                [disabled]="(!geometryForm.valid && this.geometry.file) || !contributorService.contributor">Save
             </button>
         </p>
     </div>
@@ -96,7 +87,7 @@
             <button
                 mat-raised-button color="primary" 
                 (click)="saveAssociations()" 
-                [disabled]="!geometryForm.valid && this.geometry.file">Save
+                [disabled]="!contributorService.contributor">Save
             </button>
         </p>
     </div>

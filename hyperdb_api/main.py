@@ -331,7 +331,8 @@ def create_tool_geometry_association(tool_geometry_association: schemas.ToolGeom
 @app.post(BASE_ROUTE + "/tool-geometry-associations-bulk/", response_model=List[schemas.ToolGeometryAssociation])
 def create_tool_geometry_associations(
     associations: List[schemas.ToolGeometryAssociationCreate], 
-    db: Session = Depends(get_db)):
+    db: Session = Depends(get_db)
+):
     return crud.create_tool_geometry_associations(db, associations)
 
 

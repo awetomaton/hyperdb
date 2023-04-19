@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Comment, NewComment } from '../interfaces/comment';
 import { HyperdbService } from '../hyperdb.service';
 import { Contributor } from '../interfaces/contributor';
+import { ContributorService } from '../contributor.service';
 
 
 @Component({
@@ -18,14 +19,11 @@ export class CommentsComponent implements OnInit {
   @Input() object: any;
   @Input() objectType: string;
   @Output() postedComment = new EventEmitter<null>();
-  contributors: Contributor[];
+  contributors: Contributor[] = [];
   contributorsById: Object;
   commentTitleControl = new FormControl('title', [
     Validators.required,
     Validators.minLength(1),
-  ])
-  contributorControl = new FormControl('contributor', [
-    Validators.required,
   ])
   commentBodyControl = new FormControl('body', [
     Validators.required,
@@ -33,11 +31,10 @@ export class CommentsComponent implements OnInit {
   ])
   commentForm = new FormGroup({
     title: this.commentTitleControl,
-    contributor: this.contributorControl,
     body: this.commentBodyControl,
   });
 
-  constructor(private hyperdbService: HyperdbService){}
+  constructor(private hyperdbService: HyperdbService, public contributorService: ContributorService){}
 
   ngOnInit(): void {
     this.commentForm.reset();
@@ -59,13 +56,6 @@ export class CommentsComponent implements OnInit {
   }
 
   save(): void {
-    let contributor_fk: number = -1;
-    for (let contributor of this.contributors) {
-      if (this.contributorControl.value == contributor.name){
-        contributor_fk = contributor.id;
-        break;
-      }
-    }
     let system_fk: number | null = null;
     let geometry_fk: number | null = null;
     let mesh_fk: number | null = null;
@@ -88,7 +78,7 @@ export class CommentsComponent implements OnInit {
     let comment: NewComment = {
       'title': this.commentTitleControl.value == null ? '': this.commentTitleControl.value , 
       'body': this.commentBodyControl.value == null ? '': this.commentBodyControl.value, 
-      'contributor_fk': contributor_fk, 
+      'contributor_fk': this.contributorService.contributor == null ? -1: this.contributorService.contributor.id, 
       'system_fk': system_fk, 
       'geometry_fk': geometry_fk, 
       'mesh_fk': mesh_fk, 

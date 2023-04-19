@@ -13,6 +13,7 @@ import { ToolTree } from '../interfaces/tool_tree';
 import { ToolVersion } from '../interfaces/tool_version';
 import { AssociatedConfiguredTool } from '../interfaces/configured_tool';
 import { NewToolGeometryAssociation }  from '../interfaces/tool_geometry_association';
+import { ContributorService } from '../contributor.service';
 
 
 @Component({
@@ -27,15 +28,12 @@ export class GeometryComponent implements OnInit {
   uploadProgress: number;
   comments: Comment[] = [];
   systems: System[] = [];
-  contributors: Contributor[] = [];
+  contributor: Contributor = {'email': '', 'id': -1, 'name': ''};
   geometry: Geometry = {'id': -1, 'file': '', 'contributor_fk': -1, 'system_fk': -1, 'classification': ''};
   meshes: Mesh[] = [];
   toolTrees: ToolTree[] = [];
   fileFormData: FormData | null;
   fileControl = new FormControl('file', [
-    Validators.required,
-  ])
-  contributorControl = new FormControl('contributor', [
     Validators.required,
   ])
   systemControl = new FormControl('system', [
@@ -47,12 +45,16 @@ export class GeometryComponent implements OnInit {
   ])
   geometryForm = new FormGroup({
     file: this.fileControl,
-    contributor: this.contributorControl,
     system: this.systemControl,
     classification: this.classificationControl,
   });
 
-  constructor(private route: ActivatedRoute, private hyperdbService: HyperdbService, private router: Router, private snackBar: MatSnackBar){
+  constructor(
+    private route: ActivatedRoute, 
+    private hyperdbService: HyperdbService, 
+    private router: Router,
+    private snackBar: MatSnackBar,
+    public contributorService: ContributorService) {
     this.route.params.subscribe( params => {
       let id: number;
       if (params['id'] != 'new') {
@@ -83,11 +85,10 @@ export class GeometryComponent implements OnInit {
         .subscribe(contributors => {
           for (let contributor of contributors) {
             if (contributor.id == geometry.contributor_fk) {
-              this.contributorControl.setValue(contributor.name);
+              this.contributor = contributor;
               break;
             } 
           }
-          this.contributors = contributors;
         })
         
         this.hyperdbService.getTools()
@@ -126,15 +127,19 @@ export class GeometryComponent implements OnInit {
                     }
                     associatedConfiguredTools.push(associatedConfiguredTool);
                   }
-                  let toolVersion: ToolVersion = {
-                    'id': tool.id,
-                    'version': tool.version,
-                    'configurations': associatedConfiguredTools
-                  };
-                  toolVersions.push(toolVersion);
+                  if (associatedConfiguredTools.length) {
+                    let toolVersion: ToolVersion = {
+                      'id': tool.id,
+                      'version': tool.version,
+                      'configurations': associatedConfiguredTools
+                    };
+                    toolVersions.push(toolVersion);
+                  }
                 }
-                let toolTree: ToolTree = {'name': toolName, 'toolVersions': toolVersions}
-                toolTrees.push(toolTree);
+                if (toolVersions.length) {
+                  let toolTree: ToolTree = {'name': toolName, 'toolVersions': toolVersions}
+                  toolTrees.push(toolTree);
+                }
               }
               this.toolTrees = toolTrees;
             })
@@ -155,11 +160,6 @@ export class GeometryComponent implements OnInit {
       this.hyperdbService.getSystems()
       .subscribe(systems => {
         this.systems = systems;
-      })
-
-      this.hyperdbService.getContributors()
-      .subscribe(contributors => {
-        this.contributors = contributors;
       })
     }
   }
@@ -247,13 +247,6 @@ export class GeometryComponent implements OnInit {
   }
 
   saveGeometry(): void {
-    let contributorFk = -1
-    for (let contributor of this.contributors) {
-      if (contributor.name == this.contributorControl.value){
-        contributorFk = contributor.id;
-        break;
-      }
-    }
     let systemFk = -1
     for (let system of this.systems) {
       if (system.name == this.systemControl.value){
@@ -265,7 +258,7 @@ export class GeometryComponent implements OnInit {
     if (this.geometry.id == -1){
       let newGeometry: NewGeometry = {
         'file': this.geometry.file,
-        'contributor_fk': contributorFk,
+        'contributor_fk': this.contributorService.contributor == null ? -1: this.contributorService.contributor.id,
         'system_fk': systemFk,
         'classification': this.classificationControl.value == null ? '': this.classificationControl.value
       }
@@ -278,7 +271,7 @@ export class GeometryComponent implements OnInit {
       let newGeometry: Geometry = {
         'id': this.geometry.id,
         'file': this.geometry.file,
-        'contributor_fk': contributorFk,
+        'contributor_fk': this.contributor.id,
         'system_fk': systemFk,
         'classification': this.classificationControl.value == null ? '': this.classificationControl.value
       }
@@ -303,7 +296,7 @@ export class GeometryComponent implements OnInit {
               associations.push({
                 'configured_tool_fk': associatedConfiguredTool.configuredTool.id,
                 'geometry_fk': this.geometry.id,
-                'contributor_fk': -1,
+                'contributor_fk': this.contributorService.contributor == null ? -1: this.contributorService.contributor.id,
               })
             }
           }
@@ -312,9 +305,11 @@ export class GeometryComponent implements OnInit {
       
       this.hyperdbService.postToolGeometryAssociations(associations)
       .subscribe(savedAssociations => {
-        this.snackBar.open("Success", 'Dismiss', {
-          duration: 1000
-        })
+        if (savedAssociations) {
+          this.snackBar.open("Success", 'Dismiss', {
+            duration: 1000
+          })
+        }
       })
     })
   }

@@ -1,7 +1,7 @@
 <h1>Systems</h1>
 
 <div class="button-row">
-    <a mat-raised-button color="primary" [routerLink]="['/systems/new']">Add <fa-icon [icon]="faPlus"></fa-icon></a>
+    <a mat-raised-button color="primary" [disabled]="!contributorService.contributor" [routerLink]="['/systems/new']">Add <fa-icon [icon]="faPlus"></fa-icon></a>
 </div>
 <table mat-table [dataSource]="systemsSummary" class="mat-elevation-z8">
 
@@ -40,7 +40,7 @@
     <ng-container matColumnDef="delete">
         <th mat-header-cell *matHeaderCellDef> Delete </th>
         <td mat-cell *matCellDef="let element">
-            <button mat-mini-fab color="warn" (click)="onDeleteSystem(element.system)">
+            <button mat-mini-fab color="warn" [disabled]="!contributorService.contributor" (click)="onDeleteSystem(element.system)">
                 <fa-icon [icon]="faTrash"></fa-icon>
             </button>
         </td>

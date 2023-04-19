@@ -3,6 +3,7 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { System } from '../interfaces/system';
 import { Geometry } from '../interfaces/geometry';
 import { HyperdbService } from '../hyperdb.service';
+import { ContributorService } from '../contributor.service';
 
 
 export interface GeometrySummary {
@@ -28,7 +29,7 @@ export class GeometriesComponent implements OnInit{
   faTrash = faTrash;
   faPlus = faPlus;
 
-  constructor(private hyperdbService: HyperdbService) { }
+  constructor(private hyperdbService: HyperdbService, public contributorService: ContributorService) { }
 
   ngOnInit(): void {
     this.getGeometriesSummary();

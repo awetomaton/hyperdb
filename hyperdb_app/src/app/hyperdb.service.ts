@@ -34,8 +34,8 @@ export class HyperdbService {
     );
   }
 
-  me(httpOptions: {}): Observable<Contributor> {
-    return this.http.get<Contributor>(this.apiUrl + 'me/', httpOptions)
+  me(): Observable<Contributor> {
+    return this.http.get<Contributor>(this.apiUrl + 'me/', this.httpOptions)
     .pipe(
       catchError(this.handleError<Contributor>('me'))
     );

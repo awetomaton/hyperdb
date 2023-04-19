@@ -32,6 +32,7 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
 import { ContributorsComponent } from './contributors/contributors.component';
 import { ContributorComponent } from './contributor/contributor.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { DialogModule } from '@angular/cdk/dialog';
 import { LoginDialog } from './dialogs/login-dialog/login_dialog';
 
@@ -76,6 +77,7 @@ import { LoginDialog } from './dialogs/login-dialog/login_dialog';
     MatDialogModule,
     MatSnackBarModule,
     FontAwesomeModule,
+    MatMenuModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

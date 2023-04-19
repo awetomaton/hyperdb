@@ -3,11 +3,15 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HyperdbService } from '../../hyperdb.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpHeaders } from '@angular/common/http';
+import { ContributorService } from 'src/app/contributor.service';
 
 
 @Component({
     selector: 'login-dialog',
     templateUrl: 'login-dialog.html',
+    styleUrls: [
+        '../../app.component.scss',
+      ]
   })
   export class LoginDialog {
     emailControl = new FormControl('email', [
@@ -21,7 +25,10 @@ import { HttpHeaders } from '@angular/common/http';
         password: this.passwordControl,
     })
 
-    constructor(public dialogRef: MatDialogRef<LoginDialog>, private hyperdbService: HyperdbService) {
+    constructor(
+        public dialogRef: MatDialogRef<LoginDialog>, 
+        private hyperdbService: HyperdbService, 
+        private contributorService: ContributorService) {
         this.loginForm.reset();
     }
 
@@ -37,8 +44,10 @@ import { HttpHeaders } from '@angular/common/http';
                     Authorization: 'Bearer ' + access_token
                 })
             };
-            this.hyperdbService.me(httpOptions).subscribe(me => {
-                console.log(me);
+            this.hyperdbService.httpOptions = httpOptions;
+            this.hyperdbService.me().subscribe(me => {
+                this.contributorService.contributor = me;
+                this.dialogRef.close();
             })
         })
     }

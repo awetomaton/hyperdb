@@ -258,10 +258,10 @@ def create_tool_geometry_association(db: Session, tool_geometry_association: sch
 
 
 def create_tool_geometry_associations(db: Session, associations: List[schemas.ToolGeometryAssociationCreate]):
-    db_items = [models.Geometry(**association.dict()) for association in associations]
-    db.bulk_save_objects(db_items)
-    db.commit()
+    db_items = [models.ToolGeometryAssociation(**association.dict()) for association in associations]
     for db_item in db_items:
+        db.add(db_item)
+        db.commit()
         db.refresh(db_item)
     return db_items
 

@@ -3,6 +3,7 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { HyperdbService } from '../hyperdb.service';
 import { Country } from '../interfaces/country';
 import { System } from '../interfaces/system';
+import { ContributorService } from '../contributor.service';
 
 
 export interface SystemsSummary {
@@ -29,7 +30,7 @@ export class SystemsComponent implements OnInit {
   faTrash = faTrash;
   faPlus = faPlus;
 
-  constructor(private hyperdbService: HyperdbService) { }
+  constructor(private hyperdbService: HyperdbService, public contributorService: ContributorService) { }
 
   ngOnInit(): void {
     this.getSystemsSummary();
