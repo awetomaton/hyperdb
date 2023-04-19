@@ -29,6 +29,16 @@ export class HyperdbService {
 
   login(form: FormData): Observable<any> {
     return this.http.post(this.apiUrl + 'token', form)
+    .pipe(
+      catchError(this.handleError<null>('login', null))
+    );
+  }
+
+  me(httpOptions: {}): Observable<Contributor> {
+    return this.http.get<Contributor>(this.apiUrl + 'me/', httpOptions)
+    .pipe(
+      catchError(this.handleError<Contributor>('me'))
+    );
   }
 
   uploadGeometry(form: FormData): Observable<any> {

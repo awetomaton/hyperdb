@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HyperdbService } from '../../hyperdb.service';
 import { MatDialogRef } from '@angular/material/dialog';
+import { HttpHeaders } from '@angular/common/http';
 
 
 @Component({
@@ -30,6 +31,15 @@ import { MatDialogRef } from '@angular/material/dialog';
         fileFormData.append("password", this.passwordControl.value == null ? '': this.passwordControl.value);
         this.hyperdbService.login(fileFormData).subscribe(response => {
             let access_token = response['access_token'];
+            const httpOptions = {
+                headers: new HttpHeaders({
+                    'Content-Type':  'application/json',
+                    Authorization: 'Bearer ' + access_token
+                })
+            };
+            this.hyperdbService.me(httpOptions).subscribe(me => {
+                console.log(me);
+            })
         })
     }
   }
