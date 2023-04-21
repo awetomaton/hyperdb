@@ -266,7 +266,7 @@ class AeroResult(Base, ToDictMixin):
     alpha = Column(Float)
     lift_coefficient = Column(Float)
     drag_coefficient = Column(Float)
-    configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id"))
+    configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"))
     mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"))
 
     @classmethod

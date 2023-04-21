@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'tools/:name/:version', component: ToolVersionComponent },
   { path: 'tools/:name/:version/configurations/new', component: NewConfiguredToolComponent },
   { path: 'tools/:name/:version/configurations/:id', component: ConfiguredToolComponent },
-  { path: 'meshes/new', component: NewMeshComponent },
+  { path: 'geometries/:id/meshes/new', component: NewMeshComponent },
   { path: 'meshes/:id', component: MeshComponent },
   { path: 'meshes/:mesh_id/tool-results/:configured_tool_id', component: MeshToolResultsComponent },
   { path: '**', redirectTo: '' },

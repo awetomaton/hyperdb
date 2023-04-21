@@ -35,6 +35,7 @@
             </a>
             <button 
             mat-mini-fab color="warn" 
+            [disabled]="!contributorService.contributor"
             (click)="onDeleteConfiguration(configuredTool)">
                 <fa-icon [icon]="faTrash"></fa-icon>
             </button>

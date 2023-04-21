@@ -14,6 +14,7 @@ import { ToolVersion } from '../interfaces/tool_version';
 import { AssociatedConfiguredTool } from '../interfaces/configured_tool';
 import { NewToolGeometryAssociation }  from '../interfaces/tool_geometry_association';
 import { ContributorService } from '../contributor.service';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class GeometryComponent implements OnInit {
   meshes: Mesh[] = [];
   toolTrees: ToolTree[] = [];
   fileFormData: FormData | null;
+  faPlus = faPlus;
   fileControl = new FormControl('file', [
     Validators.required,
   ])
@@ -73,11 +75,13 @@ export class GeometryComponent implements OnInit {
         this.classificationControl.setValue(this.geometry.classification);
         this.hyperdbService.getSystems()
         .subscribe(systems => {
-          for (let system of systems) {
-            this.systemControl.setValue(system.name);
-            break;
-          }
           this.systems = systems;
+          for (let system of systems) {
+            if (system.id == geometry.system_fk) {
+              this.systemControl.setValue(system.name);
+              break;
+            }
+          }
         })
 
         this.hyperdbService.getContributors()

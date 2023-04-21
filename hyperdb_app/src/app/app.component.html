@@ -2,6 +2,9 @@
   <strong>
     <a [routerLink]="['/']" style="color:black; text-decoration:none;">HyperDB</a>
   </strong>
+  <div class="navbar-logo">
+    <img src="/assets/US-NationalGeospatialIntelligenceAgency-2008Seal.svg.png">
+  </div>
   <div class="user-control">
     <button mat-raised-button (click)="openDialog('0ms', '0ms')" *ngIf="!contributorService.contributor">
       <strong>
@@ -12,7 +15,7 @@
       <button mat-button [matMenuTriggerFor]="menu">{{contributorService.contributor.name}}</button>
       <mat-menu #menu="matMenu">
         <a mat-menu-item [routerLink]="['/contributors/' + contributorService.contributor.id]">
-          <mat-icon>face</mat-icon>
+          <mat-icon>face</mat-icon>108064
           <span>Contributor Page</span>
         </a>
         <button mat-menu-item (click)="contributorService.contributor = null;">

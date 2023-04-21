@@ -1,1 +1,29 @@
-<p>new-mesh works!</p>
+<h1>
+    <span>Create New Mesh</span>
+</h1>
+<div class="dashboard-row">
+    <div class="dashboard-item dashboard-item-centered">
+        <h3>Geometry: {{geometry.file | basename}}</h3>
+        <input 
+        type="file" 
+        style="display: none" 
+        (change)="onFileSelected($event)" 
+        [disabled]="!contributorService.contributor"
+        #fileUpload>
+        <div class="file-upload">
+            <button mat-mini-fab color="primary" class="upload-btn"
+            (click)="fileUpload.click()">
+                <mat-icon>attach_file</mat-icon>
+            </button>
+            <span> Mesh File: {{newMesh.file | basename}}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <p style="display: flex; justify-content: right; margin-top: 1em;">
+            <button
+                mat-raised-button color="primary" 
+                (click)="onSave()" 
+                [disabled]="!contributorService.contributor || invalidMesh()">Save
+            </button>
+        </p>
+    </div>
+</div>

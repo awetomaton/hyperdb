@@ -295,6 +295,12 @@ def retrieve_configured_tool(db: Session, id: int):
     return db.query(models.ConfiguredTool).filter(models.ConfiguredTool.id == id).first()
 
 
+def destroy_configured_tool(db: Session, id: int):
+    configured_tool = db.query(models.ConfiguredTool).filter(models.ConfiguredTool.id == id).first()
+    db.delete(configured_tool)
+    db.commit()
+
+
 def retrieve_configured_tool_comments(db: Session, id: int):
     return db.query(models.Comment).filter(models.Comment.configured_tool_fk == id).all()
 

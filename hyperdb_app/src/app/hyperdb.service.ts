@@ -5,7 +5,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { System, NewSystem } from './interfaces/system';
 import { Geometry, NewGeometry } from './interfaces/geometry';
 import { Comment, CommentMeta, NewComment } from './interfaces/comment';
-import { Mesh } from './interfaces/mesh';
+import { Mesh, NewMesh } from './interfaces/mesh';
 import { NewTool, Tool } from './interfaces/tool';
 import { Country, NewCountry } from './interfaces/country';
 import { Contributor } from './interfaces/contributor';
@@ -49,6 +49,13 @@ export class HyperdbService {
 
   uploadGeometry(form: FormData): Observable<any> {
     return this.http.post(this.apiUrl + 'upload-geometry/', form, {
+        reportProgress: true,
+        observe: 'events'
+    })
+  }
+
+  uploadMesh(form: FormData): Observable<any> {
+    return this.http.post(this.apiUrl + 'upload-mesh/', form, {
         reportProgress: true,
         observe: 'events'
     })
@@ -116,6 +123,13 @@ export class HyperdbService {
     return this.http.get<Mesh>(this.apiUrl + 'meshes/' + id)
       .pipe(
         catchError(this.handleError<Mesh>('getMesh'))
+      );
+  }
+
+  postMesh(newMesh: NewMesh): Observable<Mesh> {
+    return this.http.post<Mesh>(this.apiUrl + 'meshes/', newMesh, this.httpOptions)
+      .pipe(
+        catchError(this.handleError<Mesh>('postMesh'))
       );
   }
 

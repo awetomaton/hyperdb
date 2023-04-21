@@ -409,6 +409,12 @@ def read_configured_tool(id:int, db: Session = Depends(get_db)):
     return crud.retrieve_configured_tool(db, id=id)
 
 
+@app.delete(BASE_ROUTE + "/configured-tools/{id}")
+def delete_configured_tool(id:int, db: Session = Depends(get_db)):
+    crud.destroy_configured_tool(db, id=id)
+    return {"success": True}
+
+
 @app.get(BASE_ROUTE + "/configured-tools/{id}/meshes", response_model=List[schemas.Mesh])
 def read_configured_tool_meshes(id:int, db: Session = Depends(get_db)):
     return crud.retrieve_configured_tool_meshes(db, id=id)

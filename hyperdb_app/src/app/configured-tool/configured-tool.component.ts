@@ -53,10 +53,6 @@ export class ConfiguredToolComponent {
     })
   }
 
-  save(): void {
-
-  }
-
   getComments(): void{
     this.hyperdbService.getConfiguredToolComments(this.configuredTool.id)
     .subscribe(comments => {
