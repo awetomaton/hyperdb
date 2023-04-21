@@ -225,8 +225,12 @@ def create_tool(db: Session, tool: schemas.ToolCreate):
     return db_item
 
 
-def get_cbaero_settings(db: Session, skip: int = 0, limit: int = 100):
+def retrieve_cbaero_settings(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.CBAeroSetting).offset(skip).limit(limit).all()
+
+
+def retrieve_cbaero_setting(db: Session, id: int):
+    return db.query(models.CBAeroSetting).filter(models.CBAeroSetting.id == id).first()
 
 
 def create_cbaero_setting(db: Session, cbaero_setting: schemas.CBAeroSettingCreate):
@@ -237,8 +241,12 @@ def create_cbaero_setting(db: Session, cbaero_setting: schemas.CBAeroSettingCrea
     return db_item
 
 
-def get_cart3d_settings(db: Session, skip: int = 0, limit: int = 100):
+def retrieve_cart3d_settings(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Cart3DSetting).offset(skip).limit(limit).all()
+
+
+def retrieve_cart3d_setting(db: Session, id: int):
+    return db.query(models.Cart3DSetting).filter(models.Cart3DSetting.id == id).first()
 
 
 def create_cart3d_setting(db: Session, cart3d_setting: schemas.Cart3DSettingCreate):
@@ -249,8 +257,12 @@ def create_cart3d_setting(db: Session, cart3d_setting: schemas.Cart3DSettingCrea
     return db_item
 
 
-def get_tool_settings(db: Session, skip: int = 0, limit: int = 100):
+def retrieve_tool_settings(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.ToolSetting).offset(skip).limit(limit).all()
+
+
+def retrieve_tool_setting(db: Session, id: int):
+    return db.query(models.ToolSetting).filter(models.ToolSetting.id == id).first()
 
 
 def create_tool_setting(db: Session, tool_setting: schemas.ToolSettingCreate):
@@ -261,8 +273,16 @@ def create_tool_setting(db: Session, tool_setting: schemas.ToolSettingCreate):
     return db_item
 
 
-def get_configured_tools(db: Session, skip: int = 0, limit: int = 100):
+def retrieve_configured_tools(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.ConfiguredTool).offset(skip).limit(limit).all()
+
+
+def retrieve_configured_tool(db: Session, id: int):
+    return db.query(models.ConfiguredTool).filter(models.ConfiguredTool.id == id).first()
+
+
+def retrieve_configured_tool_comments(db: Session, id: int):
+    return db.query(models.Comment).filter(models.Comment.configured_tool_fk == id).all()
 
 
 def retrieve_configured_tool_geometry_associations(db: Session, id: int):

@@ -21,7 +21,6 @@ export interface GeometrySummary {
   templateUrl: './geometries.component.html',
   styleUrls: [
     './geometries.component.scss',
-    '../app.component.scss',
   ]
 })
 export class GeometriesComponent implements OnInit{

@@ -31,7 +31,6 @@ export interface LabeledToolMeshAssociation{
   templateUrl: './contributor.component.html',
   styleUrls: [
     './contributor.component.scss',
-    '../app.component.scss',
   ]
 })
 export class ContributorComponent {

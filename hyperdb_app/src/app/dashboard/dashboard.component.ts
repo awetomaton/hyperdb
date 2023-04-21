@@ -10,8 +10,6 @@ import { HyperdbService } from '../hyperdb.service';
   templateUrl: './dashboard.component.html',
   styleUrls: [
     './dashboard.component.scss',
-    '../app.component.scss',
-    '../classification.scss'
   ],
 })
 export class DashboardComponent implements OnInit {

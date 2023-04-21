@@ -9,14 +9,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Geometry } from '../interfaces/geometry';
+import { ContributorService } from '../contributor.service';
 
 
 @Component({
   selector: 'hyperdb-system',
   templateUrl: './system.component.html',
   styleUrls: [
-    './system.component.scss',
-    '../app.component.scss',
+    './system.component.scss'
   ]
 })
 export class SystemComponent implements OnInit {
@@ -42,7 +42,9 @@ export class SystemComponent implements OnInit {
     private route: ActivatedRoute, 
     private hyperdbService: HyperdbService, 
     private router: Router, 
-    private snackBar: MatSnackBar){
+    private snackBar: MatSnackBar,
+    public contributorService: ContributorService, 
+    ){
 
     this.route.params.subscribe( params => {
       let id: number;

@@ -26,6 +26,9 @@
     </div>
     <div class="dashboard-item dashboard-item-centered" *ngIf="!newTool">
         <h2 class="button-header-h">Configurations</h2>
+        <div class="button-row">
+            <a mat-raised-button color="primary" [disabled]="!contributorService.contributor" [routerLink]="['configurations/new']">Add <fa-icon [icon]="faPlus"></fa-icon></a>
+        </div>
         <mat-nav-list *ngFor="let configuredTool of configuredTools" role="list" style="display: flex;">
             <a mat-list-item [routerLink]="['configurations/' + configuredTool.id]">
                 {{configuredTool.name}}

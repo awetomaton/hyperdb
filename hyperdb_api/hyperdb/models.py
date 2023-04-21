@@ -1,7 +1,8 @@
+import enum
 from typing import List
 import lorem
 import pycountry
-from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float, Enum, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, validates
 from names import get_full_name
 import random
@@ -52,9 +53,9 @@ class Contributor(Base, ToDictMixin):
     __tablename__ = "contributors"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name = Column(Text)
-    password = Column(Text)
-    email = Column(Text, unique=True)
+    name = Column(String(128))
+    password = Column(String(128))
+    email = Column(String(128), unique=True)
 
     @classmethod
     def generate_random(cls, name=None):
@@ -133,13 +134,11 @@ class CBAeroSetting(Base, ToDictMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     conf_file = Column(String(128))
-    hash = Column(String(128), unique=True)
 
     @classmethod
     def generate_random(cls):
         conf_file = get_full_name().lower().replace(" ", "_") + ".conf"
-        hash = str(random.randint(0, 100000))
-        return cls(conf_file=conf_file, hash=hash)
+        return cls(conf_file=conf_file)
 
 
 class Cart3DSetting(Base, ToDictMixin):
@@ -150,23 +149,26 @@ class Cart3DSetting(Base, ToDictMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     cntl_file = Column(String(128))
-    hash = Column(String(128), unique=True)
+    
 
     @classmethod
     def generate_random(cls):
         cntl_file = get_full_name().lower().replace(" ", "_") + ".cntl"
-        hash = str(random.randint(0, 100000))
-        return cls(cntl_file=cntl_file, hash=hash)
+        return cls(cntl_file=cntl_file)
 
 
 class ToolSetting(Base, ToDictMixin):
     """
     """
     __tablename__ = "tool_settings"
-    __table_args__ = (UniqueConstraint('cbaero_settings_fk', 'cart3d_settings_fk', name='tool_settings_uk'),)
+    __table_args__ = (
+        UniqueConstraint('cbaero_settings_fk', 'cart3d_settings_fk', name='tool_settings_uk'),
+        CheckConstraint('(cbaero_settings_fk IS NULL) != (cart3d_settings_fk IS NULL)', name='tool_settings_check')
+    )
     
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    hash = Column(String(256))
     cbaero_settings_fk: Mapped[int] = mapped_column(ForeignKey("cbaero_settings.id", ondelete="CASCADE"), nullable=True)
     cart3d_settings_fk: Mapped[int] = mapped_column(ForeignKey("cart3d_settings.id", ondelete="CASCADE"), nullable=True)
 
@@ -181,7 +183,7 @@ class ToolSetting(Base, ToDictMixin):
         kwargs = {
             setting_type: random.choice(tool_settings[setting_type])
         }
-        return cls(**kwargs)
+        return cls(hash=str(random.randint(0, 100000)), **kwargs)
 
 
 class ConfiguredTool(Base, ToDictMixin):
@@ -196,12 +198,14 @@ class ConfiguredTool(Base, ToDictMixin):
 
     @classmethod
     def generate_random(cls, tools: List[Tool], tool_settings: List[ToolSetting]):
-        tool_ids = [tool.id for tool in tools]
+        tool = random.choice(tools)
         name = get_full_name().lower().replace(" ", "_")
-        tool_fk = random.choice(tool_ids)
-        tool_setting_ids = [tool_setting.id for tool_setting in tool_settings]
-        tool_settings_fk = random.choice(tool_setting_ids)
-        return cls(tool_fk=tool_fk, name=name, tool_settings_fk=tool_settings_fk)
+        if (tool.name == "CBAero"):
+            tool_settings = [tool_setting for tool_setting in tool_settings if tool_setting.cbaero_settings_fk is not None]
+        if (tool.name == "Cart3D"):
+            tool_settings = [tool_setting for tool_setting in tool_settings if tool_setting.cart3d_settings_fk is not None]
+        tool_setting = random.choice(tool_settings)
+        return cls(tool_fk=tool.id, name=name, tool_settings_fk=tool_setting.id)
 
 
 class ToolMeshAssociation(Base, ToDictMixin):
@@ -293,6 +297,7 @@ class Comment(Base, ToDictMixin):
     system_fk = mapped_column(ForeignKey("systems.id", ondelete="CASCADE"), nullable=True)
     geometry_fk = mapped_column(ForeignKey("geometries.id", ondelete="CASCADE"), nullable=True)
     mesh_fk = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"), nullable=True)
+    tool_setting_fk = mapped_column(ForeignKey("tool_settings.id", ondelete="CASCADE"), nullable=True)
     configured_tool_fk = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"), nullable=True)
 
     @classmethod
@@ -301,7 +306,8 @@ class Comment(Base, ToDictMixin):
                         systems,
                         geometries,
                         meshes,
-                        configured_tools
+                        tool_settings,
+                        configured_tools,
                         ):
 
         title = lorem.sentence()[0:64]
@@ -312,6 +318,7 @@ class Comment(Base, ToDictMixin):
             ("system_fk", random.choice([item.id for item in systems])),
             ("geometry_fk", random.choice([item.id for item in geometries])),
             ("mesh_fk", random.choice([item.id for item in meshes])),
+            ("tool_setting_fk", random.choice([item.id for item in tool_settings])),
             ("configured_tool_fk", random.choice([item.id for item in configured_tools]))
         ]
         foreign_key_index = random.randint(0, len(foreign_keys)-1)

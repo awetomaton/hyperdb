@@ -13,7 +13,6 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
   templateUrl: './tool-version.component.html',
   styleUrls: [
     './tool-version.component.scss',
-    '../app.component.scss',
   ]
 })
 export class ToolVersionComponent {

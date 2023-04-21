@@ -1,0 +1,30 @@
+<h1>
+    <span>Create New {{tool.name}} Configuration</span>
+</h1>
+<div class="dashboard-row">
+    <div class="dashboard-item dashboard-item-centered">
+        <form>
+            <p>
+                <mat-form-field appearance="fill">
+                    <mat-label>Name</mat-label>
+                    <input matInput placeholder="Configuration Name" [(ngModel)]="toolConfiguration.name" name="name">
+                    <button *ngIf="toolConfiguration.name" matSuffix mat-icon-button aria-label="Clear" (click)="toolConfiguration.name=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </p>
+            <p>
+                <hyperdb-new-cbaero-setting *ngIf="cbaero"></hyperdb-new-cbaero-setting>
+                <hyperdb-new-cart3d-setting *ngIf="cart3d"></hyperdb-new-cart3d-setting>
+            </p>
+        </form>
+        <mat-divider></mat-divider>
+        <p style="display: flex; justify-content: right; margin-top: 1em;">
+            <button
+                mat-raised-button color="primary" 
+                (click)="save()" 
+                [disabled]="!tool.version || invalidToolSetting()">Save
+            </button>
+        </p>
+    </div>
+</div>

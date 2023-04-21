@@ -7,7 +7,12 @@
         <h2>Properties</h2>
         <form>
             <div *ngIf="geometry.id == -1">
-                <input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
+                <input 
+                type="file" 
+                style="display: none" 
+                (change)="onFileSelected($event)" 
+                [disabled]="!contributorService.contributor"
+                #fileUpload>
                 <div class="file-upload">
                     <button mat-mini-fab color="primary" class="upload-btn"
                     (click)="fileUpload.click()">
@@ -22,7 +27,7 @@
             <p>
                 <mat-form-field appearance="fill">
                     <mat-label>System</mat-label>
-                    <mat-select [formControl]="systemControl">
+                    <mat-select [formControl]="systemControl" [disabled]="!contributorService.contributor">
                         <mat-option *ngFor="let system of systems" [value]="system.name">
                             {{system.name}}
                         </mat-option>
@@ -33,6 +38,7 @@
                 <mat-form-field appearance="fill">
                     <mat-label>Classification</mat-label>
                     <input type="text"
+                        [disabled]="!contributorService.contributor"
                         matInput
                         [formControl]="classificationControl">
                 </mat-form-field>
@@ -43,7 +49,7 @@
             <button
                 mat-raised-button color="primary" 
                 (click)="saveProperties()" 
-                [disabled]="(!geometryForm.valid && this.geometry.file) || !contributorService.contributor">Save
+                [disabled]="!geometryForm.valid || !this.geometry.file || !contributorService.contributor">Save
             </button>
         </p>
     </div>
@@ -64,6 +70,7 @@
             <mat-checkbox
                 [checked]="allToolSelected(toolTree)"
                 [indeterminate]="someToolSelected(toolTree)"
+                [disabled]="!contributorService.contributor"
                 (change)="selectAllTool(toolTree, $event.checked)">
                 {{toolTree.name}}
             </mat-checkbox>
@@ -71,13 +78,14 @@
                 <li *ngFor="let toolVersion of toolTree.toolVersions">
                     <mat-checkbox
                         [checked]="allVersionSelected(toolVersion)"
+                        [disabled]="!contributorService.contributor"
                         [indeterminate]="someVersionSelected(toolVersion)"
                         (change)="selectAllVersion(toolVersion, $event.checked)">
                         {{toolTree.name}} ({{toolVersion.version}})
                     </mat-checkbox>
                     <ul>
                         <li *ngFor="let configuration of toolVersion.configurations">
-                            <mat-checkbox [(ngModel)]="configuration.associated">
+                            <mat-checkbox [(ngModel)]="configuration.associated" [disabled]="!contributorService.contributor">
                                 {{configuration.configuredTool.name}}
                             </mat-checkbox>
                         </li>

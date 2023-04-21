@@ -138,7 +138,6 @@ class Tool(ToolBase):
 
 class CBAeroSettingBase(BaseModel):
     conf_file: str
-    hash: str
 
 
 class CBAeroSettingCreate(CBAeroSettingBase):
@@ -154,7 +153,6 @@ class CBAeroSetting(CBAeroSettingBase):
 
 class Cart3DSettingBase(BaseModel):
     cntl_file: str
-    hash: str
 
 
 class Cart3DSettingCreate(Cart3DSettingBase):
@@ -169,6 +167,7 @@ class Cart3DSetting(Cart3DSettingBase):
 
 
 class ToolSettingBase(BaseModel):
+    hash: str
     cbaero_settings_fk: int | None = None
     cart3d_settings_fk: int | None = None
 
@@ -262,6 +261,7 @@ class CommentBase(BaseModel):
     system_fk: int | None = None
     geometry_fk: int | None = None
     mesh_fk: int | None = None
+    tool_setting_fk: int | None = None
     configured_tool_fk: int | None = None
 
 
@@ -282,4 +282,5 @@ class CommentMeta(BaseModel):
     system_fk: int | None = None
     geometry_fk: int | None = None
     mesh_fk: int | None = None
+    tool_setting_fk: int | None = None
     configured_tool_fk: int | None = None

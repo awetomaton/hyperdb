@@ -13,7 +13,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './comments.component.html',
   styleUrls: [
     './comments.component.scss',
-    '../app.component.scss',
   ]
 })
 export class CommentsComponent implements OnInit {
@@ -99,7 +98,7 @@ export class CommentsComponent implements OnInit {
       geometry_fk = this.object.id;
     } else if (this.objectType == 'mesh') {
       mesh_fk = this.object.id;
-    } else if (this.objectType == 'configured_tool') {
+    } else if (this.objectType == 'configured-tool') {
       configured_tool_fk = this.object.id;
     } else {
       throw new Error('Found unknown objectType: ' + this.objectType);

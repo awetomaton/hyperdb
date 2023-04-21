@@ -19,7 +19,6 @@ export interface ContributorSummary {
   templateUrl: './contributors.component.html',
   styleUrls: [
     './contributors.component.scss',
-    '../app.component.scss',
   ]
 })
 export class ContributorsComponent implements OnInit {

@@ -14,6 +14,9 @@ import { NewToolGeometryAssociation, ToolGeometryAssociation } from './interface
 import { ConfiguredTool } from './interfaces/configured_tool';
 import { ToolMeshAssociation } from './interfaces/tool_mesh_association';
 import { DeleteResponse } from './interfaces/delete_response';
+import { ToolSetting } from './interfaces/tool_setting';
+import { CBAeroSetting } from './interfaces/cbaero_setting';
+import { Cart3DSetting } from './interfaces/cart3d_setting';
 
 
 @Injectable({
@@ -287,6 +290,41 @@ export class HyperdbService {
     return this.http.get<ConfiguredTool[]>(this.apiUrl + 'configured-tools')
       .pipe(
         catchError(this.handleError<ConfiguredTool[]>('getConfiguredTools', []))
+      );
+  }
+
+  getConfiguredTool(id: number): Observable<ConfiguredTool> {
+    return this.http.get<ConfiguredTool>(this.apiUrl + 'configured-tools/' + id)
+      .pipe(
+        catchError(this.handleError<ConfiguredTool>('getConfiguredTool'))
+      );
+  }
+
+  getConfiguredToolComments(id: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(this.apiUrl + 'configured-tools/' + id + '/comments')
+      .pipe(
+        catchError(this.handleError<Comment[]>('getConfiguredTool', []))
+      );
+  }
+
+  getToolSetting(id: number): Observable<ToolSetting> {
+    return this.http.get<ToolSetting>(this.apiUrl + 'tool-settings/' + id)
+      .pipe(
+        catchError(this.handleError<ToolSetting>('getToolSetting'))
+      );
+  }
+
+  getCBAeroSetting(id: number): Observable<CBAeroSetting> {
+    return this.http.get<CBAeroSetting>(this.apiUrl + 'cbaero-settings/' + id)
+      .pipe(
+        catchError(this.handleError<CBAeroSetting>('getCBAeroSetting'))
+      );
+  }
+
+  getCart3DSetting(id: number): Observable<Cart3DSetting> {
+    return this.http.get<Cart3DSetting>(this.apiUrl + 'cart3d-settings/' + id)
+      .pipe(
+        catchError(this.handleError<Cart3DSetting>('getCart3DSetting'))
       );
   }
 

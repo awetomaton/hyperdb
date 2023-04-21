@@ -1,0 +1,17 @@
+<h1>
+    <span>{{tool.name}} ({{tool.version}}) - {{toolConfiguration.name}} Details</span>
+</h1>
+<div class="dashboard-row">
+    <div class="dashboard-item">
+        <h2 class="button-header-h">Settings</h2>
+        <hyperdb-cbaero-setting *ngIf="cbaeroId" [id]="cbaeroId"></hyperdb-cbaero-setting>
+        <hyperdb-cart3d-setting *ngIf="cart3dId" [id]="cart3dId"></hyperdb-cart3d-setting>
+    </div>
+    <hyperdb-comments 
+        class="dashboard-item"
+        [comments]="comments"
+        [object]="toolConfiguration"
+        [objectType]="'configured-tool'"
+        (commentsChanged)="getComments()">
+    </hyperdb-comments>
+</div>

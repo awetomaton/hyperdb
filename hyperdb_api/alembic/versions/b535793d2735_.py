@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 216593d55664
+Revision ID: b535793d2735
 Revises: 
-Create Date: 2023-04-19 12:25:45.929540
+Create Date: 2023-04-20 14:16:36.816112
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '216593d55664'
+revision = 'b535793d2735'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,22 +21,18 @@ def upgrade() -> None:
     op.create_table('cart3d_settings',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('cntl_file', sa.String(length=128), nullable=True),
-    sa.Column('hash', sa.String(length=128), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('hash')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('cbaero_settings',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('conf_file', sa.String(length=128), nullable=True),
-    sa.Column('hash', sa.String(length=128), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('hash')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('contributors',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.Text(), nullable=True),
-    sa.Column('password', sa.Text(), nullable=True),
-    sa.Column('email', sa.Text(), nullable=True),
+    sa.Column('name', sa.String(length=128), nullable=True),
+    sa.Column('password', sa.String(length=128), nullable=True),
+    sa.Column('email', sa.String(length=128), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -65,8 +61,10 @@ def upgrade() -> None:
     )
     op.create_table('tool_settings',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('hash', sa.String(length=256), nullable=True),
     sa.Column('cbaero_settings_fk', sa.Integer(), nullable=True),
     sa.Column('cart3d_settings_fk', sa.Integer(), nullable=True),
+    sa.CheckConstraint('(cbaero_settings_fk IS NULL) != (cart3d_settings_fk IS NULL)', name='tool_settings_check'),
     sa.ForeignKeyConstraint(['cart3d_settings_fk'], ['cart3d_settings.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['cbaero_settings_fk'], ['cbaero_settings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
@@ -134,12 +132,14 @@ def upgrade() -> None:
     sa.Column('system_fk', sa.Integer(), nullable=True),
     sa.Column('geometry_fk', sa.Integer(), nullable=True),
     sa.Column('mesh_fk', sa.Integer(), nullable=True),
+    sa.Column('tool_setting_fk', sa.Integer(), nullable=True),
     sa.Column('configured_tool_fk', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['system_fk'], ['systems.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['tool_setting_fk'], ['tool_settings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_comments_id'), 'comments', ['id'], unique=False)

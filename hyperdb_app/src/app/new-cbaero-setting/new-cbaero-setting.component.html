@@ -1,0 +1,15 @@
+<h3>CONF File: 
+    <input 
+    type="file" 
+    style="display: none" 
+    (change)="onFileSelected($event)" 
+    [disabled]="!contributorService.contributor"
+    #fileUpload>
+    <div class="file-upload" style="display:inline-block">
+        <button mat-mini-fab color="primary" class="upload-btn"
+        (click)="fileUpload.click()">
+            <mat-icon>attach_file</mat-icon>
+        </button>
+        <span> {{confFile | basename}}</span>
+    </div>
+</h3>

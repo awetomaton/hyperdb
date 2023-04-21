@@ -10,6 +10,8 @@ import { ContributorComponent } from './contributor/contributor.component';
 import { ToolsComponent } from './tools/tools.component';
 import { ToolComponent } from './tool/tool.component';
 import { ToolVersionComponent } from './tool-version/tool-version.component';
+import { ConfiguredToolComponent } from './configured-tool/configured-tool.component';
+import { NewConfiguredToolComponent } from './new-configured-tool/new-configured-tool.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -22,6 +24,8 @@ const routes: Routes = [
   { path: 'tools', component: ToolsComponent },
   { path: 'tools/:name', component: ToolComponent },
   { path: 'tools/:name/:version', component: ToolVersionComponent },
+  { path: 'tools/:name/:version/configurations/new', component: NewConfiguredToolComponent },
+  { path: 'tools/:name/:version/configurations/:id', component: ConfiguredToolComponent },
 ];
 
 @NgModule({

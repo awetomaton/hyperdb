@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HyperdbService } from '../hyperdb.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { ContributorService } from '../contributor.service';
 
 
 export interface ToolSummary {
@@ -27,6 +28,7 @@ export class ToolsComponent implements OnInit {
   constructor(
     private hyperdbService: HyperdbService, 
     private snackBar: MatSnackBar, 
+    public contributorService: ContributorService
   ) { }
 
   ngOnInit(): void {
@@ -44,7 +46,7 @@ export class ToolsComponent implements OnInit {
           versions[index] = versions[index] + 1;
         } else {
           uniqueTools.push(tool.name);
-          versions.push(0);
+          versions.push(1);
         }
       }
       for (let i = 0; i < uniqueTools.length; i ++) {

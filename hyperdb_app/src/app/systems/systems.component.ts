@@ -21,7 +21,6 @@ export interface SystemsSummary {
   selector: 'app-systems',
   templateUrl: './systems.component.html',
   styleUrls: [
-    '../app.component.scss',
     './systems.component.scss'
   ]
 })

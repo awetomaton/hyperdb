@@ -36,7 +36,12 @@
     </div>
     <div *ngIf="!newTool">
         <div class="button-row">
-            <a mat-raised-button color="primary" [routerLink]="['/tools/' +  tool.name + '/new']">Add <fa-icon [icon]="faPlus"></fa-icon></a>
+            <a 
+            mat-raised-button 
+            color="primary" 
+            [routerLink]="['/tools/' +  tool.name + '/new']"
+            [disabled]="!contributorService.contributor">Add <fa-icon [icon]="faPlus"></fa-icon>
+        </a>
         </div>
         <table mat-table [dataSource]="toolVersionSummaries" class="mat-elevation-z8">
         
@@ -55,7 +60,11 @@
             <ng-container matColumnDef="delete">
                 <th mat-header-cell *matHeaderCellDef> Delete </th>
                 <td mat-cell *matCellDef="let element">
-                    <button mat-mini-fab color="warn" (click)="onDeleteToolVersion(element.tool)">
+                    <button 
+                    mat-mini-fab 
+                    color="warn" 
+                    (click)="onDeleteToolVersion(element.tool)"
+                    [disabled]="!contributorService.contributor">
                         <fa-icon [icon]="faTrash"></fa-icon>
                     </button>
                 </td>

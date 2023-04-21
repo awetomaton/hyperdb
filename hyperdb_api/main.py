@@ -327,8 +327,14 @@ def create_cbaero_setting(cbaero_setting: schemas.CBAeroSettingCreate, db: Sessi
 
 @app.get(BASE_ROUTE + "/cbaero-settings/", response_model=List[schemas.CBAeroSetting])
 def read_cbaero_settings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    cbaero_settings = crud.get_cbaero_settings(db, skip=skip, limit=limit)
+    cbaero_settings = crud.retrieve_cbaero_settings(db, skip=skip, limit=limit)
     return cbaero_settings
+
+
+@app.get(BASE_ROUTE + "/cbaero-settings/{id}", response_model=schemas.CBAeroSetting)
+def read_cbaero_setting(id: int, db: Session = Depends(get_db)):
+    cbaero_setting = crud.retrieve_cbaero_setting(db, id=id)
+    return cbaero_setting
 
 
 @app.post(BASE_ROUTE + "/cart3d-settings/", response_model=schemas.Cart3DSetting)
@@ -338,7 +344,12 @@ def create_cart3d_setting(cart3d_setting: schemas.Cart3DSettingCreate, db: Sessi
 
 @app.get(BASE_ROUTE + "/cart3d-settings/", response_model=List[schemas.Cart3DSetting])
 def read_cart3d_settings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_cart3d_settings(db, skip=skip, limit=limit)
+    return crud.retrieve_cart3d_settings(db, skip=skip, limit=limit)
+
+
+@app.get(BASE_ROUTE + "/cart3d-settings/{id}", response_model=schemas.Cart3DSetting)
+def read_cart3d_setting(id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_cart3d_setting(db, id=id)
 
 
 @app.post(BASE_ROUTE + "/tool-settings/", response_model=schemas.ToolSetting)
@@ -348,7 +359,12 @@ def create_tool_setting(tool_setting: schemas.ToolSettingCreate, db: Session = D
 
 @app.get(BASE_ROUTE + "/tool-settings/", response_model=List[schemas.ToolSetting])
 def read_tool_settings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_tool_settings(db, skip=skip, limit=limit)
+    return crud.retrieve_tool_settings(db, skip=skip, limit=limit)
+
+
+@app.get(BASE_ROUTE + "/tool-settings/{id}", response_model=schemas.ToolSetting)
+def read_tool_setting(id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_tool_setting(db, id=id)
 
 
 @app.post(BASE_ROUTE + "/configured-tools/", response_model=schemas.ConfiguredTool)
@@ -358,7 +374,17 @@ def create_configured_tool(configured_tool: schemas.ConfiguredToolCreate, db: Se
 
 @app.get(BASE_ROUTE + "/configured-tools/", response_model=List[schemas.ConfiguredTool])
 def read_configured_tools(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_configured_tools(db, skip=skip, limit=limit)
+    return crud.retrieve_configured_tools(db, skip=skip, limit=limit)
+
+
+@app.get(BASE_ROUTE + "/configured-tools/{id}", response_model=schemas.ConfiguredTool)
+def read_configured_tool(id:int, db: Session = Depends(get_db)):
+    return crud.retrieve_configured_tool(db, id=id)
+
+
+@app.get(BASE_ROUTE + "/configured-tools/{id}/comments", response_model=List[schemas.Comment])
+def read_configured_tool_comments(id:int, db: Session = Depends(get_db)):
+    return crud.retrieve_configured_tool_comments(db, id=id)
 
 
 @app.get(BASE_ROUTE + "/configured-tools/{id}/geometry-associations", response_model=schemas.ToolGeometryAssociation)

@@ -1,13 +1,19 @@
 <h1>Tools</h1>
 
 <div class="button-row">
-    <a mat-raised-button color="primary" [routerLink]="['/tools/new']">Add <fa-icon [icon]="faPlus"></fa-icon></a>
+    <a 
+    mat-raised-button 
+    color="primary" 
+    [routerLink]="['/tools/new']"
+    [disabled]="!contributorService.contributor">Add <fa-icon [icon]="faPlus"></fa-icon></a>
 </div>
 <table mat-table [dataSource]="toolSummaries" class="mat-elevation-z8">
 
     <ng-container matColumnDef="tool">
         <th mat-header-cell *matHeaderCellDef> Tool </th>
-        <td mat-cell *matCellDef="let element"> <a [routerLink]="['/tools/' + element.tool]">{{element.tool}}</a> </td>
+        <td mat-cell *matCellDef="let element"> 
+            <a [routerLink]="['/tools/' + element.tool]">{{element.tool}}</a> 
+        </td>
     </ng-container>
 
     <ng-container matColumnDef="versions">

@@ -38,6 +38,13 @@ import { LoginDialog } from './dialogs/login-dialog/login_dialog';
 import { ToolsComponent } from './tools/tools.component';
 import { ToolComponent } from './tool/tool.component';
 import { ToolVersionComponent } from './tool-version/tool-version.component';
+import { MatTabsModule } from '@angular/material/tabs'; 
+import { ConfiguredToolComponent } from './configured-tool/configured-tool.component';
+import { NewConfiguredToolComponent } from './new-configured-tool/new-configured-tool.component';
+import { CBAeroSettingComponent } from './cbaero-setting/cbaero-setting.component';
+import { Cart3DSettingComponent } from './cart3d-setting/cart3d-setting.component';
+import { NewCart3DSettingComponent } from './new-cart3d-setting/new-cart3d-setting.component';
+import { NewCBAeroSettingComponent } from './new-cbaero-setting/new-cbaero-setting.component';
 
 
 @NgModule({
@@ -57,7 +64,13 @@ import { ToolVersionComponent } from './tool-version/tool-version.component';
     LoginDialog,
     ToolsComponent,
     ToolComponent,
-    ToolVersionComponent
+    ToolVersionComponent,
+    ConfiguredToolComponent,
+    NewConfiguredToolComponent,
+    CBAeroSettingComponent,
+    Cart3DSettingComponent,
+    NewCart3DSettingComponent,
+    NewCBAeroSettingComponent
   ],
   imports: [
     BrowserModule,
@@ -83,6 +96,7 @@ import { ToolVersionComponent } from './tool-version/tool-version.component';
     MatDialogModule,
     MatSnackBarModule,
     FontAwesomeModule,
+    MatTabsModule,
     MatMenuModule,
   ],
   providers: [],

@@ -21,7 +21,6 @@ import { ContributorService } from '../contributor.service';
   templateUrl: './geometry.component.html',
   styleUrls: [
     './geometry.component.scss',
-    '../app.component.scss',
   ]
 })
 export class GeometryComponent implements OnInit {
