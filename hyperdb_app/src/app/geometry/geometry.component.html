@@ -21,9 +21,14 @@
                     <span> {{geometry.file | basename}}</span>
                 </div>
             </div>
-            <h3 *ngIf="geometry.id != -1">File: {{geometry.file | basename}}</h3>
-            <p></p>
-            <h3 *ngIf="geometry.id != -1">Contributor: {{contributor.name}}</h3>
+            <mat-nav-list role="list" *ngIf="geometry.id != -1">
+                <a mat-list-item [routerLink]="['/geometries/' + geometry.id]">
+                    Geometry: {{geometry.file | basename}} <classification [classification]="geometry.classification"></classification>
+                </a>
+                <a mat-list-item [routerLink]="['/contributor/' + contributor.id]">
+                    Contributor: {{contributor.name}}
+                </a>
+            </mat-nav-list>
             <p>
                 <mat-form-field appearance="fill">
                     <mat-label>System</mat-label>
@@ -54,9 +59,9 @@
         </p>
     </div>
     <div class="dashboard-item" *ngIf="geometry.id != -1">
-        <a mat-button [routerLink]="['meshes/']" class="button-header"><h2 class="button-header-h">Meshes</h2></a>
+        <h2 class="button-header-h">Meshes</h2>
         <mat-nav-list role="list">
-            <a mat-list-item [routerLink]="['meshes/' + mesh.id]" *ngFor="let mesh of meshes">
+            <a mat-list-item [routerLink]="['/meshes/' + mesh.id]" *ngFor="let mesh of meshes">
                 {{mesh.file}}
             </a>
         </mat-nav-list>

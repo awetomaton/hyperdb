@@ -45,6 +45,10 @@ import { CBAeroSettingComponent } from './cbaero-setting/cbaero-setting.componen
 import { Cart3DSettingComponent } from './cart3d-setting/cart3d-setting.component';
 import { NewCart3DSettingComponent } from './new-cart3d-setting/new-cart3d-setting.component';
 import { NewCBAeroSettingComponent } from './new-cbaero-setting/new-cbaero-setting.component';
+import { MeshesComponent } from './meshes/meshes.component';
+import { MeshComponent } from './mesh/mesh.component';
+import { MeshToolResultsComponent } from './mesh-tool-results/mesh-tool-results.component';
+import { NewMeshComponent } from './new-mesh/new-mesh.component';
 
 
 @NgModule({
@@ -70,7 +74,11 @@ import { NewCBAeroSettingComponent } from './new-cbaero-setting/new-cbaero-setti
     CBAeroSettingComponent,
     Cart3DSettingComponent,
     NewCart3DSettingComponent,
-    NewCBAeroSettingComponent
+    NewCBAeroSettingComponent,
+    MeshesComponent,
+    MeshComponent,
+    MeshToolResultsComponent,
+    NewMeshComponent
   ],
   imports: [
     BrowserModule,

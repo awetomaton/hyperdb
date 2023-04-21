@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
+import { Component } from '@angular/core';
+import { ActivatedRoute } from "@angular/router";
 import { HyperdbService } from '../hyperdb.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Tool } from '../interfaces/tool';
 import { ConfiguredTool } from '../interfaces/configured_tool';
 import { ContributorService } from '../contributor.service';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Comment } from '../interfaces/comment';
+import { Mesh } from '../interfaces/mesh';
 
 
 @Component({
@@ -22,14 +22,13 @@ export class ConfiguredToolComponent {
   tool: Tool = {'id': -1, 'name': '', 'version': ''};
   cbaeroId: number;
   cart3dId: number;
+  meshes: Mesh[] = [];
   comments: Comment[] = [];
-  toolConfiguration: ConfiguredTool = {'id': -1, 'name': '', 'tool_fk': -1, tool_settings_fk: -1}
+  configuredTool: ConfiguredTool = {'id': -1, 'name': '', 'tool_fk': -1, tool_settings_fk: -1}
 
   constructor(
     private route: ActivatedRoute, 
-    private hyperdbService: HyperdbService, 
-    private router: Router, 
-    private snackBar: MatSnackBar,
+    private hyperdbService: HyperdbService,
     public contributorService: ContributorService)
   {
     this.route.params.subscribe(params => {
@@ -43,7 +42,11 @@ export class ConfiguredToolComponent {
               this.cart3dId = toolSetting.cart3d_settings_fk;
             }
           })
-          this.toolConfiguration = configuredTool;
+          this.configuredTool = configuredTool;
+
+          this.hyperdbService.getConfiguredToolMeshes(this.configuredTool.id).subscribe(meshes => {
+            this.meshes = meshes;
+          })
           this.getComments();
         })
       })
@@ -55,7 +58,7 @@ export class ConfiguredToolComponent {
   }
 
   getComments(): void{
-    this.hyperdbService.getConfiguredToolComments(this.toolConfiguration.id)
+    this.hyperdbService.getConfiguredToolComments(this.configuredTool.id)
     .subscribe(comments => {
       this.comments = comments;
     })

@@ -39,6 +39,10 @@ h2 {
     position: absolute;
 }
 
+.dashboard-item-full{
+    width: calc(100% - 2em); 
+}
+
 mat-form-field{
     width: 100%;
 }
@@ -47,4 +51,8 @@ mat-form-field{
     display: flex;
     justify-content: right;
     width: 100%;
+}
+
+span > classification {
+    float: right;
 }

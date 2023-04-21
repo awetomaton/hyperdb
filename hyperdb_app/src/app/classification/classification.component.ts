@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 
 @Component({
@@ -9,17 +9,18 @@ import { Component, Input, OnInit } from '@angular/core';
     '../classification.scss'
   ]
 })
-export class ClassificationComponent implements OnInit {
+export class ClassificationComponent {
   @Input() classification: String = '';
-  classificationLevel: String = ''
 
-  ngOnInit(): void {
+  getClassificationClass(): string {
+    let classificationClass: string = '';
     if (this.classification.includes("TOP SECRET")){
-      this.classificationLevel = "top_secret";
+      classificationClass = "top_secret";
     }else if (this.classification.includes("SECRET")) {
-      this.classificationLevel = "secret";
+      classificationClass = "secret";
     }else if (this.classification.includes("UNCLASSIFIED")) {
-      this.classificationLevel = "unclassified";
+      classificationClass = "unclassified";
     }
+    return classificationClass;
   }
 }

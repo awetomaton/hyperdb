@@ -27,6 +27,10 @@ if not os.path.isdir(HYPERDB_GEOMETRIES_DIR):
 HYPERDB_MESHES_DIR = os.path.join(HYPERDB_FILES_DIR, "meshes")
 if not os.path.isdir(HYPERDB_MESHES_DIR):
     os.mkdir(HYPERDB_MESHES_DIR)
+HYPERDB_TOOL_SETTINGS_DIR = os.path.join(HYPERDB_FILES_DIR, "tool_settings")
+if not os.path.isdir(HYPERDB_TOOL_SETTINGS_DIR):
+    os.mkdir(HYPERDB_TOOL_SETTINGS_DIR)
+
 
 # Dependency
 def get_db():
@@ -119,6 +123,11 @@ async def create_upload_geometry(file: UploadFile):
 @app.post(BASE_ROUTE + "/upload-mesh/")
 async def create_upload_mesh(file: UploadFile):
     return {"filepath": file_upload(file, HYPERDB_MESHES_DIR)}
+
+
+@app.post(BASE_ROUTE + "/upload-tool-setting/")
+async def create_upload_tool_setting(file: UploadFile):
+    return {"filepath": file_upload(file, HYPERDB_TOOL_SETTINGS_DIR)}
 
 
 @app.post(BASE_ROUTE + "/systems/", response_model=schemas.System)
@@ -293,6 +302,24 @@ def read_meshes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return meshes
 
 
+@app.get(BASE_ROUTE + "/meshes/{id}", response_model=schemas.Mesh)
+def read_mesh(id: int, db: Session = Depends(get_db)):
+    mesh = crud.get_mesh(db, id=id)
+    return mesh
+
+
+@app.get(BASE_ROUTE + "/meshes/{id}/comments", response_model=List[schemas.Comment])
+def read_mesh_comments(id: int, db: Session = Depends(get_db)):
+    mesh = crud.get_mesh_comments(db, id=id)
+    return mesh
+
+
+@app.get(BASE_ROUTE + "/meshes/{id}/configured-tools", response_model=List[schemas.ConfiguredTool])
+def read_mesh_configured_tools(id: int, db: Session = Depends(get_db)):
+    mesh = crud.get_mesh_configured_tools(db, id=id)
+    return mesh
+
+
 @app.post(BASE_ROUTE + "/tools/", response_model=schemas.Tool)
 def create_tool(tool: schemas.ToolCreate, db: Session = Depends(get_db)):
     return crud.create_tool(db=db, tool=tool)
@@ -382,6 +409,16 @@ def read_configured_tool(id:int, db: Session = Depends(get_db)):
     return crud.retrieve_configured_tool(db, id=id)
 
 
+@app.get(BASE_ROUTE + "/configured-tools/{id}/meshes", response_model=List[schemas.Mesh])
+def read_configured_tool_meshes(id:int, db: Session = Depends(get_db)):
+    return crud.retrieve_configured_tool_meshes(db, id=id)
+
+
+@app.get(BASE_ROUTE + "/configured-tools/{id}/aero-results", response_model=List[schemas.AeroResult])
+def read_configured_tool_aero_results(id:int, db: Session = Depends(get_db)):
+    return crud.retrieve_configured_aero_results(db, id=id)
+
+
 @app.get(BASE_ROUTE + "/configured-tools/{id}/comments", response_model=List[schemas.Comment])
 def read_configured_tool_comments(id:int, db: Session = Depends(get_db)):
     return crud.retrieve_configured_tool_comments(db, id=id)
@@ -431,8 +468,14 @@ def create_aero_result(aero_result: schemas.AeroResultCreate, db: Session = Depe
 
 
 @app.get(BASE_ROUTE + "/aero-results/", response_model=List[schemas.AeroResult])
-def read_aero_results(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_aero_results(db, skip=skip, limit=limit)
+def read_aero_results(
+    mesh_id: int | None = None, 
+    configured_tool_id: int | None = None, 
+    skip: int | None = None, 
+    limit: int | None = None, 
+    db: Session = Depends(get_db)
+):
+    return crud.get_aero_results(db, mesh_id=mesh_id, configured_tool_id=configured_tool_id, skip=skip, limit=limit)
 
 
 @app.post(BASE_ROUTE + "/comments/", response_model=schemas.Comment)

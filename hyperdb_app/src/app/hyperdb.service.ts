@@ -11,12 +11,13 @@ import { Country, NewCountry } from './interfaces/country';
 import { Contributor } from './interfaces/contributor';
 import { MessageService } from './message.service';
 import { NewToolGeometryAssociation, ToolGeometryAssociation } from './interfaces/tool_geometry_association';
-import { ConfiguredTool } from './interfaces/configured_tool';
+import { ConfiguredTool, NewConfiguredTool } from './interfaces/configured_tool';
 import { ToolMeshAssociation } from './interfaces/tool_mesh_association';
 import { DeleteResponse } from './interfaces/delete_response';
-import { ToolSetting } from './interfaces/tool_setting';
-import { CBAeroSetting } from './interfaces/cbaero_setting';
-import { Cart3DSetting } from './interfaces/cart3d_setting';
+import { NewToolSetting, ToolSetting } from './interfaces/tool_setting';
+import { CBAeroSetting, NewCBAeroSetting } from './interfaces/cbaero_setting';
+import { Cart3DSetting, NewCart3DSetting } from './interfaces/cart3d_setting';
+import { AeroResult } from './interfaces/aero_result';
 
 
 @Injectable({
@@ -48,6 +49,13 @@ export class HyperdbService {
 
   uploadGeometry(form: FormData): Observable<any> {
     return this.http.post(this.apiUrl + 'upload-geometry/', form, {
+        reportProgress: true,
+        observe: 'events'
+    })
+  }
+
+  uploadToolSetting(form: FormData): Observable<any> {
+    return this.http.post(this.apiUrl + 'upload-tool-setting/', form, {
         reportProgress: true,
         observe: 'events'
     })
@@ -101,6 +109,27 @@ export class HyperdbService {
     return this.http.get<Mesh[]>(this.apiUrl + 'meshes')
       .pipe(
         catchError(this.handleError<Mesh[]>('getMeshes', []))
+      );
+  }
+
+  getMesh(id: number): Observable<Mesh> {
+    return this.http.get<Mesh>(this.apiUrl + 'meshes/' + id)
+      .pipe(
+        catchError(this.handleError<Mesh>('getMesh'))
+      );
+  }
+
+  getMeshComments(id: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(this.apiUrl + 'meshes/' + id + '/comments')
+      .pipe(
+        catchError(this.handleError<Comment[]>('getMeshComments', []))
+      );
+  }
+
+  getMeshConfiguredTools(id: number): Observable<ConfiguredTool[]> {
+    return this.http.get<ConfiguredTool[]>(this.apiUrl + 'meshes/' + id + '/configured-tools')
+      .pipe(
+        catchError(this.handleError<ConfiguredTool[]>('getMeshConfiguredTools', []))
       );
   }
 
@@ -265,10 +294,24 @@ export class HyperdbService {
       );
   }
 
+  getTool(id: number): Observable<Tool> {
+    return this.http.get<Tool>(this.apiUrl + 'tools/' + id)
+      .pipe(
+        catchError(this.handleError<Tool>('getTool'))
+      );
+  }
+
   getToolConfigurations(toolId: number): Observable<ConfiguredTool[]> {
     return this.http.get<ConfiguredTool[]>(this.apiUrl + 'tools/' + toolId + '/configurations')
       .pipe(
         catchError(this.handleError<ConfiguredTool[]>('getToolConfigurations'))
+      );
+  }
+
+  getAeroResults(meshId: number, configuredToolId: number): Observable<AeroResult[]> {
+    return this.http.get<AeroResult[]>(this.apiUrl + 'aero-results?mesh_id=' + meshId + '&configured_tool_id=' + configuredToolId)
+      .pipe(
+        catchError(this.handleError<AeroResult[]>('getAeroResults', []))
       );
   }
 
@@ -293,12 +336,35 @@ export class HyperdbService {
       );
   }
 
+  postConfiguredTool(configuredTool: NewConfiguredTool): Observable<ConfiguredTool> {
+    return this.http.post<ConfiguredTool>(this.apiUrl + 'configured-tools', configuredTool, this.httpOptions)
+      .pipe(
+        catchError(this.handleError<ConfiguredTool>('postConfiguredTool'))
+      );
+  }
+
   getConfiguredTool(id: number): Observable<ConfiguredTool> {
     return this.http.get<ConfiguredTool>(this.apiUrl + 'configured-tools/' + id)
       .pipe(
         catchError(this.handleError<ConfiguredTool>('getConfiguredTool'))
       );
   }
+
+  getConfiguredToolAeroResults(id: number): Observable<AeroResult[]> {
+    return this.http.get<AeroResult[]>(this.apiUrl + 'configured-tools/' + id + '/aero-results')
+      .pipe(
+        catchError(this.handleError<AeroResult[]>('getConfiguredToolAeroResults', []))
+      );
+  }
+
+
+  getConfiguredToolMeshes(id: number): Observable<Mesh[]> {
+    return this.http.get<Mesh[]>(this.apiUrl + 'configured-tools/' + id + '/meshes')
+      .pipe(
+        catchError(this.handleError<Mesh[]>('getConfiguredToolMeshes', []))
+      );
+  }
+
 
   getConfiguredToolComments(id: number): Observable<Comment[]> {
     return this.http.get<Comment[]>(this.apiUrl + 'configured-tools/' + id + '/comments')
@@ -314,6 +380,15 @@ export class HyperdbService {
       );
   }
 
+
+  postToolSetting(setting: NewToolSetting): Observable<ToolSetting> {
+    return this.http.post<ToolSetting>(this.apiUrl + 'tool-settings/', setting, this.httpOptions)
+      .pipe(
+        catchError(this.handleError<ToolSetting>('postToolSetting'))
+      );
+  }
+
+
   getCBAeroSetting(id: number): Observable<CBAeroSetting> {
     return this.http.get<CBAeroSetting>(this.apiUrl + 'cbaero-settings/' + id)
       .pipe(
@@ -321,10 +396,24 @@ export class HyperdbService {
       );
   }
 
+  postCBAeroSetting(newCBAeroSetting: NewCBAeroSetting): Observable<CBAeroSetting> {
+    return this.http.post<CBAeroSetting>(this.apiUrl + 'cbaero-settings/', newCBAeroSetting, this.httpOptions)
+      .pipe(
+        catchError(this.handleError<CBAeroSetting>('postCBAeroSetting'))
+      );
+  }
+
   getCart3DSetting(id: number): Observable<Cart3DSetting> {
     return this.http.get<Cart3DSetting>(this.apiUrl + 'cart3d-settings/' + id)
       .pipe(
         catchError(this.handleError<Cart3DSetting>('getCart3DSetting'))
+      );
+  }
+
+  postCart3DSetting(newCart3DSetting: NewCart3DSetting): Observable<Cart3DSetting> {
+    return this.http.post<Cart3DSetting>(this.apiUrl + 'cart3d-settings/', newCart3DSetting, this.httpOptions)
+      .pipe(
+        catchError(this.handleError<Cart3DSetting>('postCart3DSetting'))
       );
   }
 
@@ -350,7 +439,7 @@ export class HyperdbService {
   }
 
   postToolGeometryAssociations(associations: NewToolGeometryAssociation[]): Observable<ToolGeometryAssociation[]> {
-    return this.http.post<ToolGeometryAssociation[]>(this.apiUrl + 'tool-geometry-associations-bulk', associations)
+    return this.http.post<ToolGeometryAssociation[]>(this.apiUrl + 'tool-geometry-associations-bulk', associations, this.httpOptions)
       .pipe(
         catchError(this.handleError<ToolGeometryAssociation[]>('postToolGeometryAssociations'))
       );

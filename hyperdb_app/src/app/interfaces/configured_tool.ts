@@ -10,3 +10,10 @@ export interface ConfiguredTool {
     tool_fk: number;
     tool_settings_fk: number;
 }
+
+
+export interface NewConfiguredTool {
+    name: string;
+    tool_fk: number;
+    tool_settings_fk: number;
+}

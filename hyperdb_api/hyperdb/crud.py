@@ -186,6 +186,20 @@ def get_meshes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Mesh).offset(skip).limit(limit).all()
 
 
+def get_mesh(db: Session, id: int):
+    return db.query(models.Mesh).filter(models.Mesh.id == id).first()
+
+
+def get_mesh_comments(db: Session, id: int):
+    return db.query(models.Comment).filter(models.Comment.mesh_fk == id).all()
+
+
+def get_mesh_configured_tools(db: Session, id: int):
+    aero_results = db.query(models.AeroResult).filter(models.AeroResult.mesh_fk == id).all()
+    aero_result_configured_tool_ids = list(set([aero_result.configured_tool_fk for aero_result in aero_results]))
+    return db.query(models.ConfiguredTool).filter(models.ConfiguredTool.id.in_(aero_result_configured_tool_ids)).all()
+
+
 def create_mesh(db: Session, mesh: schemas.MeshCreate):
     db_item = models.Mesh(**mesh.dict())
     db.add(db_item)
@@ -266,7 +280,7 @@ def retrieve_tool_setting(db: Session, id: int):
 
 
 def create_tool_setting(db: Session, tool_setting: schemas.ToolSettingCreate):
-    db_item = models.ToolSetting(**tool_setting.dict())
+    db_item = models.ToolSetting(hash='', **tool_setting.dict())
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
@@ -283,6 +297,17 @@ def retrieve_configured_tool(db: Session, id: int):
 
 def retrieve_configured_tool_comments(db: Session, id: int):
     return db.query(models.Comment).filter(models.Comment.configured_tool_fk == id).all()
+
+
+def retrieve_configured_aero_results(db: Session, id: int):
+    configured_tool = retrieve_configured_tool(db=db, id=id)
+    return db.query(models.AeroResult).filter(models.AeroResult.configured_tool_fk == configured_tool.id).all()  # type: ignore
+
+
+def retrieve_configured_tool_meshes(db: Session, id: int):
+    aero_results = retrieve_configured_aero_results(db=db, id=id)
+    aero_result_mesh_ids = list(set([aero_result.mesh_fk for aero_result in aero_results]))
+    return db.query(models.Mesh).filter(models.Mesh.id.in_(aero_result_mesh_ids)).all()
 
 
 def retrieve_configured_tool_geometry_associations(db: Session, id: int):
@@ -334,8 +359,23 @@ def create_tool_geometry_associations(db: Session, associations: List[schemas.To
     return db_items
 
 
-def get_aero_results(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.AeroResult).offset(skip).limit(limit).all()
+def get_aero_results(
+    db: Session,
+    mesh_id: int | None = None, 
+    configured_tool_id: int | None = None, 
+    skip: int | None = None, 
+    limit: int | None = None
+):
+    query = db.query(models.AeroResult)
+    if mesh_id is not None:
+        query = query.filter(models.AeroResult.mesh_fk == mesh_id)
+    if configured_tool_id is not None:
+        query = query.filter(models.AeroResult.configured_tool_fk == configured_tool_id)
+    if skip is not None:
+        query = query.offset(skip)
+    if limit is not None:
+        query = query.limit(limit)
+    return query.all()
 
 
 def create_aero_result(db: Session, aero_result: schemas.AeroResultCreate):

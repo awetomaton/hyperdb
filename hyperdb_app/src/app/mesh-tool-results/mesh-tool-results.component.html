@@ -1,0 +1,44 @@
+<h1>Tool Results on Mesh</h1>
+<div class="dashboard-row">
+    <div class="dashboard-item dashboard-item-full">
+        <h2>Properties</h2>
+        <mat-nav-list role="list">
+            <a mat-list-item [routerLink]="['/tools/' + tool.name + '/' + tool.version + '/configurations/' + configuredTool.id]">
+                Tool Configuration: {{configuredTool.name}}
+            </a>
+            <a mat-list-item [routerLink]="['../..']">
+                Mesh: {{mesh.file | basename}}
+            </a>
+            <a mat-list-item [routerLink]="['/geometries/' + geometry.id]">
+                Geometry: {{geometry.file | basename}} <classification [classification]="geometry.classification"></classification>
+            </a>
+            <a mat-list-item [routerLink]="['/systems/' + system.id]">
+                System: {{system.name}} <classification [classification]="system.classification"></classification>
+            </a>
+        </mat-nav-list>
+    </div>
+    <h2>Aero Results</h2>
+    <table mat-table [dataSource]="aeroResults" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="mach">
+            <th mat-header-cell *matHeaderCellDef> Mach </th>
+            <td mat-cell *matCellDef="let element"> {{element.mach}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="alpha">
+            <th mat-header-cell *matHeaderCellDef> Alpha </th>
+            <td mat-cell *matCellDef="let element"> {{element.alpha}} </td>
+        </ng-container>
+        <ng-container matColumnDef="lift_coefficient">
+            <th mat-header-cell *matHeaderCellDef> Lift Coefficient </th>
+            <td mat-cell *matCellDef="let element"> {{element.lift_coefficient}} </td>
+        </ng-container>
+        <ng-container matColumnDef="drag_coefficient">
+            <th mat-header-cell *matHeaderCellDef> Drag Coefficient </th>
+            <td mat-cell *matCellDef="let element"> {{element.drag_coefficient}} </td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div>

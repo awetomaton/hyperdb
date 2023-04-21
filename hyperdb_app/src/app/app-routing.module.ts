@@ -12,6 +12,9 @@ import { ToolComponent } from './tool/tool.component';
 import { ToolVersionComponent } from './tool-version/tool-version.component';
 import { ConfiguredToolComponent } from './configured-tool/configured-tool.component';
 import { NewConfiguredToolComponent } from './new-configured-tool/new-configured-tool.component';
+import { MeshComponent } from './mesh/mesh.component';
+import { NewMeshComponent } from './new-mesh/new-mesh.component';
+import { MeshToolResultsComponent } from './mesh-tool-results/mesh-tool-results.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -26,6 +29,10 @@ const routes: Routes = [
   { path: 'tools/:name/:version', component: ToolVersionComponent },
   { path: 'tools/:name/:version/configurations/new', component: NewConfiguredToolComponent },
   { path: 'tools/:name/:version/configurations/:id', component: ConfiguredToolComponent },
+  { path: 'meshes/new', component: NewMeshComponent },
+  { path: 'meshes/:id', component: MeshComponent },
+  { path: 'meshes/:mesh_id/tool-results/:configured_tool_id', component: MeshToolResultsComponent },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({

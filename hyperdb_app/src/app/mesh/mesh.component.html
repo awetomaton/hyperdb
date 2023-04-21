@@ -1,0 +1,34 @@
+<h1>Mesh: {{mesh.file | basename}}</h1>
+<div class="dashboard-row">
+    <div class="dashboard-item">
+        <h2>Properties</h2>
+        <mat-nav-list role="list">
+            <a mat-list-item [routerLink]="['/geometries/' + geometry.id]">
+                Geometry: {{geometry.file | basename}} <classification [classification]="geometry.classification"></classification>
+            </a>
+            <a mat-list-item [routerLink]="['/systems/' + system.id]">
+                System: {{system.name}} <classification [classification]="system.classification"></classification>
+            </a>
+            <a mat-list-item [routerLink]="['/contributor/' + contributor.id]">
+                Contributor: {{contributor.name}}
+            </a>
+        </mat-nav-list>
+    </div>
+    <div class="dashboard-item">
+        <h2 class="button-header-h">Tool Results</h2>
+        <mat-nav-list role="list">
+            <a mat-list-item *ngFor="let configuredTool of configuredTools" [routerLink]="['tool-results/' + configuredTool.id]">
+                {{configuredTool.name}}
+            </a>
+        </mat-nav-list>
+    </div>
+</div>
+<div class="dashboard-row">
+    <hyperdb-comments 
+        class="dashboard-item dashboard-item-centered"
+        [comments]="comments"
+        [object]="mesh"
+        [objectType]="'mesh'"
+        (commentsChanged)="getComments()">
+    </hyperdb-comments>
+</div>

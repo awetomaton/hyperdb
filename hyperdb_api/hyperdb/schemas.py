@@ -172,8 +172,9 @@ class ToolSettingBase(BaseModel):
     cart3d_settings_fk: int | None = None
 
 
-class ToolSettingCreate(ToolSettingBase):
-    pass
+class ToolSettingCreate(BaseModel):
+    cbaero_settings_fk: int | None = None
+    cart3d_settings_fk: int | None = None
 
 
 class ToolSetting(ToolSettingBase):

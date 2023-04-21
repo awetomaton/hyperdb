@@ -1,16 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { HyperdbService } from '../hyperdb.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { NewTool, Tool } from '../interfaces/tool';
-import { ConfiguredTool } from '../interfaces/configured_tool';
+import { Tool } from '../interfaces/tool';
+import { NewConfiguredTool } from '../interfaces/configured_tool';
 import { ContributorService } from '../contributor.service';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { CBAeroSetting } from '../interfaces/cbaero_setting';
-import { Cart3DSetting } from '../interfaces/cart3d_setting';
 import { CBAeroSettingComponent } from '../cbaero-setting/cbaero-setting.component';
 import { NewCBAeroSettingComponent } from '../new-cbaero-setting/new-cbaero-setting.component';
 import { NewCart3DSettingComponent } from '../new-cart3d-setting/new-cart3d-setting.component';
+import { ToolSetting } from '../interfaces/tool_setting';
 
 
 @Component({
@@ -23,7 +21,7 @@ import { NewCart3DSettingComponent } from '../new-cart3d-setting/new-cart3d-sett
 })
 export class NewConfiguredToolComponent {
   @ViewChild(NewCBAeroSettingComponent)
-  private newCBAeroComponent: NewCBAeroSettingComponent;
+  private newCBAeroSettingComponent: NewCBAeroSettingComponent;
   @ViewChild(NewCart3DSettingComponent)
   private newCart3DSettingComponent: NewCart3DSettingComponent;
 
@@ -32,13 +30,12 @@ export class NewConfiguredToolComponent {
   cart3d: boolean = false;
   cbaero: boolean = false;
   tool: Tool = {'id': -1, 'name': '', 'version': ''};
-  toolConfiguration: ConfiguredTool = {'id': -1, 'name': '', 'tool_fk': -1, tool_settings_fk: -1}
+  configuredTool: NewConfiguredTool = {'name': '', 'tool_fk': -1, tool_settings_fk: -1}
 
   constructor(
     private route: ActivatedRoute, 
     private hyperdbService: HyperdbService, 
-    private router: Router, 
-    private snackBar: MatSnackBar,
+    private router: Router,
     public contributorService: ContributorService)
   {
     this.route.params.subscribe(params => {
@@ -49,29 +46,37 @@ export class NewConfiguredToolComponent {
         } else if (this.tool.name == 'Cart3D') {
           this.cart3d = true;
         }
-        this.toolConfiguration.tool_fk = this.tool.id;
+        this.configuredTool.tool_fk = this.tool.id;
       })
     })
   }
 
-  save(): void {
-    console.log(this.newCBAeroComponent.confFile);
+  onSave(): void {
+    if (this.cbaero) {
+      //this.newCBAeroSettingComponent.saved.subscribe(setting => this.save(setting))
+      this.newCBAeroSettingComponent.save();
+    } else if (this.cart3d) {
+      this.newCart3DSettingComponent.saved.subscribe(setting => this.save(setting))
+      this.newCart3DSettingComponent.save();
+    } else {
+      return;
+    }
+  }
+
+  save(setting: ToolSetting): void {
+    this.configuredTool.tool_settings_fk = setting.id;
+    this.hyperdbService.postConfiguredTool(this.configuredTool).subscribe(configuredTool => {
+      this.router.navigate(['../', configuredTool.id], {relativeTo: this.route})
+    })
   }
 
   invalidToolSetting(): boolean {
+    let invalid: boolean = this.configuredTool.name == '';
     if (this.cbaero) {
-      if (this.newCBAeroComponent != undefined && this.newCBAeroComponent.confFile){
-        return false;
-      } else {
-        return true;
-      }
+      invalid = invalid || (this.newCBAeroSettingComponent != undefined && this.newCBAeroSettingComponent.confFile == '');
     } else if (this.cart3d) {
-      if (this.newCart3DSettingComponent != undefined && this.newCart3DSettingComponent.cntlFile){
-        return false;
-      } else {
-        return true;
-      }
+      invalid = invalid || (this.newCart3DSettingComponent != undefined && this.newCart3DSettingComponent.cntlFile == '');
     }
-    return true;
+    return invalid;
   }
 }

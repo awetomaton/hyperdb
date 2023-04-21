@@ -7,8 +7,8 @@
             <p>
                 <mat-form-field appearance="fill">
                     <mat-label>Name</mat-label>
-                    <input matInput placeholder="Configuration Name" [(ngModel)]="toolConfiguration.name" name="name">
-                    <button *ngIf="toolConfiguration.name" matSuffix mat-icon-button aria-label="Clear" (click)="toolConfiguration.name=''">
+                    <input matInput placeholder="Configuration Name" [(ngModel)]="configuredTool.name" name="name">
+                    <button *ngIf="configuredTool.name" matSuffix mat-icon-button aria-label="Clear" (click)="configuredTool.name=''">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
@@ -22,7 +22,7 @@
         <p style="display: flex; justify-content: right; margin-top: 1em;">
             <button
                 mat-raised-button color="primary" 
-                (click)="save()" 
+                (click)="onSave()" 
                 [disabled]="!tool.version || invalidToolSetting()">Save
             </button>
         </p>

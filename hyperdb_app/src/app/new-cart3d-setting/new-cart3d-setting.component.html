@@ -1,4 +1,4 @@
-<h3>CNTL File: <input 
+<h3><input 
     type="file" 
     style="display: none" 
     (change)="onFileSelected($event)" 
@@ -9,6 +9,7 @@
         (click)="fileUpload.click()">
             <mat-icon>attach_file</mat-icon>
         </button>
-        <span> {{cntlFile | basename}}</span>
+        
     </div>
+    CNTL File: <span> {{cntlFile | basename}}</span>
 </h3>
