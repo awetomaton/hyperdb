@@ -52,7 +52,7 @@ export class GeometryComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute, 
-    private hyperdbService: HyperdbService, 
+    public hyperdbService: HyperdbService, 
     private router: Router,
     private snackBar: MatSnackBar,
     public contributorService: ContributorService) {

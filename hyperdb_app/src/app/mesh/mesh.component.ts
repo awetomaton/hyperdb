@@ -24,7 +24,7 @@ export class MeshComponent {
 
   constructor(
     private route: ActivatedRoute, 
-    private hyperdbService: HyperdbService,
+    public hyperdbService: HyperdbService,
     public contributorService: ContributorService)
   {
     this.route.params.subscribe(params => {

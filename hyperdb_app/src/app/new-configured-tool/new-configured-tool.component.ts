@@ -53,7 +53,7 @@ export class NewConfiguredToolComponent {
 
   onSave(): void {
     if (this.cbaero) {
-      //this.newCBAeroSettingComponent.saved.subscribe(setting => this.save(setting))
+      this.newCBAeroSettingComponent.saved.subscribe(setting => this.save(setting))
       this.newCBAeroSettingComponent.save();
     } else if (this.cart3d) {
       this.newCart3DSettingComponent.saved.subscribe(setting => this.save(setting))

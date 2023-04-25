@@ -2,8 +2,8 @@ import enum
 from typing import List
 import lorem
 import pycountry
-from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float, Enum, CheckConstraint
-from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float, Enum, CheckConstraint, DateTime, func
+from sqlalchemy.orm import Mapped, mapped_column
 from names import get_full_name
 import random
 from hyperdb.database import Base
@@ -264,8 +264,8 @@ class AeroResult(Base, ToDictMixin):
     id = Column(Integer, primary_key=True, index=True)
     mach = Column(Float)
     alpha = Column(Float)
-    lift_coefficient = Column(Float)
-    drag_coefficient = Column(Float)
+    lift_coefficient = Column(Float, nullable=True)
+    drag_coefficient = Column(Float, nullable=True)
     configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"))
     mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"))
 
@@ -283,6 +283,40 @@ class AeroResult(Base, ToDictMixin):
                    drag_coefficient=drag_coefficient,
                    configured_tool_fk=configured_tool_fk,
                    mesh_fk=mesh_fk)
+
+
+class RunStatus(enum.Enum):
+    running = 'running'
+    failed = 'failed'
+    succeeded = 'succeeded'
+
+
+class AeroRun(Base, ToDictMixin):
+    """
+    """
+    __tablename__ = "aero_runs"
+    
+
+    id = Column(Integer, primary_key=True, index=True)
+    file = Column(String(128))
+    status = Column(Enum(RunStatus))
+    datetime_created = Column(DateTime(timezone=True), server_default=func.utcnow())
+    contributor_fk = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
+    configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"))
+    mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"))
+
+
+class AeroRunResult(Base, ToDictMixin):
+    """
+    """
+    __tablename__ = "aero_run"
+    
+
+    id = Column(Integer, primary_key=True, index=True)
+    aero_result_fk = mapped_column(ForeignKey("aero_results.id", ondelete="CASCADE"))
+    aero_run_fk = mapped_column(ForeignKey("aero_runs.id", ondelete="CASCADE"))
+    status = Column(Enum(RunStatus))
+
 
 class Comment(Base, ToDictMixin):
     """

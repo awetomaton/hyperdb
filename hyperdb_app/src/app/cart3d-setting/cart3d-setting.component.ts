@@ -11,7 +11,7 @@ export class Cart3DSettingComponent {
   cart3DSetting: Cart3DSetting = {'cntl_file': '', 'id': -1};
   @Input() id: number;
 
-  constructor(private hyperdbService: HyperdbService){}
+  constructor(public hyperdbService: HyperdbService){}
   
   ngOnInit(): void {
     this.hyperdbService.getCart3DSetting(this.id).subscribe(setting => {

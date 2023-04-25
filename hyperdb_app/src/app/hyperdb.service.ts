@@ -25,7 +25,7 @@ import { AeroResult } from './interfaces/aero_result';
 })
 export class HyperdbService {
 
-  private apiUrl = 'api/';  // URL to web api
+  public apiUrl = 'api/';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -58,7 +58,9 @@ export class HyperdbService {
     return this.http.post(this.apiUrl + 'upload-mesh/', form, {
         reportProgress: true,
         observe: 'events'
-    })
+    }).pipe(
+      catchError(this.handleError<{}>())
+    );
   }
 
   uploadToolSetting(form: FormData): Observable<any> {
@@ -322,8 +324,12 @@ export class HyperdbService {
       );
   }
 
+  getAeroResultsUrl(meshId: number, configuredToolId: number): string {
+    return this.apiUrl + 'aero-results?mesh_id=' + meshId + '&configured_tool_id=' + configuredToolId;
+  }
+
   getAeroResults(meshId: number, configuredToolId: number): Observable<AeroResult[]> {
-    return this.http.get<AeroResult[]>(this.apiUrl + 'aero-results?mesh_id=' + meshId + '&configured_tool_id=' + configuredToolId)
+    return this.http.get<AeroResult[]>(this.getAeroResultsUrl(meshId, configuredToolId))
       .pipe(
         catchError(this.handleError<AeroResult[]>('getAeroResults', []))
       );
@@ -473,7 +479,11 @@ export class HyperdbService {
       console.log(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
+      let msg = `${operation} failed: ${error.message}`;
+      if (error.error != undefined && error.error.detail) {
+        msg += ` - Details: ${error.error.detail}`
+      }
+      this.log(msg);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

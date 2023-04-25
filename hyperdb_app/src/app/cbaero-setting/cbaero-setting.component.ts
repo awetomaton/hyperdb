@@ -12,7 +12,7 @@ export class CBAeroSettingComponent implements OnInit {
   cbaeroSetting: CBAeroSetting = {'conf_file': '', 'id': -1};
   @Input() id: number;
 
-  constructor(private hyperdbService: HyperdbService){}
+  constructor(public hyperdbService: HyperdbService){}
   
   ngOnInit(): void {
     this.hyperdbService.getCBAeroSetting(this.id).subscribe(setting => {

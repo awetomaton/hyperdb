@@ -18,16 +18,20 @@ import uuid
 
 app = FastAPI()
 BASE_ROUTE = '/api'
+HYPERDB_FILES_URL = '/files'
 HYPERDB_FILES_DIR = os.environ.get("HYPERDB_FILES_DIR", "static")
 if not os.path.isdir(HYPERDB_FILES_DIR):
     os.mkdir(HYPERDB_FILES_DIR)
-HYPERDB_GEOMETRIES_DIR = os.path.join(HYPERDB_FILES_DIR, "geometries")
+HYPERDB_GEOMETRIES_RELDIR = "geometries"
+HYPERDB_GEOMETRIES_DIR = os.path.join(HYPERDB_FILES_DIR, HYPERDB_GEOMETRIES_RELDIR)
 if not os.path.isdir(HYPERDB_GEOMETRIES_DIR):
     os.mkdir(HYPERDB_GEOMETRIES_DIR)
-HYPERDB_MESHES_DIR = os.path.join(HYPERDB_FILES_DIR, "meshes")
+HYPERDB_MESHES_RELDIR = "meshes"
+HYPERDB_MESHES_DIR = os.path.join(HYPERDB_FILES_DIR, HYPERDB_MESHES_RELDIR)
 if not os.path.isdir(HYPERDB_MESHES_DIR):
     os.mkdir(HYPERDB_MESHES_DIR)
-HYPERDB_TOOL_SETTINGS_DIR = os.path.join(HYPERDB_FILES_DIR, "tool_settings")
+HYPERDB_TOOL_SETTINGS_RELDIR = "tool_settings"
+HYPERDB_TOOL_SETTINGS_DIR = os.path.join(HYPERDB_FILES_DIR, HYPERDB_TOOL_SETTINGS_RELDIR)
 if not os.path.isdir(HYPERDB_TOOL_SETTINGS_DIR):
     os.mkdir(HYPERDB_TOOL_SETTINGS_DIR)
 
@@ -99,35 +103,43 @@ async def read_users_me(
 
 
 # Based on https://fastapi.tiangolo.com/tutorial/static-files/
-app.mount(BASE_ROUTE + "/files", StaticFiles(directory=HYPERDB_FILES_DIR), name="files")
+app.mount(BASE_ROUTE + HYPERDB_FILES_URL, StaticFiles(directory=HYPERDB_FILES_DIR), name="files")
 
 
-def file_upload(file: UploadFile, directory: str):
-    #subdir = os.path.join(directory, str(uuid.uuid4()))
+def file_upload(file: UploadFile, rel_directory: str):
+    filename = str(file.filename)
+    directory = os.path.join(HYPERDB_FILES_DIR, rel_directory)
+    #file_uuid = str(uuid.uuid4())
+    #subdir = os.path.join(directory, file_uuid)
+    #if not os.path.isdir(subdir):
+    #    os.mkdir(subdir)
     #os.mkdir(subdir)
     subdir = directory
-    destination = Path(os.path.join(subdir, str(file.filename)))
+    url = HYPERDB_FILES_URL + '/' + '/'.join(rel_directory.split(os.path.sep)) + '/' + filename
+    destination = Path(os.path.join(subdir, filename))
+    #if os.path.exists(destination):
+    #    raise HTTPException(status_code=409, detail="File {} already exists".format(filename))
     try:
         with destination.open("wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
     finally:
         file.file.close()
-    return str(destination)
+    return url
 
 
 @app.post(BASE_ROUTE + "/upload-geometry/", response_model=dict)
 async def create_upload_geometry(file: UploadFile):
-    return {"filepath": file_upload(file, HYPERDB_GEOMETRIES_DIR)}
+    return {"filepath": file_upload(file, HYPERDB_GEOMETRIES_RELDIR)}
 
 
 @app.post(BASE_ROUTE + "/upload-mesh/")
 async def create_upload_mesh(file: UploadFile):
-    return {"filepath": file_upload(file, HYPERDB_MESHES_DIR)}
+    return {"filepath": file_upload(file, HYPERDB_MESHES_RELDIR)}
 
 
 @app.post(BASE_ROUTE + "/upload-tool-setting/")
 async def create_upload_tool_setting(file: UploadFile):
-    return {"filepath": file_upload(file, HYPERDB_TOOL_SETTINGS_DIR)}
+    return {"filepath": file_upload(file, HYPERDB_TOOL_SETTINGS_RELDIR)}
 
 
 @app.post(BASE_ROUTE + "/systems/", response_model=schemas.System)

@@ -22,7 +22,9 @@
                 </div>
             </div>
             <mat-nav-list role="list" *ngIf="geometry.id != -1">
-                <h3>Geometry: {{geometry.file | basename}} <classification [classification]="geometry.classification"></classification></h3>
+                <h3>
+                    Geometry: <a href="{{hyperdbService.apiUrl + geometry.file}}" download>{{geometry.file | basename}}</a><classification style="margin-left: 1em" [classification]="geometry.classification"></classification>
+                </h3>
                 <a mat-list-item [routerLink]="['/contributor/' + contributor.id]">
                     Contributor: {{contributor.name}}
                 </a>

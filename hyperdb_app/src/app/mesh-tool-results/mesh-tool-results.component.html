@@ -17,7 +17,7 @@
             </a>
         </mat-nav-list>
     </div>
-    <h2>Aero Results</h2>
+    <h2><a href="{{hyperdbService.getAeroResultsUrl(mesh.id, configuredTool.id)}}">Aero Results</a></h2>
     <table mat-table [dataSource]="aeroResults" class="mat-elevation-z8">
 
         <ng-container matColumnDef="mach">

@@ -25,7 +25,7 @@ export class MeshToolResultsComponent {
 
   constructor(
     private route: ActivatedRoute, 
-    private hyperdbService: HyperdbService)
+    public hyperdbService: HyperdbService)
   {
     this.route.params.subscribe(params => {
       this.hyperdbService.getMesh(params['mesh_id']).subscribe(mesh => {
