@@ -1,3 +1,5 @@
+from names import get_full_name
+import random
 from sqlalchemy.orm import Session
 from hyperdb import models
 from hyperdb.database import SessionLocal
@@ -86,11 +88,28 @@ def create_fixtures(
         db.add(item)
         db.commit()
         db.refresh(item)
-    configured_tools = [models.ConfiguredTool.generate_random(tools, tool_settings) for _ in range(num_configured_tools)]
+
+    tool_and_setting_unique_combos = []
+    configured_tools = []
+    while len(tool_and_setting_unique_combos) < num_configured_tools:
+        tool = random.choice(tools)
+        name = get_full_name().lower().replace(" ", "_")
+        these_tool_settings = []
+        if tool.name == "CBAero": # type: ignore
+            these_tool_settings = [tool_setting for tool_setting in tool_settings if tool_setting.cbaero_settings_fk is not None]
+        if tool.name == "Cart3D": # type: ignore
+            these_tool_settings = [tool_setting for tool_setting in tool_settings if tool_setting.cart3d_settings_fk is not None]
+        tool_setting = random.choice(these_tool_settings)
+        if (tool, tool_setting) not in tool_and_setting_unique_combos:
+            tool_and_setting_unique_combos.append((tool, tool_setting))
+            name = get_full_name().lower().replace(" ", "_")
+            configured_tools.append(models.ConfiguredTool(tool_fk=tool.id, name=name, tool_settings_fk=tool_setting.id))
     for item in configured_tools:
         db.add(item)
         db.commit()
         db.refresh(item)
+
+    
     tool_mesh_associations = [models.ToolMeshAssociation.generate_random(contributors, meshes, configured_tools) for _ in range(num_tool_mesh_associations)]
     for item in tool_mesh_associations:
         db.add(item)

@@ -49,6 +49,7 @@ import { MeshesComponent } from './hyperdb/meshes/meshes.component';
 import { MeshComponent } from './hyperdb/mesh/mesh.component';
 import { MeshToolResultsComponent } from './hyperdb/mesh-tool-results/mesh-tool-results.component';
 import { NewMeshComponent } from './hyperdb/new-mesh/new-mesh.component';
+import { NewAeroRunComponent } from './hyperdb/new-aero-run/new-aero-run.component';
 
 
 @NgModule({
@@ -78,7 +79,8 @@ import { NewMeshComponent } from './hyperdb/new-mesh/new-mesh.component';
     MeshesComponent,
     MeshComponent,
     MeshToolResultsComponent,
-    NewMeshComponent
+    NewMeshComponent,
+    NewAeroRunComponent
   ],
   imports: [
     BrowserModule,

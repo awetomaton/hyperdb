@@ -15,9 +15,11 @@ import { NewConfiguredToolComponent } from './hyperdb/new-configured-tool/new-co
 import { MeshComponent } from './hyperdb/mesh/mesh.component';
 import { NewMeshComponent } from './hyperdb/new-mesh/new-mesh.component';
 import { MeshToolResultsComponent } from './hyperdb/mesh-tool-results/mesh-tool-results.component';
+import { NewAeroRunComponent } from './hyperdb/new-aero-run/new-aero-run.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
+  { path: 'aero-runs/new', component: NewAeroRunComponent },
   { path: 'contributors', component: ContributorsComponent },
   { path: 'contributors/:id', component: ContributorComponent },
   { path: 'geometries', component: GeometriesComponent },

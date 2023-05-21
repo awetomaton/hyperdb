@@ -1,0 +1,44 @@
+<div style="display: flex; justify-content: center;">
+    <div style="flex: 1 1 auto; box-shadow: 0 0 3px #ccc; border-radius: 0.25em; max-width: 1024px; padding: 1em">
+        <h2>New Aero Run</h2>
+        <form style="display: flex; gap: 1em;" [formGroup]="aeroRunForm">
+            <div style="flex: 1 1 auto;">
+                <div style="display: flex; gap: 1em;">
+                    <div style="flex: 1 1 auto;">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Tool</mat-label>
+                            <mat-select formControlName="tool">
+                                <mat-option *ngFor="let toolName of getUniqueToolNames()" [value]="toolName">
+                                    {{toolName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div style="flex: 1 1 auto;">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Version</mat-label>
+                            <mat-select [disabled]="aeroRunForm.get('tool')?.value == 'tool' || !aeroRunForm.get('tool')?.valid">
+                                <mat-option *ngFor="let toolVersion of getSelectedToolVersions()" [value]="toolVersion.name">
+                                    {{toolVersion.version}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div style="flex: 1 1 auto;">
+                <mat-form-field appearance="fill">
+                    <mat-label>Tool Configuration</mat-label>
+                    <mat-select formControlName="tool">
+                        <mat-option *ngFor="let toolName of getUniqueToolNames()" [value]="toolName">
+                            {{toolName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div style="flex: 1 1 auto;">
+                Select Mesh
+            </div>
+        </form>
+    </div>
+</div>

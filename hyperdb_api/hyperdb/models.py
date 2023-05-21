@@ -213,9 +213,9 @@ class ConfiguredTool(Base, ToDictMixin):
     def generate_random(cls, tools: List[Tool], tool_settings: List[ToolSetting]):
         tool = random.choice(tools)
         name = get_full_name().lower().replace(" ", "_")
-        if (tool.name == "CBAero"):
+        if tool.name == "CBAero":  # type: ignore
             tool_settings = [tool_setting for tool_setting in tool_settings if tool_setting.cbaero_settings_fk is not None]
-        if (tool.name == "Cart3D"):
+        if tool.name == "Cart3D":  # type: ignore
             tool_settings = [tool_setting for tool_setting in tool_settings if tool_setting.cart3d_settings_fk is not None]
         tool_setting = random.choice(tool_settings)
         return cls(tool_fk=tool.id, name=name, tool_settings_fk=tool_setting.id)
