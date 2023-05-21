@@ -312,6 +312,7 @@ class AeroRun(Base, ToDictMixin):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(128))
+    file = Column(String(128))  # Contains data about the run
     status = Column(Enum(RunStatus))
     datetime_created = Column(DateTime(timezone=True), server_default=utcnow())
     datetime_completed = Column(DateTime(timezone=True), nullable=True)
@@ -332,6 +333,24 @@ class AeroRunResult(Base, ToDictMixin):
     status = Column(Enum(RunStatus))
 
 
+class MassEstimate(Base, ToDictMixin):
+    """
+    """
+    __tablename__ = "mass_estimates"
+    
+
+    id = Column(Integer, primary_key=True, index=True)
+    status = Column(Enum(RunStatus))
+    trajectory_file = Column(String(128))
+    mesh_fk = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"))
+    configured_tool_fk = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"))
+    contributor_fk = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
+    datetime_created = Column(DateTime(timezone=True), server_default=utcnow())
+    datetime_completed = Column(DateTime(timezone=True), nullable=True)
+    mass = Column(Float)
+    results_file = Column(String(128), nullable=True)
+
+
 class Comment(Base, ToDictMixin):
     """
     """
@@ -347,6 +366,8 @@ class Comment(Base, ToDictMixin):
     mesh_fk = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"), nullable=True)
     tool_setting_fk = mapped_column(ForeignKey("tool_settings.id", ondelete="CASCADE"), nullable=True)
     configured_tool_fk = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"), nullable=True)
+    aero_run_fk = mapped_column(ForeignKey("aero_runs.id", ondelete="CASCADE"), nullable=True)
+    mass_estimate_fk = mapped_column(ForeignKey("mass_estimates.id", ondelete="CASCADE"), nullable=True)
 
     @classmethod
     def generate_random(cls, 

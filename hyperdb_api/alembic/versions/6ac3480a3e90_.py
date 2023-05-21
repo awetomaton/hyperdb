@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: aa21855505f5
+Revision ID: 6ac3480a3e90
 Revises: 
-Create Date: 2023-05-20 20:07:26.424677
+Create Date: 2023-05-20 21:57:37.800653
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'aa21855505f5'
+revision = '6ac3480a3e90'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -126,6 +126,7 @@ def upgrade() -> None:
     op.create_index(op.f('ix_aero_results_id'), 'aero_results', ['id'], unique=False)
     op.create_table('aero_runs',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=128), nullable=True),
     sa.Column('file', sa.String(length=128), nullable=True),
     sa.Column('status', sa.Enum('running', 'failed', 'succeeded', name='runstatus'), nullable=True),
     sa.Column('datetime_created', sa.DateTime(timezone=True), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=True),
@@ -139,25 +140,23 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_aero_runs_id'), 'aero_runs', ['id'], unique=False)
-    op.create_table('comments',
+    op.create_table('mass_estimates',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=64), nullable=True),
-    sa.Column('body', sa.String(length=256), nullable=True),
-    sa.Column('contributor_fk', sa.Integer(), nullable=True),
-    sa.Column('system_fk', sa.Integer(), nullable=True),
-    sa.Column('geometry_fk', sa.Integer(), nullable=True),
+    sa.Column('status', sa.Enum('running', 'failed', 'succeeded', name='runstatus'), nullable=True),
+    sa.Column('trajectory_file', sa.String(length=128), nullable=True),
     sa.Column('mesh_fk', sa.Integer(), nullable=True),
-    sa.Column('tool_setting_fk', sa.Integer(), nullable=True),
     sa.Column('configured_tool_fk', sa.Integer(), nullable=True),
+    sa.Column('contributor_fk', sa.Integer(), nullable=True),
+    sa.Column('datetime_created', sa.DateTime(timezone=True), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=True),
+    sa.Column('datetime_completed', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('mass', sa.Float(), nullable=True),
+    sa.Column('results_file', sa.String(length=128), nullable=True),
     sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['system_fk'], ['systems.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['tool_setting_fk'], ['tool_settings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_comments_id'), 'comments', ['id'], unique=False)
+    op.create_index(op.f('ix_mass_estimates_id'), 'mass_estimates', ['id'], unique=False)
     op.create_table('tool_mesh_associations',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('contributor_fk', sa.Integer(), nullable=False),
@@ -178,16 +177,41 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_aero_run_results_id'), 'aero_run_results', ['id'], unique=False)
+    op.create_table('comments',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=64), nullable=True),
+    sa.Column('body', sa.String(length=256), nullable=True),
+    sa.Column('contributor_fk', sa.Integer(), nullable=True),
+    sa.Column('system_fk', sa.Integer(), nullable=True),
+    sa.Column('geometry_fk', sa.Integer(), nullable=True),
+    sa.Column('mesh_fk', sa.Integer(), nullable=True),
+    sa.Column('tool_setting_fk', sa.Integer(), nullable=True),
+    sa.Column('configured_tool_fk', sa.Integer(), nullable=True),
+    sa.Column('aero_run_fk', sa.Integer(), nullable=True),
+    sa.Column('mass_estimate_fk', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['aero_run_fk'], ['aero_runs.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['configured_tool_fk'], ['configured_tools.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['contributor_fk'], ['contributors.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['geometry_fk'], ['geometries.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['mass_estimate_fk'], ['mass_estimates.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['mesh_fk'], ['meshes.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['system_fk'], ['systems.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['tool_setting_fk'], ['tool_settings.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_comments_id'), 'comments', ['id'], unique=False)
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_index(op.f('ix_comments_id'), table_name='comments')
+    op.drop_table('comments')
     op.drop_index(op.f('ix_aero_run_results_id'), table_name='aero_run_results')
     op.drop_table('aero_run_results')
     op.drop_table('tool_mesh_associations')
-    op.drop_index(op.f('ix_comments_id'), table_name='comments')
-    op.drop_table('comments')
+    op.drop_index(op.f('ix_mass_estimates_id'), table_name='mass_estimates')
+    op.drop_table('mass_estimates')
     op.drop_index(op.f('ix_aero_runs_id'), table_name='aero_runs')
     op.drop_table('aero_runs')
     op.drop_index(op.f('ix_aero_results_id'), table_name='aero_results')

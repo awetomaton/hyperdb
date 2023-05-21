@@ -266,6 +266,10 @@ class AeroRunBase(BaseModel):
     mesh_fk: int
 
 
+class AeroRunCreate(AeroRunBase):
+    pass
+
+
 class AeroRun(AeroRunBase):
     id: int
 
@@ -279,11 +283,30 @@ class AeroRunResultBase(BaseModel):
     status: str
 
 
-class AeroRunCreate(AeroRunBase):
+class AeroRunResult(AeroRunResultBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class MassEstimateBase(BaseModel):
+    status: str
+    trajectory_file: str
+    mesh_fk: int
+    configured_tool_fk: int
+    contributor_fk: int
+    datetime_created: datetime
+    datetime_completed: datetime | None = None
+    mass: float
+    results_file: str | None = None
+
+
+class MassEstimateCreate(AeroRunBase):
     pass
 
 
-class AeroRunResult(AeroRunResultBase):
+class MassEstimate(AeroRunResultBase):
     id: int
 
     class Config:
@@ -299,6 +322,8 @@ class CommentBase(BaseModel):
     mesh_fk: int | None = None
     tool_setting_fk: int | None = None
     configured_tool_fk: int | None = None
+    aero_run_fk: int | None = None
+    mass_estimate_fk: int | None = None
 
 
 class CommentCreate(CommentBase):

@@ -324,6 +324,10 @@ def retrieve_configured_mesh_associations(db: Session, id: int):
     return db.query(models.ToolMeshAssociation).filter(models.ToolMeshAssociation.configured_tool_fk == id).all()
 
 
+def retrieve_configured_tool_aero_runs(db: Session, id: int):
+    return db.query(models.AeroRun).filter(models.AeroRun.configured_tool_fk == id).all()
+
+
 def create_configured_tool(db: Session, configured_tool: schemas.ConfiguredToolCreate):
     db_item = models.ConfiguredTool(**configured_tool.dict())
     db.add(db_item)
@@ -455,3 +459,10 @@ def retrieve_aero_run_results(db: Session, skip: int, limit: int):
 def retrieve_aero_run_result(db: Session, id: int):
     return db.query(models.AeroResult).filter(models.AeroResult.id == id).first()
 
+
+def retrieve_mass_estimates(db: Session, skip: int, limit: int):
+    return db.query(models.MassEstimate).offset(skip).limit(limit).all()
+
+
+def retrieve_mass_estimate(db: Session, id: int):
+    return db.query(models.MassEstimate).filter(models.MassEstimate.id == id).first()

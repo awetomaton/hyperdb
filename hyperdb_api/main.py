@@ -448,9 +448,14 @@ def read_configured_tool_geometry_associations(id: int, db: Session = Depends(ge
     return crud.retrieve_configured_tool_geometry_associations(db, id=id)
 
 
-@app.get(BASE_ROUTE + "/configured-tools/{id}/mesh-associations", response_model=schemas.ToolGeometryAssociation)
+@app.get(BASE_ROUTE + "/configured-tools/{id}/mesh-associations", response_model=List[schemas.ToolGeometryAssociation])
 def read_configured_tool_mesh_associations(id: int, db: Session = Depends(get_db)):
     return crud.retrieve_configured_mesh_associations(db, id=id)
+
+
+@app.get(BASE_ROUTE + "/configured-tools/{id}/aero-runs", response_model=List[schemas.AeroRun])
+def read_configured_tool_aero_runs(id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_configured_tool_aero_runs(db, id=id)
 
 
 @app.post(BASE_ROUTE + "/tool-mesh-associations/", response_model=schemas.ToolMeshAssociation)
@@ -543,6 +548,16 @@ def read_aero_run_results(skip: int = 0, limit: int = 100, db: Session = Depends
 @app.get(BASE_ROUTE + "/aero-run-results/{id}", response_model=schemas.AeroRunResult)
 def read_aero_run_result(id: int, db: Session = Depends(get_db)):
     return crud.retrieve_aero_run_result(db, id=id)
+
+
+@app.get(BASE_ROUTE + "/mass-estimates", response_model=List[schemas.MassEstimate])
+def read_mass_estimates(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.retrieve_mass_estimates(db, skip=skip, limit=limit)
+
+
+@app.get(BASE_ROUTE + "/mass-estimates/{id}", response_model=schemas.MassEstimate)
+def read_mass_estimate(id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_mass_estimate(db, id=id)
 
 
 if __name__ == "__main__":
