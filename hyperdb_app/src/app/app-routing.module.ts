@@ -3,18 +3,18 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SystemsComponent } from './systems/systems.component';
 import { SystemComponent } from './system/system.component';
-import { GeometriesComponent } from './geometries/geometries.component';
-import { GeometryComponent } from './geometry/geometry.component';
-import { ContributorsComponent } from './contributors/contributors.component';
-import { ContributorComponent } from './contributor/contributor.component';
+import { GeometriesComponent } from './hyperdb/geometries/geometries.component';
+import { GeometryComponent } from './hyperdb/geometry/geometry.component';
+import { ContributorsComponent } from './hyperdb/contributors/contributors.component';
+import { ContributorComponent } from './hyperdb/contributor/contributor.component';
 import { ToolsComponent } from './tools/tools.component';
 import { ToolComponent } from './tool/tool.component';
 import { ToolVersionComponent } from './tool-version/tool-version.component';
-import { ConfiguredToolComponent } from './configured-tool/configured-tool.component';
-import { NewConfiguredToolComponent } from './new-configured-tool/new-configured-tool.component';
-import { MeshComponent } from './mesh/mesh.component';
-import { NewMeshComponent } from './new-mesh/new-mesh.component';
-import { MeshToolResultsComponent } from './mesh-tool-results/mesh-tool-results.component';
+import { ConfiguredToolComponent } from './hyperdb/configured-tool/configured-tool.component';
+import { NewConfiguredToolComponent } from './hyperdb/new-configured-tool/new-configured-tool.component';
+import { MeshComponent } from './hyperdb/mesh/mesh.component';
+import { NewMeshComponent } from './hyperdb/new-mesh/new-mesh.component';
+import { MeshToolResultsComponent } from './hyperdb/mesh-tool-results/mesh-tool-results.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },

@@ -7,6 +7,11 @@
     "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "paths": {
+      "hyp-lib": [
+        "dist/hyp-lib"
+      ]
+    },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HyperdbService } from '../hyperdb.service';
+import { HyperdbService } from 'src/app/services/hyperdb.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { ContributorService } from '../contributor.service';
+import { ContributorService } from 'src/app/services/contributor.service';
 
 
 export interface ToolSummary {

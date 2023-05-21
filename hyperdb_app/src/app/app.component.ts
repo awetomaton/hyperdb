@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MessageService } from './message.service';
+import { MessageService } from './services/message.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginDialog } from './dialogs/login-dialog/login_dialog';
-import { ContributorService } from './contributor.service';
+import { ContributorService } from './services/contributor.service';
 import { HttpHeaders } from '@angular/common/http';
-import { HyperdbService } from './hyperdb.service';
+import { HyperdbService } from './services/hyperdb.service';
 
 
 @Component({

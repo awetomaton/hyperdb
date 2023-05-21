@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from "@angular/router";
-import { HyperdbService } from '../hyperdb.service';
+import { HyperdbService } from '../services/hyperdb.service';
 import { Comment } from '../interfaces/comment';
 import { System, NewSystem } from '../interfaces/system';
 import { Country, NewCountry } from '../interfaces/country';
@@ -9,7 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Geometry } from '../interfaces/geometry';
-import { ContributorService } from '../contributor.service';
+import { ContributorService } from '../services/contributor.service';
 
 
 @Component({

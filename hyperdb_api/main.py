@@ -13,6 +13,7 @@ from hyperdb.database import SessionLocal
 from hyperdb import schemas
 from hyperdb import crud
 from hyperdb import security
+from hyperdb import tasks
 import uuid
 
 
@@ -515,6 +516,33 @@ def read_comments_meta(db: Session = Depends(get_db)):
 def delete_comment(comment_id: int = 0, db: Session = Depends(get_db)):
     crud.destroy_comment(db, comment_id=comment_id)
     return {'success': True}
+
+
+@app.get(BASE_ROUTE + "/aero-runs", response_model=List[schemas.AeroRun])
+def read_aero_runs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.retrieve_aero_runs(db, skip=skip, limit=limit)
+
+
+@app.post(BASE_ROUTE + "/aero-run", response_model=schemas.AeroRun)
+def create_aero_run(aero_run: schemas.AeroRunCreate, db: Session = Depends(get_db)):
+    aero_run = crud.create_aero_run(db=db, aero_run=aero_run)
+    tasks.run_aero.delay(aero_run.id)
+    return aero_run
+    
+
+@app.get(BASE_ROUTE + "/aero-runs/{id}", response_model=schemas.AeroRun)
+def read_aero_run(id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_aero_run(db, id=id)
+
+
+@app.get(BASE_ROUTE + "/aero-run-results", response_model=List[schemas.AeroRunResult])
+def read_aero_run_results(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.retrieve_aero_run_results(db, skip=skip, limit=limit)
+
+
+@app.get(BASE_ROUTE + "/aero-run-results/{id}", response_model=schemas.AeroRunResult)
+def read_aero_run_result(id: int, db: Session = Depends(get_db)):
+    return crud.retrieve_aero_run_result(db, id=id)
 
 
 if __name__ == "__main__":

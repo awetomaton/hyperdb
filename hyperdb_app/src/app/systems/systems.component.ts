@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { HyperdbService } from '../hyperdb.service';
+import { HyperdbService } from '../services/hyperdb.service';
 import { Country } from '../interfaces/country';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { System } from '../interfaces/system';
-import { ContributorService } from '../contributor.service';
+import { ContributorService } from '../services/contributor.service';
 
 
 export interface SystemsSummary {

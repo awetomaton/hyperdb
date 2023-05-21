@@ -2,12 +2,25 @@ import enum
 from typing import List
 import lorem
 import pycountry
-from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float, Enum, CheckConstraint, DateTime, func
+from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint, Float, Enum, CheckConstraint, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 from names import get_full_name
 import random
 from hyperdb.database import Base
 from hyperdb import security
+from sqlalchemy.sql import expression
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.types import DateTime
+
+
+class utcnow(expression.FunctionElement):
+    type = DateTime()
+    inherit_cache = True
+
+
+@compiles(utcnow, 'postgresql')
+def pg_utcnow(element, compiler, **kw):
+    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
 
 
 class ToDictMixin(object):
@@ -298,9 +311,10 @@ class AeroRun(Base, ToDictMixin):
     
 
     id = Column(Integer, primary_key=True, index=True)
-    file = Column(String(128))
+    name = Column(String(128))
     status = Column(Enum(RunStatus))
-    datetime_created = Column(DateTime(timezone=True), server_default=func.utcnow())
+    datetime_created = Column(DateTime(timezone=True), server_default=utcnow())
+    datetime_completed = Column(DateTime(timezone=True), nullable=True)
     contributor_fk = mapped_column(ForeignKey("contributors.id", ondelete="CASCADE"))
     configured_tool_fk: Mapped[int] = mapped_column(ForeignKey("configured_tools.id", ondelete="CASCADE"))
     mesh_fk: Mapped[int] = mapped_column(ForeignKey("meshes.id", ondelete="CASCADE"))
@@ -309,7 +323,7 @@ class AeroRun(Base, ToDictMixin):
 class AeroRunResult(Base, ToDictMixin):
     """
     """
-    __tablename__ = "aero_run"
+    __tablename__ = "aero_run_results"
     
 
     id = Column(Integer, primary_key=True, index=True)

@@ -430,3 +430,28 @@ def destroy_comment(db: Session, comment_id: int):
     comment = db.query(models.Comment).filter(models.Comment.id == comment_id).first()
     db.delete(comment)
     db.commit()
+
+
+def retrieve_aero_runs(db: Session, skip: int, limit: int):
+    return db.query(models.AeroRun).offset(skip).limit(limit).all()
+
+
+def create_aero_run(db: Session, aero_run: schemas.AeroRunCreate):
+    db_item = models.AeroRun(**aero_run.dict())
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+
+def retrieve_aero_run(db: Session, id: int):
+    return db.query(models.AeroRun).filter(models.AeroRun.id == id).first()
+
+
+def retrieve_aero_run_results(db: Session, skip: int, limit: int):
+    return db.query(models.AeroResult).offset(skip).limit(limit).all()
+
+
+def retrieve_aero_run_result(db: Session, id: int):
+    return db.query(models.AeroResult).filter(models.AeroResult.id == id).first()
+

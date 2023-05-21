@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel
 
@@ -249,6 +250,40 @@ class AeroResultCreate(AeroResultBase):
 
 
 class AeroResult(AeroResultBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class AeroRunBase(BaseModel):
+    file: str
+    status: str
+    datetime_created: datetime
+    datetime_completed: datetime | None = None
+    contributor_fk: int
+    configured_tool_fk: int 
+    mesh_fk: int
+
+
+class AeroRun(AeroRunBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class AeroRunResultBase(BaseModel):
+    aero_run_fk: int
+    aero_result_fk: int
+    status: str
+
+
+class AeroRunCreate(AeroRunBase):
+    pass
+
+
+class AeroRunResult(AeroRunResultBase):
     id: int
 
     class Config:

@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
-import { HyperdbService } from '../hyperdb.service';
+import { HyperdbService } from 'src/app/services/hyperdb.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NewTool, Tool } from '../interfaces/tool';
-import { ConfiguredTool } from '../interfaces/configured_tool';
-import { ContributorService } from '../contributor.service';
+import { NewTool, Tool } from 'src/app/interfaces/tool';
+import { ConfiguredTool } from 'src/app/interfaces/configured_tool';
+import { ContributorService } from 'src/app/services/contributor.service';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 

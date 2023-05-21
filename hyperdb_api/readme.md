@@ -122,3 +122,6 @@ automatically create a migration.
 
 
 Produce secret key with `openssl rand -hex 32` as per https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/.
+
+### RabbitMQ
+run -d --hostname hyper-rabbit --name hyper-rabbit -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password -p 8080:15672 -p 5672:5672 rabbitmq:3-management

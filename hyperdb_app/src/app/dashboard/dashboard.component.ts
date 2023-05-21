@@ -2,7 +2,7 @@ import { Component, OnInit} from '@angular/core';
 import { System } from '../interfaces/system';
 import { Geometry } from '../interfaces/geometry';
 import { Contributor } from '../interfaces/contributor';
-import { HyperdbService } from '../hyperdb.service';
+import { HyperdbService } from '../services/hyperdb.service';
 
 
 @Component({

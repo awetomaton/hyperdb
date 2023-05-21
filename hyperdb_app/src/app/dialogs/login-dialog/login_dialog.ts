@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { HyperdbService } from '../../hyperdb.service';
+import { HyperdbService } from '../../services/hyperdb.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpHeaders } from '@angular/common/http';
-import { ContributorService } from 'src/app/contributor.service';
+import { ContributorService } from 'src/app/services/contributor.service';
 
 
 @Component({
