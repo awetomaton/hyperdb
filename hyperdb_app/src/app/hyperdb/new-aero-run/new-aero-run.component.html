@@ -1,7 +1,7 @@
-<div style="display: flex; justify-content: center;">
+<!--<div style="display: flex; justify-content: center;">
     <div style="flex: 1 1 auto; box-shadow: 0 0 3px #ccc; border-radius: 0.25em; max-width: 1024px; padding: 1em">
         <h2>New Aero Run</h2>
-        <form style="display: flex; gap: 1em;" [formGroup]="aeroRunForm">
+        <form style="display: grid; gap: 1em;" [formGroup]="aeroRunForm">
             <div style="flex: 1 1 auto;">
                 <div style="display: flex; gap: 1em;">
                     <div style="flex: 1 1 auto;">
@@ -40,5 +40,31 @@
                 Select Mesh
             </div>
         </form>
+    </div>
+</div>
+-->
+
+<div style="display: flex; justify-content: center;">
+    <div style="flex: 1 1 auto; box-shadow: 0 0 3px #ccc; border-radius: 0.25em; max-width: 1024px; padding: 1em">
+        <h2>New Aero Run</h2>
+        <div style="display: grid; grid-gap: 1em; grid-template-columns: 33% auto 33%">
+            <div style="grid-row-start: 1; grid-row-end: 2; grid-column-start: 1; grid-column-end: 3; background-color:red">A</div>
+            <div style="grid-row-start: 2; grid-row-end: 3; grid-column-start: 1; grid-column-end: 2; background-color:red">C</div>
+            <div style="grid-row-start: 2; grid-row-end: 3; grid-column-start: 2; grid-column-end: 3; background-color:red">D</div>
+            <div style="grid-row-start: 1; grid-row-end: 3; grid-column-start: 3; grid-column-end: 4; background-color:red">B</div>
+        </div>        
+        <mat-divider></mat-divider>
+        <h3>Parameters</h3>
+        <div style="display: flex; justify-content: center; gap: 1em;">
+            
+            <div style="flex: 1 1 auto">Mach</div>
+            <div style="flex: 1 1 auto">Alpha</div>
+        </div>
+        <div style="display: grid; grid-gap: 1em; grid-template-columns: 33% auto 33%">
+            <div style="grid-row-start: 1; grid-row-end: 2; grid-column-start: 1; grid-column-end: 3; background-color:red">A</div>
+            <div style="grid-row-start: 2; grid-row-end: 3; grid-column-start: 1; grid-column-end: 2; background-color:red">C</div>
+            <div style="grid-row-start: 2; grid-row-end: 3; grid-column-start: 2; grid-column-end: 3; background-color:red">D</div>
+            <div style="grid-row-start: 1; grid-row-end: 3; grid-column-start: 3; grid-column-end: 4; background-color:red">B</div>  
+        </div>  
     </div>
 </div>
